@@ -22,7 +22,7 @@
 
 /* Begin PBXFileReference section */
 		2C23F8482B6D5B8C0099BA6D /* WidgetSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSettingsView.swift; sourceTree = "<group>"; };
-		2C9EE69F2B66844500D36BA6 /* Widgets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Widgets.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C9EE69F2B66844500D36BA6 /* WWWidgets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WWWidgets.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C9EE6A32B66844500D36BA6 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		2C9EE6A62B66844500D36BA6 /* WidgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetApp.swift; sourceTree = "<group>"; };
 		2C9EE6A82B66844500D36BA6 /* WidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetView.swift; sourceTree = "<group>"; };
@@ -51,7 +51,7 @@
 		2C9EE6962B66844500D36BA6 = {
 			isa = PBXGroup;
 			children = (
-				2C9EE6A12B66844500D36BA6 /* Widgets */,
+				2C9EE6A12B66844500D36BA6 /* WWWidgets */,
 				2C9EE6A22B66844500D36BA6 /* Packages */,
 				2C9EE6A02B66844500D36BA6 /* Products */,
 			);
@@ -60,12 +60,12 @@
 		2C9EE6A02B66844500D36BA6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2C9EE69F2B66844500D36BA6 /* Widgets.app */,
+				2C9EE69F2B66844500D36BA6 /* WWWidgets.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		2C9EE6A12B66844500D36BA6 /* Widgets */ = {
+		2C9EE6A12B66844500D36BA6 /* WWWidgets */ = {
 			isa = PBXGroup;
 			children = (
 				2C9EE6A62B66844500D36BA6 /* WidgetApp.swift */,
@@ -80,7 +80,7 @@
 				2C9EE6AF2B66844600D36BA6 /* Info.plist */,
 				2C9EE6AC2B66844600D36BA6 /* Preview Content */,
 			);
-			path = Widgets;
+			path = WWWidgets;
 			sourceTree = "<group>";
 		};
 		2C9EE6A22B66844500D36BA6 /* Packages */ = {
@@ -102,9 +102,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2C9EE69E2B66844500D36BA6 /* Widgets */ = {
+		2C9EE69E2B66844500D36BA6 /* WWWidgets */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2C9EE6B22B66844600D36BA6 /* Build configuration list for PBXNativeTarget "Widgets" */;
+			buildConfigurationList = 2C9EE6B22B66844600D36BA6 /* Build configuration list for PBXNativeTarget "WWWidgets" */;
 			buildPhases = (
 				2C9EE69B2B66844500D36BA6 /* Sources */,
 				2C9EE69C2B66844500D36BA6 /* Frameworks */,
@@ -114,12 +114,12 @@
 			);
 			dependencies = (
 			);
-			name = Widgets;
+			name = WWWidgets;
 			packageProductDependencies = (
 				2C9EE6A42B66844500D36BA6 /* RealityKitContent */,
 			);
 			productName = ittybittywidgets;
-			productReference = 2C9EE69F2B66844500D36BA6 /* Widgets.app */;
+			productReference = 2C9EE69F2B66844500D36BA6 /* WWWidgets.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -150,7 +150,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2C9EE69E2B66844500D36BA6 /* Widgets */,
+				2C9EE69E2B66844500D36BA6 /* WWWidgets */,
 			);
 		};
 /* End PBXProject section */
@@ -312,7 +312,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Widgets/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"WWWidgets/Preview Content\"";
 				DEVELOPMENT_TEAM = A7X888RRVJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -338,7 +338,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Widgets/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"WWWidgets/Preview Content\"";
 				DEVELOPMENT_TEAM = A7X888RRVJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -369,7 +369,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2C9EE6B22B66844600D36BA6 /* Build configuration list for PBXNativeTarget "Widgets" */ = {
+		2C9EE6B22B66844600D36BA6 /* Build configuration list for PBXNativeTarget "WWWidgets" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2C9EE6B32B66844600D36BA6 /* Debug */,
