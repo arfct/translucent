@@ -31,7 +31,10 @@ let head = document.getElementsByTagName('head')[0]
 head.appendChild(metaTag);
 
 var cssTag = document.createElement('style');
-cssTag.innerHTML = 'body {background-color: transparent !important;}';
+cssTag.innerHTML = 'body, [class*="prototype--background-"] {background-color:transparent !important;}';
+
+
+
 head.appendChild(cssTag);
 console.log('hi')
 
