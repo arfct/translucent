@@ -1,0 +1,21 @@
+<meta name="viewport" content="width=device-width">
+<style>
+  body {
+    background-color:#00000088;
+    color:white;
+    font-family:-apple-system;
+    text-align:center;
+    font-size:30vmin;
+  }
+</style>
+<center>
+    Hello World
+    <script>
+      let updateSize = () => {
+        let size = `${document.documentElement.clientWidth} x ${document.documentElement.clientHeight}`
+        document.body.innerHTML = size
+      }
+        window.onresize = updateSize
+        updateSize()
+    </script>
+    </center>
