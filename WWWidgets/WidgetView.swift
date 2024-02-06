@@ -18,7 +18,8 @@ extension Animation {
 
 struct WidgetView: View {
   @Environment(\.openWindow) var openWindow
-  
+
+  @Environment(\.isFocused) var isFocused
   @State var widgetModel: WidgetModel
   @State private var flipped: Bool = false
   
@@ -28,36 +29,41 @@ struct WidgetView: View {
   
   var body: some View {
     
-    
-    ZStack(alignment: .bottomTrailing) {
-      
-      WebView(location: $widgetModel.location, widgetModel: $widgetModel)
-        .cornerRadius(widgetModel.style == .opaque ? 40 : 0)
-        .disabled(flipped)
-        .glassBackgroundEffect(displayMode: (widgetModel.style == .glass || widgetModel.style  == .glass_forced) ? .always : .never)
-        .opacity(flipped ? 0.0 : 1.0)
-        .task {
-          print(widgetModel.style)
-        }
-      WidgetSettingsView(widgetModel:$widgetModel, callback: toggleSettings)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
-        .glassBackgroundEffect()
-        .offset(z: 1)
-        .opacity(flipped ? 1.0 : 0.0)
-        .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
-        .disabled(!flipped)
-      
-      Button("", systemImage: "info.circle") { toggleSettings() }
-        .buttonBorderShape(.circle)
-        .buttonStyle(.borderless)
-        .labelStyle(.iconOnly)
-        .glassBackgroundEffect()
-        .hoverEffect(.lift)
+    VStack {
+      if true {
+        Button("", systemImage: "info.circle") { toggleSettings() }
+          .buttonBorderShape(.circle)
+          .buttonStyle(.borderless)
+          .labelStyle(.iconOnly)
+          .glassBackgroundEffect()
+          .hoverEffect(.lift)
+      }
+      ZStack(alignment: .bottomTrailing) {
+        
+        WebView(location: $widgetModel.location, widgetModel: $widgetModel)
+          .cornerRadius(widgetModel.style == .opaque ? 40 : 0)
+          .disabled(flipped)
+          .glassBackgroundEffect(displayMode: (widgetModel.style == .glass || widgetModel.style  == .glass_forced) ? .always : .never)
+          .opacity(flipped ? 0.0 : 1.0)
+          .task {
+            print(widgetModel.style)
+          }
+        WidgetSettingsView(widgetModel:$widgetModel, callback: toggleSettings)
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .padding()
+          .glassBackgroundEffect()
+          .offset(z: 1)
+          .opacity(flipped ? 1.0 : 0.0)
+          .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
+          .disabled(!flipped)
+        
+      }
     }
     
       .rotation3DEffect(.degrees(flipped ? 180.0 : 0.0), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
-      
+      .onLongPressGesture {
+        toggleSettings()
+      }
       .frame(idealWidth: 200, idealHeight: 700)
       .toolbar {
         ToolbarItem(placement: .topBarLeading) {
@@ -65,6 +71,7 @@ struct WidgetView: View {
             .buttonBorderShape(.circle)
         }
       }
+      
   }
 }
 

@@ -19,7 +19,7 @@ enum ViewStyle: String, Equatable, CaseIterable, Codable {
   var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
 }
 
-struct WidgetModel: Identifiable, Codable {
+struct WidgetModel: Identifiable, Codable, Hashable {
   var id: UUID
   var name: String
   var location: String

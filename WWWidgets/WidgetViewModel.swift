@@ -15,18 +15,18 @@ class WidgetViewModel {
                     withExtension: "html",
                     subdirectory: "html")!.absoluteString
                 , style: .glass),
-    WidgetModel(id: UUID(), name:"Calculator",
-                
-                location:
-                  Bundle.main.url(
-                    forResource: "Calculator",
-                    withExtension: "html",
-                    subdirectory: "html/Calculator.wdgt")!.absoluteString,
-                style: .transparent,
-                width:172,
-                height:248,
-                zoom:2.0
-               ),
+//    WidgetModel(id: UUID(), name:"Calculator",
+//                
+//                location:
+//                  Bundle.main.url(
+//                    forResource: "Calculator",
+//                    withExtension: "html",
+//                    subdirectory: "html/Calculator.wdgt")!.absoluteString,
+//                style: .transparent,
+//                width:172,
+//                height:248,
+//                zoom:2.0
+//               ),
     
     
     WidgetModel(id: UUID(), name:"Google News", location: "https://news.google.com/", style: .opaque),
