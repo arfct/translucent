@@ -12,7 +12,7 @@ import SwiftUI
 
 enum ViewStyle: String, Equatable, CaseIterable, Codable {
   case glass = "Glass"
-  case glass_forced  = "Glass (remove background)"
+  case glass_forced  = "Glass (no body background)"
   case transparent  = "Transparent"
   case opaque  = "Opaque"
 
@@ -26,15 +26,17 @@ struct WidgetModel: Identifiable, Codable, Hashable {
   var style: ViewStyle
   var width: CGFloat?
   var height: CGFloat?
-  var zoom: CGFloat?
-  init(id: UUID = UUID(), name: String, location: String, style: ViewStyle, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil) {
+  var zoom: CGFloat = 1.0
+  var flags: String = ""
+  init(id: UUID = UUID(), name: String, location: String, style: ViewStyle, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, flags: String? = nil) {
     self.id = id
     self.name = name
     self.location = location
     self.style = style
     self.width = width
     self.height = height
-    self.zoom = zoom
+    if let zoom = zoom { self.zoom = zoom }
+    if let flags = flags { self.flags = flags }
   }
   
 }

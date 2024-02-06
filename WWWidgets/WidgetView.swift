@@ -29,14 +29,15 @@ struct WidgetView: View {
   
   var body: some View {
     
-    VStack {
+    VStack(alignment: .center) {
       if true {
-        Button("", systemImage: "info.circle") { toggleSettings() }
+        Button("", systemImage: "arrow.left.and.right") { toggleSettings() }
           .buttonBorderShape(.circle)
           .buttonStyle(.borderless)
           .labelStyle(.iconOnly)
           .glassBackgroundEffect()
           .hoverEffect(.lift)
+          .offset(x:0, y:20)
       }
       ZStack(alignment: .bottomTrailing) {
         

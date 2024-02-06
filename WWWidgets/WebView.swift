@@ -64,7 +64,6 @@ console.log('hi')
   }
   
   func updateUIView(_ webView: WKWebView, context: Context) {
-    print("Update view \(location) \(webView)")
     if let url = URL(string:location) {
       let request = URLRequest(url: url)
       webView.load(request)
