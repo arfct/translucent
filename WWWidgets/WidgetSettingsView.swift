@@ -14,7 +14,6 @@ struct WidgetSettingsView: View {
   
   @FocusState private var isTextFieldFocused: Bool
   @State private var locationTempString: String = "about:blank"
-  @State private var locationTempString2: String = "about:blank"
   
   func clean(url: String) -> String? {
     if (url.hasPrefix("http")) {
@@ -32,30 +31,16 @@ struct WidgetSettingsView: View {
       
       Picker("Select an option", selection: $widgetModel.style) {
         ForEach(ViewStyle.allCases, id: \.self) { value in
-          Text(value.localizedName)
-            .tag(value)
+          HStack {
+            Text(value.localizedName)
+              .tag(value)
+            Image(systemName: value.iconName)
+          }
         }
       }
       
-//      TextField("flags", text: $widgetModel.flags)
-//        .textFieldStyle(.roundedBorder)
-//        .autocapitalization(.none)
-//        .disableAutocorrection(true)
-//        .keyboardType(.URL)
-//
-//      TextField("zoom", value: $widgetModel.zoom, formatter: NumberFormatter())
-//        .textFieldStyle(.roundedBorder)
-//        .keyboardType(.numberPad)
-
-//      HStack {
-        Label("Location", image: "link")
-//        Spacer()
-//        Button("Use Current") {
-//          
-//        }
-//      }
+      Label("Location", image: "link")
       
-      TextField("location2", text: $locationTempString2)
       TextField("location", text: $locationTempString)
         .textFieldStyle(.roundedBorder)
         .autocapitalization(.none)
@@ -80,7 +65,7 @@ struct WidgetSettingsView: View {
                     UIApplication.shared.sendAction(#selector(UIResponder.selectAll(_:)), to: nil, from: nil, for: nil)
                 }
             }
-        }        
+        }
       Spacer()
 
       Button("Done") {

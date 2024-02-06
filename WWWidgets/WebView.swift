@@ -6,8 +6,8 @@ import WebKit
 struct WebView: UIViewRepresentable {
   @Binding var location: String
   @Environment(\.openWindow) var openWindow
-@Binding var widgetModel: WidgetModel
-
+  @Binding var widgetModel: WidgetModel
+  
   
   let contentController = ContentController()
   
@@ -37,7 +37,7 @@ console.log('hi')
 
 """
     
-//    openWindow(id: "SecondWindow")
+    //    openWindow(id: "SecondWindow")
     
     let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     config.userContentController.addUserScript(script)
@@ -54,7 +54,7 @@ console.log('hi')
   
   class ContentController: NSObject, WKScriptMessageHandler {
     @Environment(\.openWindow) var openWindow
-
+    
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
       print(message.name)
       print(message.body)
@@ -68,6 +68,6 @@ console.log('hi')
       let request = URLRequest(url: url)
       webView.load(request)
     }
-
+    
   }
 }

@@ -12,11 +12,19 @@ import SwiftUI
 
 enum ViewStyle: String, Equatable, CaseIterable, Codable {
   case glass = "Glass"
-  case glass_forced  = "Glass (no body background)"
   case transparent  = "Transparent"
+//  case glass_forced  = "Glass (no body background)"
   case opaque  = "Opaque"
 
   var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
+  var iconName: String {
+    switch self {
+    case .transparent: return "square.on.square.intersection.dashed"
+    case .glass: return "square.on.square"
+//    case .glass_forced: return "square.on.square"
+    case .opaque: return "square.filled.on.square"
+    }
+  }
 }
 
 struct WidgetModel: Identifiable, Codable, Hashable {

@@ -37,14 +37,13 @@ struct WidgetView: View {
           .labelStyle(.iconOnly)
           .glassBackgroundEffect()
           .hoverEffect(.lift)
-          .offset(x:0, y:20)
+          .offset(x:0, y:10)
       }
       ZStack(alignment: .bottomTrailing) {
-        
         WebView(location: $widgetModel.location, widgetModel: $widgetModel)
-          .cornerRadius(widgetModel.style == .opaque ? 40 : 0)
+          .cornerRadius(widgetModel.style == .opaque ? 10 : 0)
           .disabled(flipped)
-          .glassBackgroundEffect(displayMode: (widgetModel.style == .glass || widgetModel.style  == .glass_forced) ? .always : .never)
+          .glassBackgroundEffect(displayMode: (widgetModel.style == .glass /*|| widgetModel.style  == .glass_forced*/) ? .always : .never)
           .opacity(flipped ? 0.0 : 1.0)
           .task {
             print(widgetModel.style)
@@ -62,9 +61,7 @@ struct WidgetView: View {
     }
     
       .rotation3DEffect(.degrees(flipped ? 180.0 : 0.0), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
-      .onLongPressGesture {
-        toggleSettings()
-      }
+
       .frame(idealWidth: 200, idealHeight: 700)
       .toolbar {
         ToolbarItem(placement: .topBarLeading) {
