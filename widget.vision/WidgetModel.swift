@@ -38,6 +38,8 @@ struct WidgetModel: Identifiable, Codable, Hashable {
   var height: CGFloat = 360
   var radius: CGFloat = 30
   var zoom: CGFloat = 1.0
+  var viewportWidth: Int?
+  
   var options: String = ""
   init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: ViewStyle, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
     self.id = id
@@ -68,6 +70,12 @@ struct WidgetModel: Identifiable, Codable, Hashable {
           case "zoom":
             if let value = Double(value) {
               self.zoom = value
+              print("ZOOM \(value)")
+            }
+          case "vw":
+            if let value = Int(value) {
+              self.viewportWidth = value
+              print("VW \(value)")
             }
           default:
             break

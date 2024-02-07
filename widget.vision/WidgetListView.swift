@@ -49,7 +49,6 @@ struct WidgetListView: View {
             .aspectRatio(contentMode: .fit)
             .frame(width: 40, height: 40)
           
-          
           Text("More").lineLimit(1)
         }
         .padding()

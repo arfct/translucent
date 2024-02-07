@@ -20,7 +20,7 @@ struct WebView: UIViewRepresentable {
     print(widgetModel.location)
     print(widgetModel.zoom)
     
-    
+    let viewport = self.widgetModel.viewportWidth
     
     
     
@@ -31,7 +31,7 @@ document.addEventListener('click', function(){
 });
 var metaTag=document.createElement('meta');
 metaTag.name = "viewport"
-metaTag.content = "width=device-width, initial-scale=\(zoom), maximum-scale=\(zoom), user-scalable=0"
+metaTag.content = "width=\(viewport), initial-scale=\(zoom), maximum-scale=\(zoom), user-scalable=0"
 let head = document.getElementsByTagName('head')[0]
 head.appendChild(metaTag);
 """
