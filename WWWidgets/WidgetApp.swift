@@ -10,28 +10,30 @@ import SwiftUI
 @main
 struct WidgetApp: App {
   @Environment(\.openWindow) var openWindow
-//  @StateObject private var store = WidgetStore()
+  @StateObject private var store = WidgetStore()
 
     var body: some Scene {
       let viewModel = WidgetViewModel()
       WindowGroup {
         WidgetListView(viewModel: viewModel)
           .onOpenURL { (url) in
-  
+            
             let newWidgetModel = WidgetModel( id: UUID(), name:"", location: url.absoluteString.replacingOccurrences(of: "widget-", with: ""), style: .glass)
             openWindow(value: newWidgetModel)
-          print(url)
+            print(url)
           }
-          .padding()
+          .padding(40)
           .glassBackgroundEffect(displayMode: .never)
-//          .task {
-//                           do {
-//                               try await store.load()
-//                           } catch {
-//                               fatalError(error.localizedDescription)
-//                           }
-//                       }
-      }.defaultSize(CGSize(width:320, height:320))
+          .task {
+            do {
+              try await store.load()
+            } catch {
+              fatalError(error.localizedDescription)
+            }
+          }
+      }
+      .windowResizability(.contentSize)
+//      .defaultSize(CGSize(width:720, height:480))
       
       
       

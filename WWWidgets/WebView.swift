@@ -19,7 +19,12 @@ struct WebView: UIViewRepresentable {
     
     print(widgetModel.location)
     print(widgetModel.zoom)
-    let source = """
+    
+    
+    
+    
+    
+    var source = """
 document.widget = window.webkit.messageHandlers.widget
 document.addEventListener('click', function(){
   window.webkit.messageHandlers.jsHandler.postMessage('click clack!');
@@ -29,16 +34,17 @@ metaTag.name = "viewport"
 metaTag.content = "width=device-width, initial-scale=\(zoom), maximum-scale=\(zoom), user-scalable=0"
 let head = document.getElementsByTagName('head')[0]
 head.appendChild(metaTag);
-
+"""
+   
+    if (widgetModel.style != .opaque) {
+      source += """
 var cssTag = document.createElement('style');
 cssTag.innerHTML = 'body, [class*="prototype--background-"] {background-color:transparent !important;}  [class*="frontend_sha_override_indicator"] {display:none}';
-
-
-
 head.appendChild(cssTag);
-console.log('hi')
 
 """
+    }
+
     
     //    openWindow(id: "SecondWindow")
     
@@ -48,8 +54,11 @@ console.log('hi')
     let webView = WKWebView(frame: CGRect(x: 0, y: 0, width: 100, height: 100), configuration: config)
     config.userContentController.add(ContentController(), name: "widget")
     webView.isOpaque = false
-    webView.backgroundColor = UIColor.clear
-    webView.scrollView.backgroundColor = UIColor.clear
+    
+    if (widgetModel.style != .opaque) {
+      webView.backgroundColor = UIColor.clear
+      webView.scrollView.backgroundColor = UIColor.clear
+    }
     webView.customUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
     return webView
   }

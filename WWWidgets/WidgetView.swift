@@ -42,7 +42,7 @@ struct WidgetView: View {
       }
       ZStack(alignment: .bottomTrailing) {
         WebView(location: $widgetModel.location, widgetModel: $widgetModel)
-          .cornerRadius(widgetModel.style == .transparent ? 10 : 0)
+          .cornerRadius(widgetModel.style != .glass ? 40 : 0)
           .disabled(flipped)
           .glassBackgroundEffect(displayMode: (widgetModel.style == .glass /*|| widgetModel.style  == .glass_forced*/) ? .always : .never)
           .opacity(flipped ? 0.0 : 1.0)

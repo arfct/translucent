@@ -30,15 +30,18 @@ enum ViewStyle: String, Equatable, CaseIterable, Codable {
 struct WidgetModel: Identifiable, Codable, Hashable {
   var id: UUID
   var name: String
+  var image: String?
   var location: String
   var style: ViewStyle
   var width: CGFloat?
   var height: CGFloat?
   var zoom: CGFloat = 1.0
   var flags: String = ""
-  init(id: UUID = UUID(), name: String, location: String, style: ViewStyle, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, flags: String? = nil) {
+  init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: ViewStyle, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, flags: String? = nil) {
     self.id = id
     self.name = name
+    
+    if let image = image { self.image = image }
     self.location = location
     self.style = style
     self.width = width
