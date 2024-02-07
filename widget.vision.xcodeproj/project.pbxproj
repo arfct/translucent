@@ -53,7 +53,7 @@
 		2C9EE6962B66844500D36BA6 = {
 			isa = PBXGroup;
 			children = (
-				2C9EE6A12B66844500D36BA6 /* WWWidgets */,
+				2C9EE6A12B66844500D36BA6 /* widget.vision */,
 				2C9EE6A22B66844500D36BA6 /* Packages */,
 				2C9EE6A02B66844500D36BA6 /* Products */,
 			);
@@ -67,7 +67,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		2C9EE6A12B66844500D36BA6 /* WWWidgets */ = {
+		2C9EE6A12B66844500D36BA6 /* widget.vision */ = {
 			isa = PBXGroup;
 			children = (
 				2C9EE6A62B66844500D36BA6 /* WidgetApp.swift */,
@@ -83,7 +83,7 @@
 				2C9EE6AF2B66844600D36BA6 /* Info.plist */,
 				2C9EE6AC2B66844600D36BA6 /* Preview Content */,
 			);
-			path = WWWidgets;
+			path = widget.vision;
 			sourceTree = "<group>";
 		};
 		2C9EE6A22B66844500D36BA6 /* Packages */ = {
@@ -140,7 +140,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 2C9EE69A2B66844500D36BA6 /* Build configuration list for PBXProject "WWWidgets" */;
+			buildConfigurationList = 2C9EE69A2B66844500D36BA6 /* Build configuration list for PBXProject "widget.vision" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -368,7 +368,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2C9EE69A2B66844500D36BA6 /* Build configuration list for PBXProject "WWWidgets" */ = {
+		2C9EE69A2B66844500D36BA6 /* Build configuration list for PBXProject "widget.vision" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2C9EE6B02B66844600D36BA6 /* Debug */,
