@@ -38,10 +38,11 @@ struct WidgetView: View {
           .glassBackgroundEffect()
           .hoverEffect(.lift)
           .offset(x:0, y:10)
+          .opacity(0.1)
       }
       ZStack(alignment: .bottomTrailing) {
         WebView(location: $widgetModel.location, widgetModel: $widgetModel)
-          .cornerRadius(widgetModel.style == .opaque ? 10 : 0)
+          .cornerRadius(widgetModel.style == .transparent ? 10 : 0)
           .disabled(flipped)
           .glassBackgroundEffect(displayMode: (widgetModel.style == .glass /*|| widgetModel.style  == .glass_forced*/) ? .always : .never)
           .opacity(flipped ? 0.0 : 1.0)
