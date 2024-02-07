@@ -18,7 +18,7 @@ extension Animation {
 
 struct WidgetView: View {
   @Environment(\.openWindow) var openWindow
-
+  
   @Environment(\.isFocused) var isFocused
   @State var widgetModel: WidgetModel
   @State private var flipped: Bool = false
@@ -28,49 +28,44 @@ struct WidgetView: View {
   }
   
   var body: some View {
-    
-    VStack(alignment: .center) {
-      if true {
-        Button("", systemImage: "arrow.left.and.right") { toggleSettings() }
-          .buttonBorderShape(.circle)
-          .buttonStyle(.borderless)
-          .labelStyle(.iconOnly)
-          .glassBackgroundEffect()
-          .hoverEffect(.lift)
-          .offset(x:0, y:10)
-          .opacity(0.1)
-      }
-      ZStack(alignment: .bottomTrailing) {
-        WebView(location: $widgetModel.location, widgetModel: $widgetModel)
-          .cornerRadius(widgetModel.style != .glass ? 40 : 0)
-          .disabled(flipped)
-          .glassBackgroundEffect(displayMode: (widgetModel.style == .glass /*|| widgetModel.style  == .glass_forced*/) ? .always : .never)
-          .opacity(flipped ? 0.0 : 1.0)
-          .task {
-            print(widgetModel.style)
-          }
-        WidgetSettingsView(widgetModel:$widgetModel, callback: toggleSettings)
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .padding()
-          .glassBackgroundEffect()
-          .offset(z: 1)
-          .opacity(flipped ? 1.0 : 0.0)
-          .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
-          .disabled(!flipped)
-        
-      }
-    }
-    
-      .rotation3DEffect(.degrees(flipped ? 180.0 : 0.0), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
-
-      .frame(idealWidth: 200, idealHeight: 700)
-      .toolbar {
-        ToolbarItem(placement: .topBarLeading) {
-          Button("Info", systemImage: "info") { toggleSettings() }
+    GeometryReader { geometry in
+      VStack(alignment: .center) {
+        if true {
+          
+          
+        }
+        ZStack(alignment: .bottomTrailing) {
+          WebView(location: $widgetModel.location, widgetModel: $widgetModel)
+            .cornerRadius(widgetModel.style != .glass ? 20 : 10)
+            .disabled(flipped)
+            .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widgetModel.radius), displayMode: (widgetModel.style == .glass /*|| widgetModel.style  == .glass_forced*/) ? .always : .never)
+            .opacity(flipped ? 0.0 : 1.0)
+          
+          WidgetSettingsView(widgetModel:$widgetModel, callback: toggleSettings)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding()
+            .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widgetModel.radius))
+            .offset(z: 1)
+            .opacity(flipped ? 1.0 : 0.0)
+            .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
+            .disabled(!flipped)
+          
+        }
+        .ornament(attachmentAnchor: .scene(.top)) {
+          Button("•", systemImage: "circle.fill") { toggleSettings() }
             .buttonBorderShape(.circle)
+            .tint(.primary)
+            .buttonStyle(.borderless)
+            .transition(.move(edge: .top))
+            .buttonStyle(.automatic)
+            .labelStyle(.titleOnly)
+            .hoverEffect()
+            .opacity(1.0)
         }
       }
       
+      .rotation3DEffect(.degrees(flipped ? 180.0 : 0.0), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
+    }
   }
 }
 

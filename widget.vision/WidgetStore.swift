@@ -4,7 +4,6 @@ import SwiftUI
 class WidgetStore: ObservableObject {
     @Published var widgets: [WidgetModel] = []
 
-
     private static func fileURL() throws -> URL {
         try FileManager.default.url(for: .documentDirectory,
                                     in: .userDomainMask,

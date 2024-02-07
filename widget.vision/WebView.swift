@@ -39,7 +39,7 @@ head.appendChild(metaTag);
     if (widgetModel.style != .opaque) {
       source += """
 var cssTag = document.createElement('style');
-cssTag.innerHTML = 'body, [class*="prototype--background-"] {background-color:transparent !important;}  [class*="frontend_sha_override_indicator"] {display:none}';
+cssTag.innerHTML = 'body, [class*="prototype--background-"] {background-color:\(widgetModel.color) !important; background-image:none !important}  [class*="frontend_sha_override_indicator"] {display:none}';
 head.appendChild(cssTag);
 
 """
