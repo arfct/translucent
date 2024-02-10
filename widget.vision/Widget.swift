@@ -1,28 +1,13 @@
 import Foundation
 import SwiftUI
+import SwiftData
 
-enum ViewStyle: String, Equatable, CaseIterable, Codable {
-  case glass = "Glass"
-  case transparent  = "Transparent"
-  //  case glass_forced  = "Glass (no body background)"
-  case opaque  = "Opaque"
-  
-  var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
-  var iconName: String {
-    switch self {
-    case .transparent: return "square.on.square.intersection.dashed"
-    case .glass: return "square.on.square"
-      //    case .glass_forced: return "square.on.square"
-    case .opaque: return "square.filled.on.square"
-    }
-  }
-}
 
-struct WidgetModel: Identifiable, Codable, Hashable {
+@Model final class Widget {
   var id: UUID
-  var name: String
+  var name: String?
   var image: String?
-  var location: String
+  var location: String?
   var style: ViewStyle
   var color: String = "transparent"
   
@@ -32,8 +17,10 @@ struct WidgetModel: Identifiable, Codable, Hashable {
   var zoom: CGFloat = 1.0
   var viewportWidth: Int?
   var isLoading: Bool = false
-  
+  var lastOpened: Date?
   var options: String = ""
+    
+
   init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: ViewStyle, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
     self.id = id
     self.name = name
@@ -47,7 +34,6 @@ struct WidgetModel: Identifiable, Codable, Hashable {
     if let options = options {
       options.split(separator: ",").forEach({ param in
         let kv = param.split(separator:"=")
-        print("Parameter: \(kv)")
         if let key = kv.first, let value = kv.last {
           switch key {
           case "bg":
@@ -63,10 +49,12 @@ struct WidgetModel: Identifiable, Codable, Hashable {
           case "zoom":
             if let value = Double(value) {
               self.zoom = value
+              print("ZOOM \(value)")
             }
           case "vw":
             if let value = Int(value) {
               self.viewportWidth = value
+              print("VW \(value)")
             }
           default:
             break
@@ -89,5 +77,55 @@ struct WidgetModel: Identifiable, Codable, Hashable {
   }
   
 }
+ 
+extension Widget {
+    @Transient
+    var bgColor: Color {
+      return Color.red
+    }
+    
+  @Transient
+  var displayName: String {
+      name ?? "Untitled"
+  }
+  @Transient
+  var hostName: String? {
+    URLComponents(string: location!)?.host
+  }
+    
+    
+//    static var preview: Widget {
+//      Widget(id: UUID(), name: "Test", image: nil, location: "https://www.google.com", style: .transparent, width: 360, height: 360, zoom: 1.0, options: "bg=transparent")
+//    }
+}
 
+private extension Color {
+    static var random: Color {
+        var generator: RandomNumberGenerator = SystemRandomNumberGenerator()
+        return random(using: &generator)
+    }
+    
+    static func random(using generator: inout RandomNumberGenerator) -> Color {
+        let red = Double.random(in: 0..<1, using: &generator)
+        let green = Double.random(in: 0..<1, using: &generator)
+        let blue = Double.random(in: 0..<1, using: &generator)
+        return Color(red: red, green: green, blue: blue)
+    }
+}
 
+enum ViewStyle: String, Equatable, CaseIterable, Codable {
+  case glass = "Glass"
+  case transparent  = "Transparent"
+  //  case glass_forced  = "Glass (no body background)"
+  case opaque  = "Opaque"
+  
+  var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
+  var iconName: String {
+    switch self {
+    case .transparent: return "square.on.square.intersection.dashed"
+    case .glass: return "square.on.square"
+      //    case .glass_forced: return "square.on.square"
+    case .opaque: return "square.filled.on.square"
+    }
+  }
+}

@@ -8,21 +8,23 @@
 
 /* Begin PBXBuildFile section */
 		2C23F8492B6D5B8C0099BA6D /* WidgetSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C23F8482B6D5B8C0099BA6D /* WidgetSettingsView.swift */; };
-		2C50AF042B7336DB000111C0 /* WidgetStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C50AF032B7336DB000111C0 /* WidgetStore.swift */; };
+		2C8E78982B769C9F004DA40B /* Widget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E78972B769C9F004DA40B /* Widget.swift */; };
+		2C8E789A2B769F94004DA40B /* WidgetPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E78992B769F94004DA40B /* WidgetPickerView.swift */; };
+		2C8E789E2B76A0B2004DA40B /* WidgetPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E789D2B76A0B2004DA40B /* WidgetPickerItem.swift */; };
 		2C9EE6A52B66844500D36BA6 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 2C9EE6A42B66844500D36BA6 /* RealityKitContent */; };
 		2C9EE6A72B66844500D36BA6 /* WidgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9EE6A62B66844500D36BA6 /* WidgetApp.swift */; };
 		2C9EE6A92B66844500D36BA6 /* WidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9EE6A82B66844500D36BA6 /* WidgetView.swift */; };
 		2C9EE6AB2B66844600D36BA6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C9EE6AA2B66844600D36BA6 /* Assets.xcassets */; };
 		2C9EE6B62B6684C100D36BA6 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9EE6B52B6684C100D36BA6 /* WebView.swift */; };
 		2C9EE6B82B66850000D36BA6 /* html in Resources */ = {isa = PBXBuildFile; fileRef = 2C9EE6B72B66850000D36BA6 /* html */; };
-		2C9EE6BC2B67D31800D36BA6 /* WidgetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9EE6BB2B67D31800D36BA6 /* WidgetModel.swift */; };
-		2C9EE6BE2B67D39300D36BA6 /* WidgetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9EE6BD2B67D39300D36BA6 /* WidgetViewModel.swift */; };
-		2C9EE6C02B67D44A00D36BA6 /* WidgetListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9EE6BF2B67D44A00D36BA6 /* WidgetListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2C23F8482B6D5B8C0099BA6D /* WidgetSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSettingsView.swift; sourceTree = "<group>"; };
-		2C50AF032B7336DB000111C0 /* WidgetStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WidgetStore.swift; sourceTree = "<group>"; };
+		2C8E78972B769C9F004DA40B /* Widget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widget.swift; sourceTree = "<group>"; };
+		2C8E78992B769F94004DA40B /* WidgetPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPickerView.swift; sourceTree = "<group>"; };
+		2C8E789D2B76A0B2004DA40B /* WidgetPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPickerItem.swift; sourceTree = "<group>"; };
+		2C8E789F2B76C377004DA40B /* widget.vision.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = widget.vision.entitlements; sourceTree = "<group>"; };
 		2C9EE69F2B66844500D36BA6 /* widget.vision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = widget.vision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C9EE6A32B66844500D36BA6 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		2C9EE6A62B66844500D36BA6 /* WidgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetApp.swift; sourceTree = "<group>"; };
@@ -31,9 +33,6 @@
 		2C9EE6AF2B66844600D36BA6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2C9EE6B52B6684C100D36BA6 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		2C9EE6B72B66850000D36BA6 /* html */ = {isa = PBXFileReference; lastKnownFileType = folder; path = html; sourceTree = "<group>"; };
-		2C9EE6BB2B67D31800D36BA6 /* WidgetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetModel.swift; sourceTree = "<group>"; };
-		2C9EE6BD2B67D39300D36BA6 /* WidgetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetViewModel.swift; sourceTree = "<group>"; };
-		2C9EE6BF2B67D44A00D36BA6 /* WidgetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,16 +68,16 @@
 			isa = PBXGroup;
 			children = (
 				2C9EE6A62B66844500D36BA6 /* WidgetApp.swift */,
-				2C9EE6BF2B67D44A00D36BA6 /* WidgetListView.swift */,
-				2C9EE6BB2B67D31800D36BA6 /* WidgetModel.swift */,
-				2C9EE6BD2B67D39300D36BA6 /* WidgetViewModel.swift */,
+				2C8E78992B769F94004DA40B /* WidgetPickerView.swift */,
+				2C8E789D2B76A0B2004DA40B /* WidgetPickerItem.swift */,
 				2C9EE6A82B66844500D36BA6 /* WidgetView.swift */,
 				2C23F8482B6D5B8C0099BA6D /* WidgetSettingsView.swift */,
-				2C50AF032B7336DB000111C0 /* WidgetStore.swift */,
 				2C9EE6B52B6684C100D36BA6 /* WebView.swift */,
+				2C8E78972B769C9F004DA40B /* Widget.swift */,
 				2C9EE6B72B66850000D36BA6 /* html */,
 				2C9EE6AA2B66844600D36BA6 /* Assets.xcassets */,
 				2C9EE6AF2B66844600D36BA6 /* Info.plist */,
+				2C8E789F2B76C377004DA40B /* widget.vision.entitlements */,
 			);
 			path = widget.vision;
 			sourceTree = "<group>";
@@ -164,13 +163,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2C9EE6BE2B67D39300D36BA6 /* WidgetViewModel.swift in Sources */,
+				2C8E789E2B76A0B2004DA40B /* WidgetPickerItem.swift in Sources */,
 				2C9EE6B62B6684C100D36BA6 /* WebView.swift in Sources */,
-				2C9EE6C02B67D44A00D36BA6 /* WidgetListView.swift in Sources */,
-				2C9EE6BC2B67D31800D36BA6 /* WidgetModel.swift in Sources */,
+				2C8E78982B769C9F004DA40B /* Widget.swift in Sources */,
 				2C9EE6A92B66844500D36BA6 /* WidgetView.swift in Sources */,
-				2C50AF042B7336DB000111C0 /* WidgetStore.swift in Sources */,
 				2C23F8492B6D5B8C0099BA6D /* WidgetSettingsView.swift in Sources */,
+				2C8E789A2B769F94004DA40B /* WidgetPickerView.swift in Sources */,
 				2C9EE6A72B66844500D36BA6 /* WidgetApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -302,6 +300,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = widget.vision/widget.vision.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"widget.vision/Preview Content\"";
@@ -330,6 +329,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = widget.vision/widget.vision.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"widget.vision/Preview Content\"";

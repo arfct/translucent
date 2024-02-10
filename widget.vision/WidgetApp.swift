@@ -6,69 +6,51 @@
 //
 
 import SwiftUI
+import SwiftData
+import Darwin
 
 @main
 struct WidgetApp: App {
   @Environment(\.openWindow) var openWindow
-  @StateObject private var store = WidgetStore()
-
+  @Environment(\.scenePhase) private var scenePhase
+  
+  private var container: ModelContainer?
+  init() {
+    do {
+      container = try ModelContainer(
+        for: Widget.self,
+        configurations: ModelConfiguration()
+      )
+    } catch {
+      print("An error occurred: \(error)")
+      exit(0)
+    }
+  }
+  
     var body: some Scene {
-      let viewModel = WidgetViewModel()
       WindowGroup {
-        WidgetListView(viewModel: viewModel)
+        WidgetPickerView()
           .onOpenURL { (url) in
-            print("url \(url)")
+            print("🌐 Opening URL: \(url)")
             let location = url.absoluteString.replacingOccurrences(of: "widget-", with: "")
             let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
             let username = urlComponents?.user?.removingPercentEncoding ?? ""
-              
-            let newWidgetModel = WidgetModel( id: UUID(), name:url.host() ?? "", location: location, style: .glass, options:username)
-            openWindow(value: newWidgetModel)
-            
-          }
-          .padding(40)
-          .glassBackgroundEffect(displayMode: .never)
-          .task {
-            do {
-              try await store.load()
-            } catch {
-              fatalError(error.localizedDescription)
-            }
+            let widget = Widget( id: UUID(), name:url.host() ?? "NAME", location: location, style: .glass, options:username)
+            container?.mainContext.insert(widget)
+            try? container?.mainContext.save()
+            openWindow(id: "widget", value: widget.persistentModelID)
           }
       }
+      .modelContainer(container!)
       .windowResizability(.contentSize)
-//      .defaultSize(CGSize(width:720, height:480))
       
-      
-      
-      WindowGroup(for: WidgetModel.ID.self) { $widgetId in
-        if let widgetId = widgetId, let widgetModel = viewModel[widgetId: widgetId] {
-          WidgetView(widgetModel:widgetModel)
-            .frame(minWidth: widgetModel.width, maxWidth: .infinity,
-                 minHeight: widgetModel.height, maxHeight: .infinity)
-            .task {
-              print(widgetModel)
-            }
+      WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in
+        if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
+          WidgetView(widget:widget)
         }
       }
+      .modelContainer(container!)
       .windowStyle(.plain)
       .windowResizability(.contentSize)
-      .defaultSize(CGSize(width: 360, height: 180))
-      
-      WindowGroup(for: WidgetModel.self) { $widgetModel in
-        if let widgetModel = widgetModel {
-          WidgetView(widgetModel: widgetModel)
-
-            .frame(minWidth: widgetModel.width, maxWidth: .infinity,
-                 minHeight: widgetModel.height, maxHeight: .infinity)
-        }
-      }
-      .windowStyle(.plain)
-      .windowResizability(.contentSize)
-      .defaultSize(CGSize(width: 360, height: 180))
-      
-      
-      
-        
     }
 }
