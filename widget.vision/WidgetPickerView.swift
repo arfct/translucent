@@ -14,59 +14,75 @@ struct WidgetPickerView: View {
   @Environment(\.openWindow) private var openWindow
   
   let columns = [
-      GridItem(.adaptive(minimum: 80))
+    GridItem(.adaptive(minimum: 200, maximum: 300))
   ]
   var body: some View {
     NavigationStack {
-      List(selection: $selection) {
-        ForEach(widgets) { widget in
-          WidgetListItem(widget: widget)
-            .swipeActions(edge: .trailing) {
-              Button(role: .destructive) {
-                deleteWidget(widget)
-                
-              } label: {
-                Label("Delete", systemImage: "trash")
+      ScrollView {
+        LazyVGrid(columns: columns, spacing: 16) {
+          ForEach(widgets) { widget in
+            WidgetListItem(widget: widget)
+              .swipeActions(edge: .trailing) {
+                Button(role: .destructive) {
+                  withAnimation {
+                    deleteWidget(widget)
+                  }
+                } label: {
+                  Label("Delete", systemImage: "trash")
+                }
               }
-            }
-            .onTapGesture {
-              openWindow(id: "widget", value: widget.persistentModelID)
-            }
-            .onLongPressGesture {
-              deleteWidget(widget)
-            }
+              .onTapGesture {
+                openWindow(id: "widget", value: widget.persistentModelID)
+              }
+              .contentShape(RoundedRectangle(cornerRadius: 80, style: .continuous))
+              .contextMenu(ContextMenu(menuItems: {
+                Button {
+                  deleteWidget(widget)
+                } label: {
+                  Label("Remove", systemImage: "trash")
+                }
+              }))
+          }
+          .onDelete(perform: deleteWidgets(at:))
         }
-        .onDelete(perform: deleteWidgets(at:))
       }
+      .frame(maxHeight:.infinity)
       .overlay {
         if widgets.isEmpty {
           ContentUnavailableView {
             Label("No Widgets", systemImage: "rectangle.3.offgrid.fill")
           } description: {
             Text("Open a widget from the web to add it")
+            Button {
+            
+            } label: {
+              Label("Add widget", systemImage: "plus")
+            }
+
           }
         }
       }
-      .navigationTitle("Widgets")
+      .padding(40)
       .toolbar {
         ToolbarItem(placement: .navigationBarLeading) {
-          EditButton()
-            .disabled(widgets.isEmpty)
+          Image("widget.vision")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 240)
+            .padding(.leading, 20)
         }
         ToolbarItemGroup(placement: .navigationBarTrailing) {
           Spacer()
-
+          
           Button {
-
             openURL(URL(string: "https://widget.vision/more")!)
           } label: {
             Label("Add widget", systemImage: "plus")
-//            Label(title: "Add", icon: "plus")
           }
         }
       }
-    }      .frame(width:500)
-
+    }
+    .frame(width:500)
   }
   
   private func deleteWidgets(at offsets: IndexSet) {
@@ -76,17 +92,14 @@ struct WidgetPickerView: View {
   }
   
   private func deleteWidget(_ widget: Widget) {
-    /**
-     Unselect the item before deleting it.
-     */
     if widget.persistentModelID == selection?.persistentModelID {
       selection = nil
     }
     modelContext.delete(widget)
   }
 }
-//
-//#Preview {
-//    ContentView()
+
+#Preview {
+    WidgetPickerView()
 //        .modelContainer(PreviewSampleData.container)
-//}
+}

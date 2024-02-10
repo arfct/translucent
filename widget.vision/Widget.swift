@@ -94,9 +94,9 @@ extension Widget {
   }
     
     
-//    static var preview: Widget {
-//      Widget(id: UUID(), name: "Test", image: nil, location: "https://www.google.com", style: .transparent, width: 360, height: 360, zoom: 1.0, options: "bg=transparent")
-//    }
+    static var preview: Widget {
+      Widget(name: "Test", location: "https://example.com", style: .glass)
+    }
 }
 
 private extension Color {
