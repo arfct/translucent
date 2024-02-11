@@ -18,24 +18,28 @@ struct WidgetListItem: View {
     var widget: Widget
     
     var body: some View {
-
         HStack {
-          ZStack {
-//            AsyncImage(url: URL.urlInDocumentsDirectory(with: "36E7AE85-4084-4CE7-97D0-8C502025445D.png"))
-//              .frame(width: 300, height: 200)
+      
             VStack(alignment: .leading) {
               Image(systemName: "rectangle.ratio.4.to.3.fill")
                 .padding(.bottom, 10)
               Text(widget.displayName)
                 .font(.headline)
+                .foregroundColor(widget.foreColor)
               Text(widget.hostName ?? "")
                 .font(.subheadline)
+                .foregroundColor(widget.tintColor)
+
             }.padding(EdgeInsets(top: 20, leading: 30, bottom: 30, trailing: 30))
-          }
-        }.buttonBorderShape(.roundedRectangle)
-        .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+          
+            .frame(maxWidth: .infinity, alignment:.leading)
+        }
+        .buttonBorderShape(.capsule)
+
+//        .background(widget.backColor)
         .frame(maxWidth: .infinity, alignment:.leading)
-        .glassBackgroundEffect()
+              .glassBackgroundEffect()
+              .hoverEffect(.lift)
     }
 
 }

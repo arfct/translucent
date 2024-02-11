@@ -3,7 +3,7 @@ import SwiftData
 
 struct WidgetPickerView: View {
   @Environment(\.modelContext) private var modelContext
-  @Query(sort: \Widget.lastOpened, order: .forward)
+  @Query(sort: \Widget.lastOpened, order: .reverse)
   var widgets: [Widget]
   
   @State private var showAddWidget = false
@@ -36,10 +36,12 @@ struct WidgetPickerView: View {
                   Label("Delete", systemImage: "trash")
                 }
               }
+              
               .onTapGesture {
                 openWindow(id: "widget", value: widget.persistentModelID)
               }
-              .contentShape(RoundedRectangle(cornerRadius: 80, style: .continuous))
+              .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+              .hoverEffect(.lift)
               .contextMenu(ContextMenu(menuItems: {
                 Button {
                   deleteWidget(widget)
@@ -87,7 +89,7 @@ struct WidgetPickerView: View {
         }
       }
     }
-    .frame(minWidth: 400, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 700, maxHeight: .infinity, alignment: .center)
+    .frame(minWidth: 480, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 700, maxHeight: .infinity, alignment: .center)
   }
   
   private func deleteWidgets(at offsets: IndexSet) {

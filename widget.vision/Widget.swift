@@ -9,8 +9,10 @@ import SwiftData
   var image: String?
   var location: String?
   var style: ViewStyle
-  var color: String = "transparent"
-  
+  var backHex: String = "0000"
+  var foreHex: String = "ffff"
+  var tintHex: String = "8Aff"
+  var fontName: String = ""
   var width: CGFloat = 360
   var height: CGFloat = 360
   var radius: CGFloat = 30
@@ -25,7 +27,6 @@ import SwiftData
   init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: ViewStyle, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
     self.id = id
     self.name = name
-    
     if let image = image { self.image = image }
     self.location = location
     self.style = style
@@ -33,13 +34,22 @@ import SwiftData
     if let height = height {self.height = height }
     
     if let options = options {
+      if options.contains("transparent") {
+        self.style = .transparent;
+      }
       options.split(separator: "&").forEach({ param in
         let kv = param.split(separator:"=")
         if let key = kv.first, let value = kv.last {
           switch key {
+          case "style":
+            if (value == "transparent") { self.style = .transparent}
           case "bg":
-            self.color = String(value)
-          case "wh", "sz", "size":
+            self.backHex = String(value)
+          case "fg":
+            self.foreHex = String(value)
+          case "tg", "tint":
+            self.tintHex = String(value)
+          case "sz", "size":
             let dims = value.split(separator: "x")
             if let width = dims.first.map(String.init), let widthDouble = Double(width) {
               self.width = CGFloat(widthDouble)
@@ -47,11 +57,9 @@ import SwiftData
             if let height = dims.last.map(String.init), let heightDouble = Double(height) {
               self.height = CGFloat(heightDouble)
             }
-        
           case "zm", "zoom":
             if let value = Double(value) {
               self.zoom = value
-              print("ZOOM \(value)")
             }
           case "ua", "agent":
             if let value = Double(value) {
@@ -60,7 +68,6 @@ import SwiftData
           case "vw":
             if let value = Int(value) {
               self.viewportWidth = value
-              print("VW \(value)")
             }
           default:
             break
@@ -69,22 +76,23 @@ import SwiftData
         }
       })
 
-      if options.contains("transparent") {
-        self.style = .transparent;
-      }
+
     }
     if let zoom = zoom { self.zoom = zoom }
-    if let options = options { self.options = options }
   }
   
 }
  
 extension Widget {
-    @Transient
-    var bgColor: Color {
-      return Color.red
-    }
-    
+  @Transient
+  var backColor: Color { Color.withHex(backHex) }
+  
+  @Transient
+  var foreColor: Color { Color.withHex(foreHex) }
+  
+  @Transient
+  var tintColor: Color { Color.withHex(tintHex) }
+  
   @Transient
   var displayName: String {
       name ?? "Untitled"
@@ -93,23 +101,14 @@ extension Widget {
   var hostName: String? {
     URLComponents(string: location!)?.host
   }
+  @Transient
+  var shareURL: String {
+    "https://example.com"
+  }
     
   @Transient
-  var backgroundColor: Color? {
-    switch(color) {
-    case "white":
-      return .white
-    case "black":
-      return .black
-    case "light":
-      return .white.opacity(0.5)
-    case "dark":
-      return .black.opacity(0.5)
-    case "transparent":
-      return .clear
-    default:
-      return Color(hex: color)
-    }
+  var description: String {
+    return "Widget \(id) - \(location ?? "")"
   }
     
     
