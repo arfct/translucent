@@ -12,6 +12,7 @@ struct WidgetPickerView: View {
   
   @Environment(\.openURL) var openURL
   @Environment(\.openWindow) private var openWindow
+  @Environment(\.dismissWindow) private var dismissWindow
   
   let columns = [
     GridItem(.adaptive(minimum: 200, maximum: 300))
@@ -19,6 +20,8 @@ struct WidgetPickerView: View {
   
   func getMoreWidgets() {
     openURL(URL(string: "https://widget.vision/more")!)
+    dismissWindow(id: "main")
+
   }
   
   var body: some View {
@@ -71,15 +74,16 @@ struct WidgetPickerView: View {
       }
       .padding(40)
       .toolbar {
-        ToolbarItem(placement: .navigationBarLeading) {
+        ToolbarItem(placement: .principal) {
           Image("widget.vision")
             .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(width: 240)
             .padding(.leading, 20)
+            .opacity(0.5)
         }
         ToolbarItemGroup(placement: .navigationBarTrailing) {
-          Spacer()
+         
           
           Button {
             getMoreWidgets()
@@ -87,8 +91,20 @@ struct WidgetPickerView: View {
             Label("Add widget", systemImage: "plus")
           }
         }
+        ToolbarItemGroup(placement: .navigationBarLeading) {
+         
+          
+          Button {
+            getMoreWidgets()
+          } label: {
+            Label("Add widget", systemImage: "plus")
+          }.opacity(0.0).disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+        }
       }
     }
+    .background(
+      LinearGradient(gradient: Gradient(colors: [.black.opacity(0.4), .black.opacity(0.8)]), startPoint: .topLeading, endPoint: .bottomTrailing)
+      )
     .frame(minWidth: 480, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 700, maxHeight: .infinity, alignment: .center)
   }
   

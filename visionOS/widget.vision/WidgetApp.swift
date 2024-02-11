@@ -53,11 +53,12 @@ struct WidgetApp: App {
             windowWidth = geometry.size.width
             windowHeight = geometry.size.height
           }
-      }
+      }.frame(minWidth: 480, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 700, maxHeight: .infinity, alignment: .center)
     }
     .modelContainer(container!)
     .windowResizability(.contentSize)
     .defaultSize(width: windowWidth, height: windowHeight)
+    
     
     WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in
       if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
