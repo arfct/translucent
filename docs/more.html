@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#4285f4" />
+
+    <link rel="icon" href="https://glitch.com/favicon.ico" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <!--
+      This is the page head - it contains info the browser uses
+      Like the title, which appears on the browser tab but not inside the page
+      Further down you'll see the content that displays in the page
+    -->
+    <title>widget.vision</title>
+   
+    <style>
+      a.button {
+        display:flex;
+        flex-direction:column;
+        text-decoration:none;
+        padding:16px;
+        border-radius:20px;
+        background-color:rgba(200,200,200,0.2);
+          color:white;
+        aspect:1.5;
+        text-wrap:wrap;
+        width:10rem;
+        height:6em;
+        gap:4px;
+        margin:0;
+        box-sizing:border-box;
+        background: rgb(255 255 255 / 20%);
+          box-shadow: inset 1px 1.5px 2px #fff9, inset 1px -0.5px 2px #ffffff4d,
+          0 0.6021873017743928px 0.6021873017743928px -1.25px #0000002e,
+          0 2.288533303243457px 2.288533303243457px -2.5px #00000029,
+          0 10px 10px -3.75px #00000010;
+        backdrop-filter: blur(40px);
+        border-radius: 30px;
+        }
+      .spacer {
+        box-sizing:border-box;
+      }
+      a img {
+        width:18px;
+        margin-bottom:auto;
+      }
+      .disabled {
+        opacity:0.2
+      }
+      * {
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+      body {
+        
+        gap:8px;
+        align-items:center;
+        justify-content:center;
+        margin:0;
+        padding:0;
+        background-color:#222;
+        background:linear-gradient(to bottom, #464544, #000);
+        min-height:100vh;
+        box-sizing:border-box;
+        
+      }
+
+    .tiles {
+        display:flex;
+        flex-wrap:wrap;
+        gap:8px;
+        align-items:center;
+        justify-content:center;
+      width:100%;
+      max-width:670px;
+      margin:auto;
+      }
+      .spacer {
+        opacity:0.0;
+          height:1px;
+      }
+      b {
+        white-space: nowrap;
+        overflow:ellipsis;
+      }
+      i {
+        font-size:20%;
+        opacity:0.5;
+      }
+      img.title {
+        max-width:400px;
+          display:block;
+        opacity:0.1;
+        margin:auto;
+        margin-bottom:4vmin;
+        margin-top:4vmin;
+      }
+      .explainer {
+        color:white;
+        width:100%;
+        padding:24px;
+        box-sizing:border-box;
+        background: rgb(255 255 255 / 5%);
+/*           box-shadow: inset 1px 1.5px 2px #fff1, inset 1px -0.5px 2px #ffffff1d,
+          0 0.6021873017743928px 0.6021873017743928px -1.25px #0000001e,
+          0 2.288533303243457px 2.288533303243457px -2.5px #00000019,
+          0 10px 10px -3.75px #00000010; */
+        backdrop-filter: blur(40px);
+        border-radius: 30px;
+        opacity:0.8
+      }
+      
+      .ventilation {
+  background-image: radial-gradient(black 2px, transparent 0);
+  background-size: 8px 8px;
+  background-position: 0px 0px;
+        width:672px;
+        height:160px;
+        margin:auto;
+      }
+    </style>
+    <!-- The website JavaScript file -->
+    
+    <script src="/script.js" defer></script>
+  </head>
+  <body>
+    <div class="ventilation" style="height:160px"></div>
+    <img class="title" src="https://cdn.glitch.global/22c4c95d-564c-4b27-8713-0771aac34ca8/widget.vision.svg?v=1707584617594">
+    <div class="tiles">
+    <a class="button" href="widget-https://vw=880&sz=880x640&zoom=1.0&bg=%23ffffff88@nytfrontpage.glitch.me/">
+      <span class="material-icons">newspaper</span>
+      <b>NYT Front Page</b>
+      <i>nytimes.com</i>
+    </a>
+        
+        
+    <a class="button" href="widget-https://sz=430x640&zoom=0.5&vw=860&bg=%23ffffff44@news.google.com/">
+      <span class="material-icons">newspaper</span>
+      <b>Google News</b>
+      <i>news.google.com</i>
+    </a>
+        
+
+    
+    <a class="button" href="widget-https://sz=400x280&style=transparent@eink.page/poem.html">
+     <span class="material-icons">schedule</span>
+      <b>AI Time Poem</b>
+      <i>eink.page</i>
+    </a>
+    <a class="button" href="widget-https://wh=400x280&style=transparent@eink.page/haiku.html">
+     <span class="material-icons">schedule</span>
+      <b>AI Time Haiku</b>
+      <i>eink.page</i>
+    </a>
+    
+                
+    <a class="button" href="widget-https://calculator.bitty.app/">
+     <span class="material-icons">calculate</span>
+      <b>Calculator</b>
+      <i>itty.bitty.site</i>
+
+    </a>
+    
+    <a class="button" href="widget-https://example.com">
+      <span class="material-icons">info</span>
+      <b>Example.com</b>
+      <i>example.com</i>
+    </a>
+    
+    <a class="button" href="widget-https://style=transparent@staging.figma.com/proto/qDAryalY0STlk3S8WmdgNT/Figma-Widget?type=design&node-id=32-5&t=1UNLv06qbZtavp5W-0&scaling=contain&page-id=0%3A1&starting-point-node-id=32%3A3&commit-sha=2b7b5c1ef150b7657fcd7dca00c66ef349152ed9">
+      <span class="material-icons">edit</span>
+      <b>Figma Prototype</b>
+      <i>figma.com</i>
+    </a>    
+    <a class="button" 
+       href="widget-https://sz=400x600&tg=1DB954&ua=desktop@open.spotify.com"
+       agent="desktop"
+       >
+      <span class="material-icons">speaker</span>
+      <b>Spotify Player</b>
+      <i>open.spotify.com</i>
+    </a>
+    
+
+
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+      
+      <p>
+        
+      </p>
+      <div class="ventilation" style="height:80px"></div>
+
+      <div class="explainer">
+        <b>How it works:</b><p>
+        
+        </p>
+        widget.vision adds simple web widgets to visionOS. 
+        They can come from this site, or anywhere on the web. 
+        Simply add <u>widget-</u>https://… to the beginning of a url, or use the share action to send it.
+      </div>
+    </div>
+  </body>
+</html>
