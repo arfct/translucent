@@ -60,7 +60,7 @@
         margin:0;
         padding:0;
         background-color:#222;
-        background:linear-gradient(to bottom, #464544, #000);
+        background:linear-gradient(to bottom, hsl(1.0, 2.0, 2.0, ), #000);
         min-height:100vh;
         box-sizing:border-box;
         
@@ -125,6 +125,8 @@
     <script src="/script.js" defer></script>
   </head>
   <body>
+
+    
     <div class="ventilation" style="height:160px"></div>
     <img class="title" src="https://cdn.glitch.global/22c4c95d-564c-4b27-8713-0771aac34ca8/widget.vision.svg?v=1707584617594">
     <div class="tiles">
@@ -221,5 +223,22 @@
         Simply add <u>widget-</u>https://… to the beginning of a url, or use the share action to send it.
       </div>
     </div>
+
+
+    <script>
+      const body = document.querySelector("body");
+      const updateColor = () => {
+        const currentTime = Math.floor(Date.now() / 1000); // seconds since 1970
+        const hue = currentTime % 360;
+        console.log("hue", hue)
+        body.style.background = 
+        `linear-gradient(to bottom right, 
+            hsl(${hue}, 33%, 25%), 
+            hsl(${hue}, 15%, 10%), 
+            #000)`;
+      }
+      updateColor()
+      setInterval(updateColor, 1000);
+    </script>
   </body>
 </html>
