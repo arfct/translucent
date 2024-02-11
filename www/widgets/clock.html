@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dimensions Widget</title>
+  <style>
+    body {
+      background-color:transparent;
+      color:white;
+      font-family:-apple-system, BlinkMacSystemFont, sans-serif;
+      text-align:center;
+      font-size:40vmin;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      margin:0;
+      padding:0;
+    }
+    html {
+      background:black
+    }
+  </style>
+</head>
+<body>
+  <center>
+  <div id="clock"></div>
+  </center>
+  <script>
+    function updateClock() {
+      var now = new Date();
+      var options = { hour: 'numeric', minute: 'numeric' };
+      var localizedTime = now.toLocaleTimeString(undefined, options)
+      .replace(/ AM/, '').replace(/ PM/, '')
+      .replace(/ AM/, 'ᴀᴍ').replace(/ PM/, 'ᴘᴍ')
+      document.getElementById('clock').textContent = localizedTime;
+    }
+
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
