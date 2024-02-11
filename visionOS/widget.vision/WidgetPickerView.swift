@@ -9,7 +9,7 @@ struct WidgetPickerView: View {
   @State private var showAddWidget = false
   @State private var selection: Widget?
   @State private var path: [Widget] = []
-  
+  @State private var hue: CGFloat = 0.6
   @Environment(\.openURL) var openURL
   @Environment(\.openWindow) private var openWindow
   @Environment(\.dismissWindow) private var dismissWindow
@@ -30,21 +30,6 @@ struct WidgetPickerView: View {
         LazyVGrid(columns: columns, spacing: 16) {
           ForEach(widgets) { widget in
             WidgetListItem(widget: widget)
-              .swipeActions(edge: .trailing) {
-                Button(role: .destructive) {
-                  withAnimation {
-                    deleteWidget(widget)
-                  }
-                } label: {
-                  Label("Delete", systemImage: "trash")
-                }
-              }
-              
-              .onTapGesture {
-                openWindow(id: "widget", value: widget.persistentModelID)
-              }
-              .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-              .hoverEffect(.lift)
               .contextMenu(ContextMenu(menuItems: {
                 Button {
                   deleteWidget(widget)
@@ -53,7 +38,6 @@ struct WidgetPickerView: View {
                 }
               }))
           }
-          .onDelete(perform: deleteWidgets(at:))
         }
       }
       .frame(maxHeight:.infinity)
@@ -81,31 +65,31 @@ struct WidgetPickerView: View {
             .frame(width: 240)
             .padding(.leading, 20)
             .opacity(0.5)
+            .mask(Color.blue)
         }
         ToolbarItemGroup(placement: .navigationBarTrailing) {
-         
-          
-          Button {
-            getMoreWidgets()
-          } label: {
+          Button { getMoreWidgets() } label: {
             Label("Add widget", systemImage: "plus")
           }
-        }
-        ToolbarItemGroup(placement: .navigationBarLeading) {
-         
-          
-          Button {
-            getMoreWidgets()
-          } label: {
-            Label("Add widget", systemImage: "plus")
-          }.opacity(0.0).disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
         }
       }
     }
     .background(
-      LinearGradient(gradient: Gradient(colors: [.black.opacity(0.4), .black.opacity(0.8)]), startPoint: .topLeading, endPoint: .bottomTrailing)
+      LinearGradient(gradient: Gradient(colors: [
+        Color(hue: hue, saturation: 1.0, brightness: 0.5).opacity(0.4),
+        Color(hue: hue + 0.1, saturation: 0.5, brightness: 0.1).opacity(0.8)
+      ]), startPoint: .topLeading, endPoint: .bottomTrailing)
       )
-    .frame(minWidth: 480, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 700, maxHeight: .infinity, alignment: .center)
+    .task {
+      Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+        
+        let currentTime = floor(Date().timeIntervalSince1970)
+        let hueDeg = fmod(currentTime, 360)
+        hue = hueDeg / 360.0
+        
+        print("Hue \(hueDeg)")
+      }
+    }
   }
   
   private func deleteWidgets(at offsets: IndexSet) {

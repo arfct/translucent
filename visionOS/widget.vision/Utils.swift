@@ -71,3 +71,18 @@ extension Color {
     }
   }
 }
+
+
+
+extension URL {
+    static var documentsDirectory: URL? {
+        let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+      
+        return URL(string: documentsDirectory)
+    }
+
+    static func urlInDocumentsDirectory(with filename: String) -> URL? {
+      print(documentsDirectory?.appendingPathComponent(filename))
+        return documentsDirectory?.appendingPathComponent(filename)
+    }
+}

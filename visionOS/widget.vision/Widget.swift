@@ -22,6 +22,7 @@ import SwiftData
   var lastOpened: Date?
   var options: String = ""
   var userAgent: String = "mobile"
+  var icon: String = "square.on.square"
     
 
   init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: ViewStyle, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
@@ -69,6 +70,8 @@ import SwiftData
             if let value = Int(value) {
               self.viewportWidth = value
             }
+          case "icon":
+            self.icon = String(value)
           default:
             break
           }
@@ -113,7 +116,7 @@ extension Widget {
     
     
     static var preview: Widget {
-      Widget(name: "Test", location: "https://example.com", style: .glass)
+      Widget(name: "Test", location: "https://example.com", style: .glass, options: "bg=0000&fg=ffff&tg=8aff&sz=360x360&zoom=1.0&icon=graduationcap")
     }
 }
 

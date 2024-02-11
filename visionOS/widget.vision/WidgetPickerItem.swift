@@ -1,27 +1,18 @@
-
 import SwiftUI
 
-extension URL {
-    static var documentsDirectory: URL? {
-        let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
-      
-        return URL(string: documentsDirectory)
-    }
-
-    static func urlInDocumentsDirectory(with filename: String) -> URL? {
-      print(documentsDirectory?.appendingPathComponent(filename))
-        return documentsDirectory?.appendingPathComponent(filename)
-    }
-}
-
 struct WidgetListItem: View {
+  
+  @Environment(\.openWindow) private var openWindow
+  @Environment(\.dismissWindow) private var dismissWindow
     var widget: Widget
     
     var body: some View {
-        HStack {
-      
+
+          Button {
+            openWindow(id: "widget", value: widget.persistentModelID)
+          } label: {
             VStack(alignment: .leading) {
-              Image(systemName: "rectangle.ratio.4.to.3.fill")
+              Image(systemName: widget.icon)
                 .padding(.bottom, 10)
               Text(widget.displayName)
                 .font(.headline)
@@ -29,23 +20,22 @@ struct WidgetListItem: View {
               Text(widget.hostName ?? "")
                 .font(.subheadline)
                 .foregroundColor(widget.tintColor)
-
-            }.padding(EdgeInsets(top: 20, leading: 30, bottom: 30, trailing: 30))
-          
+              
+            }
             .frame(maxWidth: .infinity, alignment:.leading)
+//            .padding(EdgeInsets(top: 20, leading: 30, bottom: 30, trailing: 30))
+            .buttonBorderShape(.roundedRectangle)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 1))
+              
+          
+
+          }
         }
-        .buttonBorderShape(.capsule)
-
-//        .background(widget.backColor)
-        .frame(maxWidth: .infinity, alignment:.leading)
-              .glassBackgroundEffect()
-              .hoverEffect(.lift)
-    }
-
 }
 
 
-#Preview("HI?", windowStyle: .automatic, traits: .sizeThatFitsLayout) {
+#Preview("Preview", windowStyle: .automatic, traits: .sizeThatFitsLayout) {
   WidgetListItem(widget: .preview)
 }
 
