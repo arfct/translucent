@@ -15,7 +15,7 @@ struct WidgetPickerView: View {
   @Environment(\.dismissWindow) private var dismissWindow
   
   let columns = [
-    GridItem(.adaptive(minimum: 200, maximum: 300))
+    GridItem(.adaptive(minimum: 240, maximum: 480))
   ]
   
   func getMoreWidgets() {
@@ -25,9 +25,18 @@ struct WidgetPickerView: View {
   }
   
   var body: some View {
-    NavigationStack {
+    VStack {
       ScrollView {
-        LazyVGrid(columns: columns, spacing: 16) {
+        Image("widget.vision")
+          .renderingMode(.template)
+          .resizable()
+          .foregroundColor(Color(hue: hue, saturation: 0.2, brightness: 1.0))
+          .aspectRatio(contentMode: .fit)
+          .frame(maxWidth: 480)
+          .padding(60)
+          .padding(.top,40)
+          .opacity(0.8)
+        LazyVGrid(columns: columns, spacing: 20) {
           ForEach(widgets) { widget in
             WidgetListItem(widget: widget)
               .contextMenu(ContextMenu(menuItems: {
@@ -39,45 +48,37 @@ struct WidgetPickerView: View {
               }))
           }
         }
+        .padding(.horizontal, 20)
       }
       .frame(maxHeight:.infinity)
+      .overlay(
+        Button { getMoreWidgets() } label: {
+          Label("Add widget", systemImage: "plus")
+        }
+          .padding(.bottom, 40), alignment: .bottom
+      )
+      
       .overlay {
         if widgets.isEmpty {
           ContentUnavailableView {
             Label("No Widgets", systemImage: "rectangle.3.offgrid.fill")
           } description: {
             Text("Open a widget from the web to add it")
-            Button {
-              getMoreWidgets()
-            } label: {
-              Label("Add widget", systemImage: "plus")
-            }
+//            Button {
+//              getMoreWidgets()
+//            } label: {
+//              Label("Add widget", systemImage: "plus")
+//            }
 
           }
         }
       }
-      .padding(40)
-      .toolbar {
-        ToolbarItem(placement: .principal) {
-          Image("widget.vision")
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 240)
-            .padding(.leading, 20)
-            .opacity(0.5)
-            .mask(Color.blue)
-        }
-        ToolbarItemGroup(placement: .navigationBarTrailing) {
-          Button { getMoreWidgets() } label: {
-            Label("Add widget", systemImage: "plus")
-          }
-        }
-      }
+    
     }
     .background(
       LinearGradient(gradient: Gradient(colors: [
-        Color(hue: hue, saturation: 1.0, brightness: 0.5).opacity(0.4),
-        Color(hue: hue + 0.1, saturation: 0.5, brightness: 0.1).opacity(0.8)
+        Color(hue: hue, saturation: 1.0, brightness: 0.3).opacity(0.5),
+        Color(hue: fmod(hue + 1.0/6.0, 1.0), saturation: 0.2, brightness: 0.1).opacity(0.7)
       ]), startPoint: .topLeading, endPoint: .bottomTrailing)
       )
     .task {
@@ -86,8 +87,6 @@ struct WidgetPickerView: View {
         let currentTime = floor(Date().timeIntervalSince1970)
         let hueDeg = fmod(currentTime, 360)
         hue = hueDeg / 360.0
-        
-        print("Hue \(hueDeg)")
       }
     }
   }

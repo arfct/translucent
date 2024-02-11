@@ -98,7 +98,10 @@ extension Widget {
   
   @Transient
   var displayName: String {
-      name ?? "Untitled"
+    if let name = name, name.count > 0 {
+      return name
+    }
+    return hostName ?? "Untitled"
   }
   @Transient
   var hostName: String? {

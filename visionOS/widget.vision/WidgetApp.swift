@@ -13,7 +13,7 @@ import Darwin
 struct WidgetApp: App {
   @Environment(\.openWindow) var openWindow
   @Environment(\.scenePhase) private var scenePhase
-  @AppStorage("windowWidth") var windowWidth = 500.0
+  @AppStorage("windowWidth") var windowWidth = 540.0
   @AppStorage("windowHeight") var windowHeight = 720.0
   
   private var container: ModelContainer?
@@ -53,7 +53,7 @@ struct WidgetApp: App {
             windowWidth = geometry.size.width
             windowHeight = geometry.size.height
           }
-      }.frame(minWidth: 480, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 700, maxHeight: .infinity, alignment: .center)
+      }.frame(minWidth: 360, idealWidth: 540, maxWidth: .infinity, minHeight: 400, idealHeight: 700, maxHeight: .infinity, alignment: .center)
     }
     .modelContainer(container!)
     .windowResizability(.contentSize)

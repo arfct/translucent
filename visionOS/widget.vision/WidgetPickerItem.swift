@@ -6,32 +6,30 @@ struct WidgetListItem: View {
   @Environment(\.dismissWindow) private var dismissWindow
     var widget: Widget
     
-    var body: some View {
-
-          Button {
-            openWindow(id: "widget", value: widget.persistentModelID)
-          } label: {
-            VStack(alignment: .leading) {
-              Image(systemName: widget.icon)
-                .padding(.bottom, 10)
-              Text(widget.displayName)
-                .font(.headline)
-                .foregroundColor(widget.foreColor)
-              Text(widget.hostName ?? "")
-                .font(.subheadline)
-                .foregroundColor(widget.tintColor)
-              
-            }
-            .frame(maxWidth: .infinity, alignment:.leading)
-//            .padding(EdgeInsets(top: 20, leading: 30, bottom: 30, trailing: 30))
-            .buttonBorderShape(.roundedRectangle)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 1))
-              
-          
-
-          }
-        }
+  var body: some View {
+    
+    Button {
+      openWindow(id: "widget", value: widget.persistentModelID)
+    } label: {
+      VStack(alignment: .center) {
+        Image(systemName: widget.icon)
+          .padding(.bottom, 10)
+        Text(widget.displayName)
+          .font(.headline)
+          .foregroundColor(widget.foreColor)
+          .lineLimit(1)
+      }
+      .frame(maxWidth: .infinity)
+      .padding()
+    }
+    .buttonStyle(.borderless)
+    .buttonBorderShape(.roundedRectangle)
+    .background(.white.opacity(0.1))
+    .cornerRadius(30)
+//  .blendMode(.multiply)
+//    .glassBackgroundEffect()
+    .frame(maxWidth: .infinity, maxHeight:200, alignment:.leading)
+  }
 }
 
 
