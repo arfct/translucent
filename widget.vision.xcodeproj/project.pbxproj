@@ -17,6 +17,7 @@
 		2C9EE6AB2B66844600D36BA6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C9EE6AA2B66844600D36BA6 /* Assets.xcassets */; };
 		2C9EE6B62B6684C100D36BA6 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9EE6B52B6684C100D36BA6 /* WebView.swift */; };
 		2C9EE6B82B66850000D36BA6 /* html in Resources */ = {isa = PBXBuildFile; fileRef = 2C9EE6B72B66850000D36BA6 /* html */; };
+		2CF2535A2B7847F900E57BF2 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF253592B7847F900E57BF2 /* Utils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		2C9EE6AF2B66844600D36BA6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2C9EE6B52B6684C100D36BA6 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		2C9EE6B72B66850000D36BA6 /* html */ = {isa = PBXFileReference; lastKnownFileType = folder; path = html; sourceTree = "<group>"; };
+		2CF253592B7847F900E57BF2 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 				2C23F8482B6D5B8C0099BA6D /* WidgetSettingsView.swift */,
 				2C9EE6B52B6684C100D36BA6 /* WebView.swift */,
 				2C8E78972B769C9F004DA40B /* Widget.swift */,
+				2CF253592B7847F900E57BF2 /* Utils.swift */,
 				2C9EE6B72B66850000D36BA6 /* html */,
 				2C9EE6AA2B66844600D36BA6 /* Assets.xcassets */,
 				2C9EE6AF2B66844600D36BA6 /* Info.plist */,
@@ -170,6 +173,7 @@
 				2C23F8492B6D5B8C0099BA6D /* WidgetSettingsView.swift in Sources */,
 				2C8E789A2B769F94004DA40B /* WidgetPickerView.swift in Sources */,
 				2C9EE6A72B66844500D36BA6 /* WidgetApp.swift in Sources */,
+				2CF2535A2B7847F900E57BF2 /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,6 +236,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = 42UPQKJBH7.com.blacktree.vision.widget;
 				SDKROOT = xros;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -288,6 +293,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = 42UPQKJBH7.com.blacktree.vision.widget;
 				SDKROOT = xros;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
@@ -315,7 +321,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.blacktree.vision.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = 42UPQKJBH7.com.blacktree.vision.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -344,7 +350,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.blacktree.vision.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = 42UPQKJBH7.com.blacktree.vision.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;

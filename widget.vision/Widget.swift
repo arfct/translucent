@@ -19,6 +19,7 @@ import SwiftData
   var isLoading: Bool = false
   var lastOpened: Date?
   var options: String = ""
+  var userAgent: String = "mobile"
     
 
   init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: ViewStyle, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
@@ -32,13 +33,13 @@ import SwiftData
     if let height = height {self.height = height }
     
     if let options = options {
-      options.split(separator: ",").forEach({ param in
+      options.split(separator: "&").forEach({ param in
         let kv = param.split(separator:"=")
         if let key = kv.first, let value = kv.last {
           switch key {
           case "bg":
             self.color = String(value)
-          case "wh":
+          case "wh", "sz", "size":
             let dims = value.split(separator: "x")
             if let width = dims.first.map(String.init), let widthDouble = Double(width) {
               self.width = CGFloat(widthDouble)
@@ -46,10 +47,15 @@ import SwiftData
             if let height = dims.last.map(String.init), let heightDouble = Double(height) {
               self.height = CGFloat(heightDouble)
             }
-          case "zoom":
+        
+          case "zm", "zoom":
             if let value = Double(value) {
               self.zoom = value
               print("ZOOM \(value)")
+            }
+          case "ua", "agent":
+            if let value = Double(value) {
+              self.userAgent = String(value)
             }
           case "vw":
             if let value = Int(value) {
@@ -62,12 +68,7 @@ import SwiftData
           print("\(key) = \(value)")
         }
       })
-      //      {
-      //
-      //        let dims = //
-      //
-      //
-      //      }
+
       if options.contains("transparent") {
         self.style = .transparent;
       }
@@ -91,6 +92,24 @@ extension Widget {
   @Transient
   var hostName: String? {
     URLComponents(string: location!)?.host
+  }
+    
+  @Transient
+  var backgroundColor: Color? {
+    switch(color) {
+    case "white":
+      return .white
+    case "black":
+      return .black
+    case "light":
+      return .white.opacity(0.5)
+    case "dark":
+      return .black.opacity(0.5)
+    case "transparent":
+      return .clear
+    default:
+      return Color(hex: color)
+    }
   }
     
     

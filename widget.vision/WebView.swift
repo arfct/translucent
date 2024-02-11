@@ -7,15 +7,16 @@ struct WebView: UIViewRepresentable {
   @Binding var title: String?
   @Binding var location: String?
   @Environment(\.openWindow) var openWindow
-  @Binding var widgetModel: Widget
-  var loadStatusChanged: ((Bool, Error?) -> Void)? = nil
+  @Binding var widget: Widget
+  var webView: WKWebView = WKWebView()
+  var loadStatusChanged: ((WebView, Bool, Error?) -> Void)? = nil
 
   
   func makeCoordinator() -> Coordinator {
     Coordinator(self)
   }
   
-  func onLoadStatusChanged(perform: ((Bool, Error?) -> Void)?) -> some View {
+  func onLoadStatusChanged(perform: ((WebView, Bool, Error?) -> Void)?) -> some View {
       var copy = self
       copy.loadStatusChanged = perform
       return copy
@@ -29,16 +30,16 @@ struct WebView: UIViewRepresentable {
       }
 
       func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-          parent.loadStatusChanged?(true, nil)
+          parent.loadStatusChanged?(parent, true, nil)
       }
 
       func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
           parent.title = webView.title ?? ""
-          parent.loadStatusChanged?(false, nil)
+          parent.loadStatusChanged?(parent, false, nil)
       }
 
       func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-          parent.loadStatusChanged?(false, error)
+          parent.loadStatusChanged?(parent, false, error)
       }
   }
   
@@ -59,10 +60,10 @@ struct WebView: UIViewRepresentable {
       let head = document.getElementsByTagName('head')[0]
       head.appendChild(metaTag);
       """
-    if (widgetModel.style != .opaque) {
+    if (widget.style != .opaque) {
       source += """
       var cssTag = document.createElement('style');
-      cssTag.innerHTML = 'body, [class*="prototype--background-"] {background-color:\(widgetModel.color) !important; background-image:none !important}  [class*="frontend_sha_override_indicator"] {display:none}';
+      cssTag.innerHTML = 'body, [class*="prototype--background-"] {background-color:\(widget.color) !important; background-image:none !important}  [class*="frontend_sha_override_indicator"] {display:none}';
       head.appendChild(cssTag);
       """
      
@@ -71,25 +72,32 @@ struct WebView: UIViewRepresentable {
   }
   
   func makeUIView(context: Context) -> WKWebView {
-    let config = WKWebViewConfiguration()
-    let zoom = widgetModel.zoom ?? 1.0
-    
-    let viewport = self.widgetModel.viewportWidth
-    let script = WKUserScript(source: overrideJS(widget: widgetModel), injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+    let config = webView.configuration
+    let script = WKUserScript(source: overrideJS(widget: widget), injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     config.userContentController.addUserScript(script)
-    
-    let webView = WKWebView(frame: CGRect(x: 0, y: 0, width: 100, height: 100), configuration: config)
     config.userContentController.add(ContentController(), name: "widget")
     webView.isOpaque = false
     
-    if (widgetModel.style != .opaque) {
+    if (widget.style != .opaque) {
       webView.backgroundColor = UIColor.clear
       webView.scrollView.backgroundColor = UIColor.clear
     }
     
     webView.navigationDelegate = context.coordinator
     
-    webView.customUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
+    var userAgent: String?
+    
+    switch (widget.userAgent) {
+    case "desktop":
+      userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15"
+    case "mobile":
+      userAgent = nil
+    default:
+      userAgent = widget.userAgent
+    }
+      
+    webView.customUserAgent = userAgent ?? "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
+    
     return webView
   }
   
@@ -104,9 +112,26 @@ struct WebView: UIViewRepresentable {
     }
   }
   
-  func updateUIView(_ webView: WKWebView, context: Context) {
-    print("Updating web view \(webView.url)")
+
+  func saveSnapshot(_ webView: WKWebView) {
     
+    let image = webView.snapshot
+    if var path = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+      path.append(path: "thumbnails")
+      
+      try? FileManager.default.createDirectory(at: path, withIntermediateDirectories: true)
+      
+      if let data = image.pngData(){
+        let filename = path.appendingPathComponent(widget.id.uuidString + ".png")
+        print("data \(data) \(filename)")
+        try? data.write(to: filename)
+      }
+    }
+  }
+  func updateUIView(_ webView: WKWebView, context: Context) {
+    saveSnapshot(webView)
+    
+    print("Updating web view \(webView.url)")
     if let url = URL(string:location!) {
       if (webView.url == nil) {
         let request = URLRequest(url: url)
@@ -115,4 +140,15 @@ struct WebView: UIViewRepresentable {
     }
     
   }
+}
+
+
+extension UIView {
+
+    var snapshot: UIImage {
+        return UIGraphicsImageRenderer(size: bounds.size).image { _ in
+            drawHierarchy(in: bounds, afterScreenUpdates: true)
+        }
+    }
+
 }

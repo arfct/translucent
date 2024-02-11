@@ -27,30 +27,31 @@ struct WidgetApp: App {
     }
   }
   
-    var body: some Scene {
-      WindowGroup {
-        WidgetPickerView()
-          .onOpenURL { (url) in
-            print("🌐 Opening URL: \(url)")
-            let location = url.absoluteString.replacingOccurrences(of: "widget-", with: "")
-            let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
-            let username = urlComponents?.user?.removingPercentEncoding ?? ""
-            let widget = Widget( id: UUID(), name:url.host() ?? "NAME", location: location, style: .glass, options:username)
-            container?.mainContext.insert(widget)
-            try? container?.mainContext.save()
-            openWindow(id: "widget", value: widget.persistentModelID)
-          }
-      }
-      .modelContainer(container!)
-      .windowResizability(.contentSize)
-      
-      WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in
-        if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
-          WidgetView(widget:widget)
+  var body: some Scene {
+    WindowGroup {
+      WidgetPickerView()
+        .onOpenURL { (url) in
+          print("🌐 Opening URL: \(url)")
+          let location = url.absoluteString.replacingOccurrences(of: "widget-", with: "")
+          let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+          let username = urlComponents?.user?.removingPercentEncoding ?? ""
+          let widget = Widget( id: UUID(), name:url.host() ?? "NAME", location: location, style: .glass, options:username)
+          container?.mainContext.insert(widget)
+          try! container?.mainContext.save()
+          openWindow(id: "widget", value: widget.persistentModelID)
         }
-      }
-      .modelContainer(container!)
-      .windowStyle(.plain)
-      .windowResizability(.contentSize)
     }
+    .modelContainer(container!)
+    .windowResizability(.contentSize)
+    .defaultSize(width: 500, height: 720)
+    
+    WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in
+      if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
+        WidgetView(widget:widget)
+      }
+    }
+    .modelContainer(container!)
+    .windowStyle(.plain)
+    .windowResizability(.contentSize)
+  }
 }

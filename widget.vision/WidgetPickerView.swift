@@ -16,6 +16,11 @@ struct WidgetPickerView: View {
   let columns = [
     GridItem(.adaptive(minimum: 200, maximum: 300))
   ]
+  
+  func getMoreWidgets() {
+    openURL(URL(string: "https://widget.vision/more")!)
+  }
+  
   var body: some View {
     NavigationStack {
       ScrollView {
@@ -54,7 +59,7 @@ struct WidgetPickerView: View {
           } description: {
             Text("Open a widget from the web to add it")
             Button {
-            
+              getMoreWidgets()
             } label: {
               Label("Add widget", systemImage: "plus")
             }
@@ -75,14 +80,14 @@ struct WidgetPickerView: View {
           Spacer()
           
           Button {
-            openURL(URL(string: "https://widget.vision/more")!)
+            getMoreWidgets()
           } label: {
             Label("Add widget", systemImage: "plus")
           }
         }
       }
     }
-    .frame(width:500)
+    .frame(minWidth: 400, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 700, maxHeight: .infinity, alignment: .center)
   }
   
   private func deleteWidgets(at offsets: IndexSet) {
