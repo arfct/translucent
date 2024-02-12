@@ -80,6 +80,10 @@ struct WidgetApp: App {
     WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in
       if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
         WidgetView(widget:widget)
+          .onOpenURL { showWindowForURL($0) }
+          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
+            showWindowForURL($0.webpageURL)
+          }
           .task {
             print("Opened", widget.description)
             widget.lastOpened = .now
