@@ -25,16 +25,32 @@ layout: base
       {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
       {%- for post in posts -%}
       <li>
-        <span class="post-meta">{{ post.date | date: date_format }}</span>
-        <h3>
-          Widget: 
-          <a class="post-link" href="{{ post.url | relative_url }}">
-            {{ post.title | escape }}
+          <a class="button" href="widget-{{post.href}}">
+            <span class="material-symbols-rounded">{{post.icon}}</span>
+            <b>{{post.title}}</b>
+            <i>{{post.href}}</i>
           </a>
-        </h3>
-        {%- if site.show_excerpts -%}
-          {{ post.excerpt }}
-        {%- endif -%}
+
+<!-- 
+
+          function renderButton(data) {
+            const url = new URL(data.href);
+            for (const key in data.data) {
+              if (key !== "href") {
+                url.searchParams.set(key, data.data[key]);
+              }
+            }
+            console.log("url", "widget-" + data.href + "#wv?" + (url.searchParams.toString()))
+            const a = document.createElement("a");
+            a.className = "button";
+            a.href = data.href;
+            a.dataset = data.data
+            a.onclick = (e) => {
+              e.preventDefault();
+              window.open("widget-" + data.href + "#wv" + (url.searchParams.toString()), "_blank");
+            }
+          } -->
+
       </li>
       {%- endfor -%}
     </ul>
