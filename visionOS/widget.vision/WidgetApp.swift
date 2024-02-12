@@ -49,6 +49,10 @@ struct WidgetApp: App {
             print("widget.persistentModelID \(widget.persistentModelID)")
             openWindow(id: "widget", value: widget.persistentModelID)
           }
+          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { userActivity in
+            guard let url = userActivity.webpageURL else { return }
+            print(url.absoluteString)
+          }
           .onChange(of: geometry.size) {
             windowWidth = geometry.size.width
             windowHeight = geometry.size.height

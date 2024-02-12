@@ -25,11 +25,9 @@ struct WidgetView: View {
   
   func toggleSettings() {
     withAnimation(.spring) {
-      
       try? modelContext.save()
       flipped.toggle()
     }
-    
   }
   
   var body: some View {
