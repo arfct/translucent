@@ -28,11 +28,15 @@ layout: default
       {%- for widget in posts -%}
     
           <a class="button" href="widget-{{widget.href}}#wv?
-          {% if widget.title %}&title={{ widget.title }}{% endif %}
-          {% if widget.style %}&style={{ widget.style }}{% endif %}
+            {%- if widget.title %}&title={{ widget.title | url_encode }}{% endif -%}
+            {%- if widget.style %}&style={{ widget.style }}{% endif -%}
+            {% if widget.bg %}&bg={{ widget.bg }}{% endif %}
+            {% if widget.fg %}&fg={{ widget.fg }}{% endif %}
+            {% if widget.size %}&size={{ widget.size }}{% endif %}
+            {% if widget.min %}&min={{ widget.min }}{% endif %}
 
-          ">
-            <span class="material-symbols-rounded">{{widget.icon}}</span>
+            ">
+              <span class="material-symbols-rounded">{{widget.icon}}</span>
             <b> {{widget.title}}</b>
             <i>{{widget.href}}</i>
           </a>
