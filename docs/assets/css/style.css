@@ -1,0 +1,19 @@
+body {
+  background-color:pink;
+}
+
+h1 {
+  font-weight:normal;
+}
+
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  margin:auto;
+  max-width:40em;
+  line-height:125%;
+}
+
+.site-header {
+  border-top:none;
+}
