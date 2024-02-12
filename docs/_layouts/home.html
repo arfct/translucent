@@ -39,29 +39,9 @@ layout: default
 {% if widget.zoom %}&zoom={{ widget.zoom }}{% endif %}
           ">
             <span class="material-symbols-rounded">{{widget.icon}}</span>
-            <b>{{widget.title}}</b>
+            <b>Open {{widget.title}}</b>
             <i>{{widget.href}}</i>
           </a>
-
-<!-- 
-
-          function renderButton(data) {
-            const url = new URL(data.href);
-            for (const key in data.data) {
-              if (key !== "href") {
-                url.searchParams.set(key, data.data[key]);
-              }
-            }
-            console.log("url", "widget-" + data.href + "#wv?" + (url.searchParams.toString()))
-            const a = document.createElement("a");
-            a.className = "button";
-            a.href = data.href;
-            a.dataset = data.data
-            a.onclick = (e) => {
-              e.preventDefault();
-              window.open("widget-" + data.href + "#wv" + (url.searchParams.toString()), "_blank");
-            }
-          } -->
       {%- endfor -%}
     </div>
 
