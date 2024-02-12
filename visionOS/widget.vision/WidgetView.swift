@@ -37,7 +37,7 @@ struct WidgetView: View {
       VStack(alignment: .center) {
         ZStack(alignment: .bottomTrailing) {
           if (!flipped) {
-            WebView(title: $widget.name, location: $widget.location, widget: $widget)
+            WebView(title: $widget.title, location: $widget.location, widget: $widget)
               .onLoadStatusChanged { content, loading, error in
                 print("Loading - \(loading ? widget.location ?? "" : "done")")
                 self.isLoading = loading
@@ -81,7 +81,7 @@ struct WidgetView: View {
             .buttonStyle(.automatic)
             .labelStyle(.iconOnly)
             .hoverEffect()
-            .opacity(flipped || showOrnaments ? 1.0 : 0.0)
+            .opacity(showOrnaments && !flipped ? 1.0 : 0.0)
             .animation(.spring)
             
           }
@@ -91,7 +91,6 @@ struct WidgetView: View {
       
 
       .onChange(of: geometry.size) {
-        print("Size: \(geometry.size)");
         widget.width = geometry.size.width
         widget.height = geometry.size.height
         try? modelContext.save()

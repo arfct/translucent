@@ -5,9 +5,11 @@ import SwiftData
 
 @Model final class Widget {
   var id: UUID
-  var name: String?
+  var name: String = ""
+  var title: String?
   var image: String?
   var location: String?
+  var originalLocation: String?
   var style: ViewStyle
   var backHex: String = "0000"
   var foreHex: String = "ffff"
@@ -15,6 +17,10 @@ import SwiftData
   var fontName: String = ""
   var width: CGFloat = 360
   var height: CGFloat = 360
+  var minWidth: CGFloat = CGFloat.zero
+  var minHeight: CGFloat = CGFloat.zero
+  var maxWidth: CGFloat = CGFloat.infinity
+  var maxHheight: CGFloat = CGFloat.infinity
   var radius: CGFloat = 30
   var zoom: CGFloat = 1.0
   var viewportWidth: Int?
@@ -23,7 +29,8 @@ import SwiftData
   var options: String = ""
   var userAgent: String = "mobile"
   var icon: String = "square.on.square"
-    
+  var clearClasses: String?
+  var hideClasses: String?
 
   init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: ViewStyle, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
     self.id = id
@@ -98,18 +105,23 @@ extension Widget {
   
   @Transient
   var displayName: String {
-    if let name = name, name.count > 0 {
-      return name
+    if name.count > 0 {
+      return name;
     }
-    return hostName ?? "Untitled"
+    
+    return title ?? hostName ?? "Untitled";
   }
+  
   @Transient
   var hostName: String? {
     URLComponents(string: location!)?.host
   }
+  
   @Transient
   var shareURL: String {
-    "https://example.com"
+    let encodedURL = location?.replacingOccurrences(of: "https://", with: "").addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+    let urlString = "https://widget.vision/w/#\(encodedURL)"
+    return urlString
   }
     
   @Transient
@@ -141,7 +153,7 @@ enum ViewStyle: String, Equatable, CaseIterable, Codable {
   case glass = "Glass"
   case transparent  = "Transparent"
   //  case glass_forced  = "Glass (no body background)"
-  case opaque  = "Opaque"
+//  case opaque  = "Opaque"
   
   var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
   var iconName: String {
@@ -149,7 +161,7 @@ enum ViewStyle: String, Equatable, CaseIterable, Codable {
     case .transparent: return "square.on.square.intersection.dashed"
     case .glass: return "square.on.square"
       //    case .glass_forced: return "square.on.square"
-    case .opaque: return "square.filled.on.square"
+//    case .opaque: return "square.filled.on.square"
     }
   }
 }

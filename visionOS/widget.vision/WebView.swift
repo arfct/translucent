@@ -54,16 +54,28 @@ struct WebView: UIViewRepresentable {
       document.addEventListener('click', function(){
         window.webkit.messageHandlers.jsHandler.postMessage('click clack!');
       });
+      
       var metaTag=document.createElement('meta');
       metaTag.name = "viewport"
       metaTag.content = "width=\(viewport), initial-scale=\(zoom), maximum-scale=\(zoom), user-scalable=0"
       let head = document.getElementsByTagName('head')[0]
       head.appendChild(metaTag);
       """
-    if (widget.style != .opaque) {
+    
+    if (widget.fontName != "") {
+      source += """
+      var fontTag = document.createElement('link');
+      fontTag.rel = 'stylesheet';
+      fontTag.href = 'https://fonts.googleapis.com/css?family=\(widget.fontName.replacingOccurrences(of: " ", with: "+"))&display=swap';
+      head.appendChild(fontTag);
+      document.body.style.fontFamily = '\(widget.fontName), initial`;
+      """
+    }
+    
+    if (true) { //widget.style != .opaque) {
       source += """
       var cssTag = document.createElement('style');
-      cssTag.innerHTML = 'body, [class*="prototype--background-"] {background-color:transparent !important; background-image:none !important}  [class*="frontend_sha_override_indicator"] {display:none}';
+      cssTag.innerHTML = 'body, .page-view, [class*="prototype--background-"] {background-color:transparent !important; background-image:none !important}  [class*="frontend_sha_override_indicator"] {display:none}';
       head.appendChild(cssTag);
       """
      
@@ -102,10 +114,10 @@ struct WebView: UIViewRepresentable {
     webView.customUserAgent = userAgent ?? "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
     
     
-    if (widget.style != .opaque) {
+//    if (widget.style != .opaque) {
       webView.backgroundColor = UIColor.clear
       webView.scrollView.backgroundColor = UIColor.clear
-    }
+//    }
     
     if let url = URL(string:location!) {
       if (webView.url == nil) {

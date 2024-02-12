@@ -1,0 +1,27 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "A7X888RRVJ.com.blacktree.vision.widget"
+        ],
+        "components": [
+          {
+            "/": "/",
+            "exclude": true,
+            "comment": ""
+          },
+          {
+            "/": "/more",
+            "exclude": true,
+            "comment": ""
+          },
+          {
+            "/": "/*",
+            "comment": "Matches any URL whose path starts with /"
+          }
+        ]
+      }
+    ]
+  }
+}

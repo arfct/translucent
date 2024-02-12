@@ -12,7 +12,6 @@ struct WidgetSettingsView: View {
   
   @FocusState private var isTextFieldFocused: Bool
   @State private var locationTempString: String = "about:blank"
-  @State private var selectedOption: String = "Option1"
   
   func clean(url: String) -> String? {
     if (url.hasPrefix("http")) {
@@ -24,10 +23,72 @@ struct WidgetSettingsView: View {
     }
     return nil
   }
+  
+  let spacing = 20.0
+  let leftColumn = 120.0
+  
   var body: some View {
+    
     ScrollView {
+      HStack(spacing:20){
+        Button {
+          print("back")
+          self.callback()
+        } label: {
+          Label("Done", systemImage: "arrow.left")
+        }
+        .buttonBorderShape(.circle)
+        .labelStyle(.iconOnly)
+        Spacer()
+        
+        Button {
+          openWindow(id:"main")
+        } label: {
+          Label("List", systemImage: "rectangle.grid.2x2")
+        }
+        .labelStyle(.iconOnly)
+        .buttonBorderShape(.circle)
+        
+        .buttonStyle(.borderless)
+        ShareLink(
+          item: URL(string: widget.shareURL)!,
+          preview: SharePreview(
+            "Widget \(widget.name ?? "")",
+            image: Image(systemName: "plus"))
+          
+        ) {
+          Image(systemName: "square.and.arrow.up")
+        }            .buttonBorderShape(.circle)
+        
+          .buttonStyle(.borderless)
+        
+        Menu {
+          Button("Use Current", action: {
+            // Handle Option 1 tap
+          }).disabled(true)
+          Divider()
+          Picker("User Agent", selection: $widget.userAgent) {
+            Text("Mobile").tag("mobile")
+            Text("Desktop").tag("desktop")
+            //              Text("Custom").tag("custom")
+          }
+          
+          
+        } label: {
+          Label("Location", systemImage: "ellipsis")
+        }.labelStyle(.iconOnly)
+          .buttonStyle(.borderless)
+      }.padding()
       VStack(alignment:.leading, spacing: 20) { // Settings
-        HStack() {
+        
+        
+        HStack(spacing:spacing) {
+          HStack {
+            Label("Location", systemImage: "ellipsis").labelStyle(.titleOnly)
+            
+            
+          }.frame(maxWidth: leftColumn, alignment: .leading)
+          
           TextField("location", text: $locationTempString)
             .textFieldStyle(.roundedBorder)
             .autocapitalization(.none)
@@ -57,90 +118,85 @@ struct WidgetSettingsView: View {
               }
             }
           
-          Menu {
-            Button("Use Current", action: {
-              // Handle Option 1 tap
-            }).disabled(true)
-            Divider()
-            Picker("User Agent", selection: $selectedOption) {
-              Text("Mobile")
-              Text("Desktop")
-              Text("Custom")
-            }.disabled(true)
-          } label: {
-            Image(systemName: "ellipsis")
-          }.buttonStyle(.borderless)
-          
         }
         
         
-        HStack {
-          ColorPicker(selection: $backColor, supportsOpacity: true) {}
-            .labelsHidden()
-            .onChange(of: backColor) {
-              if let hex = backColor.toHex() { widget.backHex = hex }
-            }
+        HStack(spacing:spacing) {
+          Label("Title", systemImage: "link")
+            .labelStyle(.titleOnly)
+            .frame(maxWidth: leftColumn, alignment: .leading)
           
+          TextField(widget.name ?? "", text: $widget.name)
+            .textFieldStyle(.roundedBorder)
+          
+            .autocapitalization(.none)
+            .disableAutocorrection(true)
+            .keyboardType(.URL)
+        }
+        HStack(spacing:spacing) {
+          ColorPicker(selection: $backColor, supportsOpacity: true) {
+            Text("Style")
+          }
+          .frame(maxWidth: leftColumn)
+          .onChange(of: backColor) {
+            if let hex = backColor.toHex() { widget.backHex = hex }
+          }
           Picker("Select an option", selection: $widget.style) {
             ForEach(ViewStyle.allCases, id: \.self) { value in
               HStack {
                 Text(value.localizedName)
                   .tag(value)
-                Image(systemName: value.iconName)
+                  .frame(maxWidth: .infinity, alignment:.leading)
+//                Image(systemName: value.iconName)
               }
             }
           }
+          .background(.ultraThickMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+          
+          
+          
         }
         
         // Foreground
-        HStack {
+        HStack(spacing:spacing) {
           
-          ColorPicker(selection: $foreColor, supportsOpacity: true) {}
-            .labelsHidden()
-            .onChange(of: foreColor) {
-              if let hex = foreColor.toHex() {
-                print("changed \(hex)")
-                widget.foreHex = hex
-              }
+          ColorPicker(selection: $foreColor, supportsOpacity: true) {
+            Text("Font")
+          }
+          
+          .frame(maxWidth: leftColumn)
+          .onChange(of: foreColor) {
+            if let hex = foreColor.toHex() {
+              print("changed \(hex)")
+              widget.foreHex = hex
             }
+          }
           
           TextField("default font", text:$widget.fontName)
             .textFieldStyle(.roundedBorder)
             .autocapitalization(.none)
             .disableAutocorrection(true)
-            
-//          Picker("Select an option", selection: $widgetModel.font) {
-//            ForEach(ViewStyle.allCases, id: \.self) { value in
-//              Text("System font")
-//            }
-//          }
+            .frame(maxWidth: .infinity)
+          //          Picker("Select an option", selection: $widgetModel.font) {
+          //            ForEach(ViewStyle.allCases, id: \.self) { value in
+          //              Text("System font")
+          //            }
+          //          }
         }
         
         Spacer()
         
-      }.padding()
-      HStack {
-        ShareLink(
-          item: URL(string: widget.shareURL)!,
-          preview: SharePreview(
-            "Widget \(widget.name ?? "")",
-                               image: Image(systemName: "plus"))
-        
-        ) {
-          Image(systemName: "square.and.arrow.up")
-        }            .buttonBorderShape(.circle)
-
-//        Button("Close") {
-//          callback()
-//        }
-        Button("All Widgets") {
-          openWindow(id: "main")
-        }
-      }
+      }.padding(.horizontal, 20)
+        .padding(.top, 20)
+        .frame(maxWidth: 640, maxHeight: .infinity, alignment: .center)
+      
+      //          .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 20))
+      
+      
+      
+      
+      
     }
-  }
-  func shareWidget() {
-    
   }
 }
 
