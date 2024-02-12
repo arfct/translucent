@@ -14,6 +14,8 @@ struct WidgetPickerView: View {
   @Environment(\.openWindow) private var openWindow
   @Environment(\.dismissWindow) private var dismissWindow
   
+  var app: WidgetApp?
+  
   let columns = [
     GridItem(.adaptive(minimum: 240, maximum: 480))
   ]
@@ -25,7 +27,7 @@ struct WidgetPickerView: View {
   }
   
   var body: some View {
-    VStack {
+    NavigationStack {
       ScrollView {
         Image("widget.vision")
           .renderingMode(.template)
@@ -33,8 +35,9 @@ struct WidgetPickerView: View {
           .foregroundColor(Color(hue: hue, saturation: 0.2, brightness: 1.0))
           .aspectRatio(contentMode: .fit)
           .frame(maxWidth: 480)
-          .padding(60)
-          .padding(.top,40)
+          .padding(.horizontal, 60)
+          .padding(.bottom, 60)
+          .padding(.top, 20)
           .opacity(0.8)
         LazyVGrid(columns: columns, spacing: 20) {
           ForEach(widgets) { widget in
@@ -51,24 +54,44 @@ struct WidgetPickerView: View {
         .padding(.horizontal, 20)
       }
       .frame(maxHeight:.infinity)
-      .overlay(
-        Button { getMoreWidgets() } label: {
-          Label("Add widget", systemImage: "plus")
-        }
-          .padding(.bottom, 40), alignment: .bottom
-      )
       
+     
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          PasteButton(payloadType: URL.self) { urls in
+            print("url \(urls)")
+            if let url = urls.first {
+              DispatchQueue.main.async {
+                app?.showWindowForURL(url)
+              }
+            }
+          }
+          .frame(minWidth:90, minHeight:90)
+          .buttonBorderShape(.circle)
+          .buttonStyle(.borderless)
+          .labelStyle(.titleOnly)
+          .tint(.secondary)
+        }
+        ToolbarItem(placement: .topBarLeading) {
+          Button { getMoreWidgets() } label: {
+            Label("Get widgets", systemImage: "plus")
+          }.labelStyle(.titleOnly)
+            .frame(maxHeight:36)
+            .buttonStyle(.borderless)
+            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18))
+        }
+      }
       .overlay {
         if widgets.isEmpty {
           ContentUnavailableView {
             Label("No Widgets", systemImage: "rectangle.3.offgrid.fill")
           } description: {
             Text("Open a widget from the web to add it")
-//            Button {
-//              getMoreWidgets()
-//            } label: {
-//              Label("Add widget", systemImage: "plus")
-//            }
+            Button {
+              getMoreWidgets()
+            } label: {
+              Label("Add widget", systemImage: "plus")
+            }
 
           }
         }
@@ -106,6 +129,6 @@ struct WidgetPickerView: View {
 }
 
 #Preview {
-    WidgetPickerView()
+  WidgetPickerView(app:nil)
 //        .modelContainer(PreviewSampleData.container)
 }

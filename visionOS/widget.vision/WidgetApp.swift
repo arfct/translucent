@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import Darwin
+import UniformTypeIdentifiers
 
 @main
 struct WidgetApp: App {
@@ -30,10 +31,20 @@ struct WidgetApp: App {
     }
   }
   
+  @MainActor func showWindowForURL(_ url: URL?) {
+    print("open \(url?.host())")
+    guard let url = url else { return }
+    let widget = Widget(url:url)
+    container?.mainContext.insert(widget)
+    try! container?.mainContext.save()
+    print("widget.persistentModelID \(widget.persistentModelID.id.hashValue)")
+    openWindow(id: "widget", value: widget.persistentModelID)
+  }
+  
   var body: some Scene {
     WindowGroup(id: "main") {
       GeometryReader { geometry in
-        WidgetPickerView()
+        WidgetPickerView(app: self)
           .onOpenURL { showWindowForURL($0) }
           .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
             showWindowForURL($0.webpageURL)
@@ -41,6 +52,21 @@ struct WidgetApp: App {
           .onChange(of: geometry.size) {
             windowWidth = geometry.size.width
             windowHeight = geometry.size.height
+          }
+          .onDrop(of: [.url], isTargeted: nil) { providers, point in
+            
+            for provider in providers {
+
+              print("Provider \(provider)");
+              provider.loadObject(ofClass: URL.self) { url,arg  in
+
+                DispatchQueue.main.async {
+                  showWindowForURL(url)
+                }
+              }
+            }
+            
+            return true
           }
       }
       .frame(minWidth: 360, idealWidth: 540, maxWidth: .infinity,
@@ -66,13 +92,5 @@ struct WidgetApp: App {
     .defaultSize(width: 360, height: 360)
   }
 
-  @MainActor func showWindowForURL(_ url: URL?) {
-    print("open \(url?.host())")
-    guard let url = url else { return }
-    let widget = Widget(url:url)
-    container?.mainContext.insert(widget)
-    try! container?.mainContext.save()
-    print("widget.persistentModelID \(widget.persistentModelID.id.hashValue)")
-    openWindow(id: "widget", value: widget.persistentModelID)
-  }
+
 }

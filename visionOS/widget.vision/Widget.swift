@@ -64,6 +64,7 @@ import SwiftData
     self.name = name
     if let image = image { self.image = image }
     self.location = location
+    self.originalLocation = location
     self.style = style
     if let width = width {self.width = width }
     if let height = height {self.height = height }
@@ -150,8 +151,11 @@ extension Widget {
   
   @Transient
   var shareURL: String {
+    if (originalLocation != nil) {
+      return originalLocation!
+    }
     let encodedURL = location?.replacingOccurrences(of: "https://", with: "").addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-    let urlString = "https://widget.vision/w/#\(encodedURL)"
+    let urlString = "https://widget.vision/\(encodedURL)"
     return urlString
   }
     
