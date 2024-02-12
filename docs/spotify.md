@@ -1,3 +1,12 @@
 ---
 title: Spotify
+icon: speaker
+href: https://open.spotify.com
+size: 400x600
+bg: 1DB95422
+remove: >
+  [data-testid='download-button'],[href="/download"],[href="/search/recent"],[href="/search"]+a
+ua: desktop
 ---
+
+Spotify Widget
