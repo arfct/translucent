@@ -28,7 +28,8 @@ layout: default
       {%- for widget in posts -%}
     
           <a class="button" href="widget-{{widget.href}}#wv?
-
+          {% if widget.title %}&title={{ widget.title }}{% endif %}
+          
           ">
             <span class="material-symbols-rounded">{{widget.icon}}</span>
             <b> {{widget.title}}</b>
