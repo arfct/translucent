@@ -94,8 +94,9 @@ struct WidgetView: View {
         try? modelContext.save()
        }
     }
-    .frame(minWidth: clampInitialSize ? widget.width : .zero, idealWidth: widget.width, maxWidth: clampInitialSize ? widget.width : .infinity,
-           minHeight: clampInitialSize ? widget.height : .zero, idealHeight: widget.height, maxHeight: clampInitialSize ? widget.height : .infinity)
+    // Clamp the size initially to set the base size, but then allow it to change later.
+    .frame(minWidth: clampInitialSize ? widget.width : widget.minWidth, idealWidth: widget.width, maxWidth: clampInitialSize ? widget.width : widget.maxWidth,
+           minHeight: clampInitialSize ? widget.height : widget.minHeight, idealHeight: widget.height, maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
     
     .persistentSystemOverlays(showOrnaments ? .automatic : .hidden)
     

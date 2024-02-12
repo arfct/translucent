@@ -34,35 +34,22 @@ struct WidgetApp: App {
     WindowGroup(id: "main") {
       GeometryReader { geometry in
         WidgetPickerView()
-          .onOpenURL { (url) in
-            print("🌐 Opening URL: \(url)")
-            let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
-            let username = urlComponents?.user?.removingPercentEncoding ?? ""
-            var location = url.absoluteString.replacingOccurrences(of: "widget-", with: "")
-            if let offset = location.firstIndex(of: "@")?.utf16Offset(in: location) {
-              location = "https://" + String(location.dropFirst(offset + 1))
-              print("location \(location)")
-            }
-            let widget = Widget( id: UUID(), name:url.host() ?? "NAME", location: location, style: .glass, options:username)
-            container?.mainContext.insert(widget)
-            try! container?.mainContext.save()
-            print("widget.persistentModelID \(widget.persistentModelID)")
-            openWindow(id: "widget", value: widget.persistentModelID)
-          }
-          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { userActivity in
-            guard let url = userActivity.webpageURL else { return }
-            print(url.absoluteString)
+          .onOpenURL { showWindowForURL($0) }
+          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
+            showWindowForURL($0.webpageURL)
           }
           .onChange(of: geometry.size) {
             windowWidth = geometry.size.width
             windowHeight = geometry.size.height
           }
-      }.frame(minWidth: 360, idealWidth: 540, maxWidth: .infinity, minHeight: 400, idealHeight: 700, maxHeight: .infinity, alignment: .center)
+      }
+      .frame(minWidth: 360, idealWidth: 540, maxWidth: .infinity,
+              minHeight: 400, idealHeight: 700, maxHeight: .infinity,
+              alignment: .center)
     }
     .modelContainer(container!)
     .windowResizability(.contentSize)
     .defaultSize(width: windowWidth, height: windowHeight)
-    
     
     WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in
       if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
@@ -77,6 +64,15 @@ struct WidgetApp: App {
     .windowStyle(.plain)
     .windowResizability(.contentSize)
     .defaultSize(width: 360, height: 360)
-    
+  }
+
+  @MainActor func showWindowForURL(_ url: URL?) {
+    print("open \(url?.host())")
+    guard let url = url else { return }
+    let widget = Widget(url:url)
+    container?.mainContext.insert(widget)
+    try! container?.mainContext.save()
+    print("widget.persistentModelID \(widget.persistentModelID.id.hashValue)")
+    openWindow(id: "widget", value: widget.persistentModelID)
   }
 }

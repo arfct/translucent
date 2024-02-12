@@ -3,6 +3,7 @@ import SwiftUI
 import SwiftData
 
 
+
 @Model final class Widget {
   var id: UUID
   var name: String = ""
@@ -20,7 +21,7 @@ import SwiftData
   var minWidth: CGFloat = CGFloat.zero
   var minHeight: CGFloat = CGFloat.zero
   var maxWidth: CGFloat = CGFloat.infinity
-  var maxHheight: CGFloat = CGFloat.infinity
+  var maxHeight: CGFloat = CGFloat.infinity
   var radius: CGFloat = 30
   var zoom: CGFloat = 1.0
   var viewportWidth: Int?
@@ -32,6 +33,32 @@ import SwiftData
   var clearClasses: String?
   var hideClasses: String?
 
+  
+  func sizeFor(dimensions: String) -> CGSize {
+    let dims = dimensions.split(separator: "x")
+    var size = CGSize()
+    if let width = dims.first.map(String.init), let widthDouble = Double(width) {
+      size.width = CGFloat(widthDouble)
+    }
+    if let height = dims.last.map(String.init), let heightDouble = Double(height) {
+      size.height = CGFloat(heightDouble)
+    }
+    print("size \(size)")
+    return size;
+  }
+  
+  convenience init(url: URL) {
+    print("🌐 Opening URL: \(url)")
+    let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+    let username = urlComponents?.user?.removingPercentEncoding ?? ""
+    var location = url.absoluteString.replacingOccurrences(of: "widget-", with: "")
+    if let offset = location.firstIndex(of: "@")?.utf16Offset(in: location) {
+      location = "https://" + String(location.dropFirst(offset + 1))
+      print("location \(location)")
+    }
+    self.init( id: UUID(), name:url.host() ?? "NAME", location: location, style: .glass, options:username)
+  }
+  
   init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: ViewStyle, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
     self.id = id
     self.name = name
@@ -57,14 +84,18 @@ import SwiftData
             self.foreHex = String(value)
           case "tg", "tint":
             self.tintHex = String(value)
-          case "sz", "size":
-            let dims = value.split(separator: "x")
-            if let width = dims.first.map(String.init), let widthDouble = Double(width) {
-              self.width = CGFloat(widthDouble)
-            }
-            if let height = dims.last.map(String.init), let heightDouble = Double(height) {
-              self.height = CGFloat(heightDouble)
-            }
+          case "ms", "sz", "size":
+            let size = sizeFor(dimensions: String(value))
+            self.width = size.width
+            self.height = size.height
+          case "mn", "min":
+            let size = sizeFor(dimensions: String(value))
+            self.minWidth = size.width
+            self.minHeight = size.height
+          case "mx", "max":
+            let size = sizeFor(dimensions: String(value))
+            self.maxWidth = size.width
+            self.maxHeight = size.height
           case "zm", "zoom":
             if let value = Double(value) {
               self.zoom = value
