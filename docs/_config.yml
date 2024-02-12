@@ -1,0 +1,9 @@
+theme: minima
+# remote_theme: jekyll/minima@3cdd14d
+
+# plugins:
+# - jekyll-remote-theme
+
+permalink: /posts/:title
+header_pages:
+  - about
