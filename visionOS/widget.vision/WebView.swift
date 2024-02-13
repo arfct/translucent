@@ -53,9 +53,11 @@ struct WebView: UIViewRepresentable {
     let zoom = widget.zoom
     var source =
       """
-      document.widget = window.webkit.messageHandlers.widget
+      console.log("Loading Widget.vision")
+      
+      window.widget = window.webkit.messageHandlers.widget
       document.addEventListener('click', function(){
-        window.webkit.messageHandlers.jsHandler.postMessage('click clack!');
+        window.webkit.messageHandlers.widget.postMessage('Clicked Page!');
       });
       
       var metaTag=document.createElement('meta');
@@ -75,22 +77,18 @@ struct WebView: UIViewRepresentable {
       
       """
       
-      print("css \(source)")
     }
     
     if (true) { //widget.style != .opaque) {
       let clearClasses = widget.clearClasses ?? "body"
-      //      if (clearClasses == nil && widget.style != .opaque) {
-      //        clearClasses = "body"
-      //      }
       
       var css = ""
       let selectors = clearClasses
-      css += "\(selectors) { background-color:transparent !important; background-image:none !important;} "
+      css += "\(selectors) { background-color:transparent !important; background-image:none !important;}\n"
       
       
       if let selectors = widget.removeClasses {
-        css += "\(selectors) { display:none !important; }"
+        css += "\(selectors) { display:none !important; }\n"
       }
       
       css += """
@@ -111,9 +109,17 @@ struct WebView: UIViewRepresentable {
       var cssTag = document.createElement('style');
       cssTag.innerHTML = `\(css)`
       head.appendChild(cssTag);
+      
+      
+      
+              widget.postMessage(document.innerHTML);
+      console.log("Loaded Widget.vision")
       """
       
+      
     }
+    
+    print("css \(source)")
     return source
   }
   
@@ -172,9 +178,7 @@ struct WebView: UIViewRepresentable {
     @Environment(\.openWindow) var openWindow
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-      print(message.name)
-      print(message.body)
-      //      openWindow(id: "SecondWindow")
+      print("💬 Message:\n\(message.body)")
     }
   }
   
