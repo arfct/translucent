@@ -30,7 +30,7 @@
         margin:0;
         box-sizing:border-box;
         background: hsla(var(--hue), 20%, 50%, 0.2);
-
+        position:relative;
         backdrop-filter: blur(40px);
         border-radius: 30px;
         }
@@ -151,8 +151,8 @@
     </svg>
     
 
-    <div class="tiles">
-    <a class="button" href="widget-https://vw=880&size=660x720&min=660x300&max=660x1280&zoom=0.75&bg=%23ffffff88@nytfrontpage.glitch.me/">
+    <div id="tiles" class="tiles">
+    <a class="button" href="widget-https://vw=880&size=660x720&min=660x300&max=660x1220&zoom=0.75&bg=%23ffffff88@nytfrontpage.glitch.me/">
       <span class="material-symbols-rounded">newspaper</span>
       <b>NYT Front Page</b>
       <i>nytimes.com</i>
@@ -173,9 +173,9 @@
       <i>eink.page</i>
     </a> -->
 
-    <a class="button" href="widget-https://wh=400x280&style=transparent@eink.page/haiku.html">
+    <a class="button" href="widget-https://wh=480x250&style=transparent@eink.page/haiku.html">
      <span class="material-symbols-rounded">schedule</span>
-      <b>AI Time Haiku</b>
+      <b>Haiku AI Clock</b>
       <i>eink.page</i>
     </a>
     
@@ -194,14 +194,17 @@
       <i>figma.com</i>
     </a>    
 
-    <a class="button" 
-       href="widget-https://sz=400x600&tg=1DB954&ua=desktop@open.spotify.com"
+    <!-- <a class="button" 
+       href="widget-https://open.spotify.com#about#wv?sz=400x600&bg=1DB95422&remove=[data-testid%3d%22download-button%22],[href%3d%22/download%22],[href%3d%22/search/recent%22],[href%3d%22/search%22]+a&ua=desktop"
        agent="desktop"
        >
       <span class="material-symbols-rounded">speaker</span>
       <b>Spotify Player</b>
       <i>open.spotify.com</i>
-    </a>
+    </a> -->
+
+
+
     
     <a class="button" href="widget-https://widget.vision/widgets/dims">
       <span class="material-symbols-rounded">drag_pan</span>
@@ -216,11 +219,10 @@
  
      </a>
 
-      
-      <p>
-        
-      </p>
-      <br><br>
+
+    </div>
+
+    <br><br>
       <div class="explainer">
         <b>How it works:</b><p>
         
@@ -230,10 +232,6 @@
         Add <u>widget-</u>https://… to the beginning of a url, or drag it onto the widget.vision window.
       </div>
       <div class="ventilation" style="height:80px"></div>
-
-
-    </div>
-
 
     <script>
       const body = document.querySelector("body");
@@ -254,5 +252,38 @@
       updateColor()
       setInterval(updateColor, 1000);
     </script>
+        <script>
+          const spotify = {
+            title:"Spotify Player",
+            icon:"speaker",
+            href:"https://open.spotify.com",
+            data: {
+              sz:"400x600",
+              bg:"1DB95422",
+              remove:`[data-testid="download-button"],[href="/download"],[href="/search/recent"],[href="/search"]+a`,
+              ua:'desktop'
+            }
+          }
+          function renderButton(data) {
+            const url = new URL(data.href);
+            for (const key in data.data) {
+              if (key !== "href") {
+                url.searchParams.set(key, data.data[key]);
+              }
+            }
+            console.log("url", "widget-" + data.href + "#wv?" + (url.searchParams.toString()))
+            const a = document.createElement("a");
+            a.className = "button";
+            a.href = data.href;
+            a.dataset = data.data
+            a.onclick = (e) => {
+              e.preventDefault();
+              window.open("widget-" + data.href + "#wv" + (url.searchParams.toString()), "_blank");
+            }
+            a.innerHTML = `<span class="material-symbols-rounded">${data.icon}</span><b>${data.title}</b><i>${url.hostname}</i>`;
+            document.getElementById("tiles").appendChild(a);
+          }
+          renderButton(spotify)
+        </script>
   </body>
 </html>

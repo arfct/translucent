@@ -36,27 +36,3 @@ struct WidgetListItem: View {
 #Preview("Preview", windowStyle: .automatic, traits: .sizeThatFitsLayout) {
   WidgetListItem(widget: .preview)
 }
-
-
-//
-//Button{
-//          openWindow(value: widgetModel.id)
-//        } label: {
-//          VStack {
-//            Image(systemName: widgetModel.image ?? "globe")
-//              .resizable()
-//              .aspectRatio(contentMode: .fit)
-//              .frame(width: 40, height: 40)
-//            Text(widgetModel.name).lineLimit(1)
-//          }
-//          .padding()
-//          .frame(maxWidth: .infinity, alignment:.leading)
-//        }
-//        .buttonBorderShape(.roundedRectangle)
-//        .contextMenu(ContextMenu(menuItems: {
-//          Button {
-//            viewModel.widgets.remove(at: viewModel.widgets.firstIndex(of: widgetModel)!)
-//          } label: {
-//            Label("Remove", systemImage: "trash")
-//          }
-//        }))

@@ -126,7 +126,7 @@ struct WidgetSettingsView: View {
             .labelStyle(.titleOnly)
             .frame(maxWidth: leftColumn, alignment: .leading)
           
-          TextField(widget.name ?? "", text: $widget.name)
+          TextField(widget.title ?? "", text: $widget.name)
             .textFieldStyle(.roundedBorder)
           
             .autocapitalization(.none)

@@ -99,10 +99,11 @@ div.title {
   font-weight:500;
 }
 div.location {
-  text-overflow:ellipsis;
-  font-size:30%;
+  font-size:20%;
   color: hsla(var(--hue), 90%, 70%, 0.5);
   overflow:hidden;
+  text-overflow:ellipsis;
+
 }
 
 svg.title {

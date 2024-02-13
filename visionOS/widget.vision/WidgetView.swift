@@ -46,7 +46,7 @@ struct WidgetView: View {
               .frame(maxWidth: .infinity, maxHeight: .infinity)
             
               .disabled(flipped)
-              .offset(z:flipped ? 1 : 0)
+//              .offset(z:flipped ? 1 : 0)
               .opacity(flipped ? 0.0 : 1.0)
               .background(widget.backColor)
               .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),

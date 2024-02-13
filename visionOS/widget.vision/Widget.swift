@@ -31,7 +31,7 @@ import SwiftData
   var userAgent: String = "mobile"
   var icon: String = "square.on.square"
   var clearClasses: String?
-  var hideClasses: String?
+  var removeClasses: String?
 
   
   func sizeFor(dimensions: String) -> CGSize {
@@ -48,18 +48,27 @@ import SwiftData
   }
   
   convenience init(url: URL) {
-    print("🌐 Opening URL: \(url)")
-    let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
-    let username = urlComponents?.user?.removingPercentEncoding ?? ""
-    var location = url.absoluteString.replacingOccurrences(of: "widget-", with: "")
-    if let offset = location.firstIndex(of: "@")?.utf16Offset(in: location) {
-      location = "https://" + String(location.dropFirst(offset + 1))
-      print("location \(location)")
+    print("🌐 Opening URL: \(url.absoluteString)")
+    var location = url.absoluteString
+    var parameters: String?
+    if let regex = try? Regex(#"(?:%23|#)wv\?(.*)"#) {
+      
+      if let match = location.firstMatch(of: regex) {
+      
+        parameters = String(match[1].substring!)
+        location = location.replacing(regex, with: "")
+      }
     }
-    self.init( id: UUID(), name:url.host() ?? "NAME", location: location, style: .glass, options:username)
+    
+    location = location.replacingOccurrences(of: "widget-http", with: "http")
+    location = location.replacingOccurrences(of: "https://widget.vision/http", with: "http")
+    
+    print("LOCATION \(location) PARAM \(parameters) ")
+    
+    self.init( name:url.host() ?? "NAME", location: location, options:parameters)
   }
   
-  init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: ViewStyle, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
+  init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: ViewStyle = .glass, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
     self.id = id
     self.name = name
     if let image = image { self.image = image }
@@ -75,7 +84,7 @@ import SwiftData
       }
       options.split(separator: "&").forEach({ param in
         let kv = param.split(separator:"=")
-        if let key = kv.first, let value = kv.last {
+        if let key = kv.first?.removingPercentEncoding, let value = kv.last?.removingPercentEncoding {
           switch key {
           case "style":
             if (value == "transparent") { self.style = .transparent}
@@ -109,8 +118,18 @@ import SwiftData
             if let value = Int(value) {
               self.viewportWidth = value
             }
+          case "ua", "agent":
+            if let value = Double(value) {
+              self.userAgent = String(value)
+            }
+          case "remove":
+            self.removeClasses = String(value)
+          case "clear":
+            self.clearClasses = String(value)
           case "icon":
             self.icon = String(value)
+          case "name":
+            self.name = String(value)
           default:
             break
           }

@@ -43,7 +43,7 @@ struct WidgetPickerView: View {
           ForEach(widgets) { widget in
             WidgetListItem(widget: widget)
               .contextMenu(ContextMenu(menuItems: {
-                Button {
+                Button(role: .destructive) {
                   deleteWidget(widget)
                 } label: {
                   Label("Remove", systemImage: "trash")

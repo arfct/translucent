@@ -32,7 +32,6 @@ struct WidgetApp: App {
   }
   
   @MainActor func showWindowForURL(_ url: URL?) {
-    print("open \(url?.host())")
     guard let url = url else { return }
     let widget = Widget(url:url)
     container?.mainContext.insert(widget)

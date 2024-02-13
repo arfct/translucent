@@ -73,9 +73,23 @@ struct WebView: UIViewRepresentable {
     }
     
     if (true) { //widget.style != .opaque) {
+      let clearClasses = widget.clearClasses ?? "body"
+//      if (clearClasses == nil && widget.style != .opaque) {
+//        clearClasses = "body"
+//      }
+      
+      var css = ""
+       let selectors = clearClasses
+        css += "\(selectors) { background-color:transparent !important; background-image:none !important;} "
+      
+      
+      if let selectors = widget.removeClasses {
+        css += "\(selectors) { display:none !important; }"
+      }
+  print("CSS \(css)")
       source += """
       var cssTag = document.createElement('style');
-      cssTag.innerHTML = 'body, .page-view, [class*="prototype--background-"] {background-color:transparent !important; background-image:none !important}  [class*="frontend_sha_override_indicator"] {display:none}';
+      cssTag.innerHTML = `\(css)`
       head.appendChild(cssTag);
       """
      
