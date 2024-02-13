@@ -133,6 +133,9 @@ svg.title path{
   border-radius: 30px;
   opacity:0.8
 }
+a {
+  color:white;
+}
 
 .ventilation {
   background-image: radial-gradient(black 2px, transparent 0);

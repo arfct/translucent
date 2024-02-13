@@ -50,6 +50,7 @@ struct WebView: UIViewRepresentable {
     if let width = widget.viewportWidth {
       viewport = String(width)
     }
+   
     let zoom = widget.zoom
     var source =
       """
@@ -153,7 +154,7 @@ struct WebView: UIViewRepresentable {
     
     webView.customUserAgent = userAgent ?? "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
     
-    
+//    webView.pageZoom = widget.zoom
     //    if (widget.style != .opaque) {
     webView.backgroundColor = UIColor.clear
     webView.scrollView.backgroundColor = UIColor.clear
