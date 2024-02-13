@@ -18,8 +18,8 @@ import SwiftData
   var fontName: String = ""
   var width: CGFloat = 360
   var height: CGFloat = 360
-  var minWidth: CGFloat = CGFloat.zero
-  var minHeight: CGFloat = CGFloat.zero
+  var minWidth: CGFloat = 320
+  var minHeight: CGFloat = 180
   var maxWidth: CGFloat = CGFloat.infinity
   var maxHeight: CGFloat = CGFloat.infinity
   var radius: CGFloat = 30
