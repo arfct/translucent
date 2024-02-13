@@ -47,6 +47,14 @@ layout: default
                 <div class="location">{{widget.href |  replace: "https://", "" }}</div>
             </a>
       {%- endfor -%}
+
+
+      <div class="explainer">
+        {{ content }}
+      </div>
+      <div class="ventilation" style="height:80px"></div>
+
+      
     </div>
 
     {% if site.paginate %}
@@ -71,9 +79,5 @@ layout: default
 
 
 
-  <div class="explainer">
-    {{ content }}
-  </div>
-  <div class="ventilation" style="height:80px"></div>
 
 </div>
