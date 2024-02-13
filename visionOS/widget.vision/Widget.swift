@@ -88,6 +88,8 @@ import SwiftData
           switch key {
           case "style":
             if (value == "transparent") { self.style = .transparent}
+          case "name":
+            self.name = String(value)
           case "bg":
             self.backHex = String(value)
           case "fg":

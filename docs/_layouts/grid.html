@@ -26,17 +26,23 @@ layout: default
       {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
       {%- for widget in posts -%}
     
-          <a class="button" href="widget-{{widget.href}}#wv?
-            {%- if widget.title %}&title={{ widget.title | url_encode }}{% endif %}
-            {%- if widget.style %}&style={{ widget.style }}{% endif %}
-            {%- if widget.size %}&size={{ widget.size }}{% endif %}
-            {%- if widget.minsize %}&minsize={{ widget.minsize }}{% endif %}
-            {%- if widget.maxsize %}&maxsize={{ widget.maxsize }}{% endif %}
-            {%- if widget.bg %}&bg={{ widget.bg }}{% endif %}
-            {%- if widget.ua %}&ua={{ widget.ua }}{% endif %}
+          <a class="button" href="widget-{{widget.href}}#wv?widget
+            {%- if widget.name %}&name={{ widget.name | url_encode }}{% endif -%}
+            {%- if widget.icon %}&icon={{ widget.icon }}{% endif -%}
+            {%- if widget.style %}&style={{ widget.style }}{% endif -%}
+            {%- if widget.size %}&size={{ widget.size }}{% endif -%}
+            {%- if widget.minsize %}&minsize={{ widget.minsize }}{% endif -%}
+            {%- if widget.maxsize %}&maxsize={{ widget.maxsize }}{% endif -%}
+            {%- if widget.bg %}&bg={{ widget.bg | url_encode}}{% endif -%}
+            {%- if widget.fg %}&fg={{ widget.fg | url_encode}}{% endif -%}
+            {%- if widget.remove %}&remove={{ widget.remove | url_encode}}{% endif -%}
+            {%- if widget.clear %}&clear={{ widget.clear | url_encode}}{% endif -%}
+            {%- if widget.ua %}&ua={{ widget.ua }}{% endif -%}
             ">
-              <span class="material-symbols-rounded">{{widget.icon}}</span>
-              <div class="title">{{widget.title}}</div>
+
+
+              <span class="material-symbols-rounded">{{widget.micon}}</span>
+              <div class="title">{{widget.name}}</div>
               <div class="location">{{widget.href |  replace: "https://", "" }}</div>
           </a>
       {%- endfor -%}
