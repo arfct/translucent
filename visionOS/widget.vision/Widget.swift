@@ -98,11 +98,11 @@ import SwiftData
             let size = sizeFor(dimensions: String(value))
             self.width = size.width
             self.height = size.height
-          case "mn", "min":
+          case "minsize", "min":
             let size = sizeFor(dimensions: String(value))
             self.minWidth = size.width
             self.minHeight = size.height
-          case "mx", "max":
+          case "maxsize", "max":
             let size = sizeFor(dimensions: String(value))
             self.maxWidth = size.width
             self.maxHeight = size.height
