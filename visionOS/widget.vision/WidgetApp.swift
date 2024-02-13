@@ -15,7 +15,7 @@ struct WidgetApp: App {
   @Environment(\.openWindow) var openWindow
   @Environment(\.scenePhase) private var scenePhase
   @AppStorage("windowWidth") var windowWidth = 540.0
-  @AppStorage("windowHeight") var windowHeight = 720.0
+  @AppStorage("windowHeight") var windowHeight = 680.0
   
   private var container: ModelContainer?
   init() {
@@ -69,7 +69,7 @@ struct WidgetApp: App {
           }
       }
       .frame(minWidth: 360, idealWidth: 540, maxWidth: .infinity,
-              minHeight: 400, idealHeight: 700, maxHeight: .infinity,
+              minHeight: 400, idealHeight: 680, maxHeight: .infinity,
               alignment: .center)
     }
     .modelContainer(container!)
