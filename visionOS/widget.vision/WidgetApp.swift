@@ -57,7 +57,7 @@ struct WidgetApp: App {
             for provider in providers {
 
               print("Provider \(provider)");
-              provider.loadObject(ofClass: URL.self) { url,arg  in
+              _ = provider.loadObject(ofClass: URL.self) { url,arg  in
 
                 DispatchQueue.main.async {
                   showWindowForURL(url)

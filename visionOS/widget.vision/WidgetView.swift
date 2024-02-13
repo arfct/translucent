@@ -22,7 +22,7 @@ struct WidgetView: View {
   @State var showOrnaments: Bool = true
   @State var ornamentTimer: Timer?
   @State var clampInitialSize: Bool = true
-  
+  @State var foreColor: Color = .white
   func toggleSettings() {
     withAnimation(.spring) {
       try? modelContext.save()
@@ -52,6 +52,11 @@ struct WidgetView: View {
               .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
                                      displayMode: (widget.style == .glass ) ? .always : .never)
               .cornerRadius(widget.style != .glass ? 20 : 10)
+              .gesture(TapGesture().onEnded({ gesture in
+                showOrnaments = true
+                scheduleHide()
+              
+              }))
           }
           WidgetSettingsView(widget:$widget, callback: toggleSettings)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -80,7 +85,7 @@ struct WidgetView: View {
             .labelStyle(.iconOnly)
             .hoverEffect()
             .opacity(showOrnaments && !flipped ? 1.0 : 0.0)
-            .animation(.spring)
+            .animation(.spring(), value: flipped)
             
           }
         }
@@ -99,12 +104,7 @@ struct WidgetView: View {
            minHeight: clampInitialSize ? widget.height : widget.minHeight, idealHeight: widget.height, maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
     
     .persistentSystemOverlays(showOrnaments ? .automatic : .hidden)
-    
-    .gesture(TapGesture().onEnded({ gesture in
-      showOrnaments = true
-      scheduleHide()
-    
-    }))
+  
     .task{
       DispatchQueue.main.asyncAfter(deadline: .now() + 1) { clampInitialSize = false }
       scheduleHide()

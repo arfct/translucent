@@ -63,8 +63,6 @@ import SwiftData
     location = location.replacingOccurrences(of: "widget-http", with: "http")
     location = location.replacingOccurrences(of: "https://widget.vision/http", with: "http")
     
-    print("LOCATION \(location) PARAM \(parameters) ")
-    
     self.init( name:url.host() ?? "NAME", location: location, options:parameters)
   }
   
@@ -120,18 +118,12 @@ import SwiftData
             if let value = Int(value) {
               self.viewportWidth = value
             }
-          case "ua", "agent":
-            if let value = Double(value) {
-              self.userAgent = String(value)
-            }
           case "remove":
             self.removeClasses = String(value)
           case "clear":
             self.clearClasses = String(value)
           case "icon":
             self.icon = String(value)
-          case "name":
-            self.name = String(value)
           default:
             break
           }
@@ -176,7 +168,7 @@ extension Widget {
       return originalLocation!
     }
     let encodedURL = location?.replacingOccurrences(of: "https://", with: "").addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-    let urlString = "https://widget.vision/\(encodedURL)"
+    let urlString = "https://widget.vision/\(String(describing: encodedURL))"
     return urlString
   }
     

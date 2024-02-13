@@ -31,6 +31,7 @@ struct WidgetSettingsView: View {
     
     ScrollView {
       HStack(spacing:20){
+
         Button {
           print("back")
           self.callback()
@@ -39,7 +40,7 @@ struct WidgetSettingsView: View {
         }
         .buttonBorderShape(.circle)
         .labelStyle(.iconOnly)
-        Spacer()
+        Spacer(minLength: 0)
         
         Button {
           openWindow(id:"main")
@@ -53,7 +54,7 @@ struct WidgetSettingsView: View {
         ShareLink(
           item: URL(string: widget.shareURL)!,
           preview: SharePreview(
-            "Widget \(widget.name ?? "")",
+            "Widget \(widget.name)",
             image: Image(systemName: "plus"))
           
         ) {
@@ -134,9 +135,11 @@ struct WidgetSettingsView: View {
             .keyboardType(.URL)
         }
         HStack(spacing:spacing) {
-          ColorPicker(selection: $backColor, supportsOpacity: true) {
+          ColorPicker(selection: $backColor) {
             Text("Style")
-          }
+  
+      
+        }
           .frame(maxWidth: leftColumn)
           .onChange(of: backColor) {
             if let hex = backColor.toHex() { widget.backHex = hex }

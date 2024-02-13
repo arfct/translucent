@@ -10,46 +10,49 @@ struct WebView: UIViewRepresentable {
   @Binding var widget: Widget
   var webView: WKWebView = WKWebView()
   var loadStatusChanged: ((WebView, Bool, Error?) -> Void)? = nil
-
+  
   
   func makeCoordinator() -> Coordinator {
     Coordinator(self)
   }
   
   func onLoadStatusChanged(perform: ((WebView, Bool, Error?) -> Void)?) -> some View {
-      var copy = self
-      copy.loadStatusChanged = perform
-      return copy
+    var copy = self
+    copy.loadStatusChanged = perform
+    return copy
   }
   
   class Coordinator: NSObject, WKNavigationDelegate {
-      let parent: WebView
+    let parent: WebView
     
-      init(_ parent: WebView) {
-          self.parent = parent
-      }
-
-      func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-          parent.loadStatusChanged?(parent, true, nil)
-      }
-
-      func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-          parent.title = webView.title ?? ""
-          parent.loadStatusChanged?(parent, false, nil)
-      }
-
-      func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-          parent.loadStatusChanged?(parent, false, error)
-      }
+    init(_ parent: WebView) {
+      self.parent = parent
+    }
+    
+    func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+      parent.loadStatusChanged?(parent, true, nil)
+    }
+    
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+      parent.title = webView.title ?? ""
+      parent.loadStatusChanged?(parent, false, nil)
+    }
+    
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+      parent.loadStatusChanged?(parent, false, error)
+    }
   }
   
   let contentController = ContentController()
   
   func overrideJS(widget:Widget) -> String{
-    let viewport = widget.viewportWidth
+    var viewport = "device-width"
+    if let width = widget.viewportWidth {
+      viewport = String(width)
+    }
     let zoom = widget.zoom
     var source =
-    """
+      """
       document.widget = window.webkit.messageHandlers.widget
       document.addEventListener('click', function(){
         window.webkit.messageHandlers.jsHandler.postMessage('click clack!');
@@ -69,30 +72,47 @@ struct WebView: UIViewRepresentable {
       fontTag.href = 'https://fonts.googleapis.com/css?family=\(widget.fontName.replacingOccurrences(of: " ", with: "+"))&display=swap';
       head.appendChild(fontTag);
       document.body.style.fontFamily = '\(widget.fontName), initial`;
+      
       """
+      
+      print("css \(source)")
     }
     
     if (true) { //widget.style != .opaque) {
       let clearClasses = widget.clearClasses ?? "body"
-//      if (clearClasses == nil && widget.style != .opaque) {
-//        clearClasses = "body"
-//      }
+      //      if (clearClasses == nil && widget.style != .opaque) {
+      //        clearClasses = "body"
+      //      }
       
       var css = ""
-       let selectors = clearClasses
-        css += "\(selectors) { background-color:transparent !important; background-image:none !important;} "
+      let selectors = clearClasses
+      css += "\(selectors) { background-color:transparent !important; background-image:none !important;} "
       
       
       if let selectors = widget.removeClasses {
         css += "\(selectors) { display:none !important; }"
       }
-  print("CSS \(css)")
+      
+      css += """
+      
+      :root {
+        --fore-color: \(widget.foreColor.description);
+        --back-color: \(widget.backColor.description);
+        --tint-color: \(widget.tintColor.description);
+      }
+      
+      body {
+      color: var(--fore-color, white);
+      }
+      
+      """
+      
       source += """
       var cssTag = document.createElement('style');
       cssTag.innerHTML = `\(css)`
       head.appendChild(cssTag);
       """
-     
+      
     }
     return source
   }
@@ -114,7 +134,7 @@ struct WebView: UIViewRepresentable {
   
   
   func updateUIView(_ webView: WKWebView, context: Context) {
-   
+    
     var userAgent: String?
     switch (widget.userAgent) {
     case "desktop":
@@ -124,21 +144,23 @@ struct WebView: UIViewRepresentable {
     default:
       userAgent = widget.userAgent
     }
-      
+    
     webView.customUserAgent = userAgent ?? "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
     
     
-//    if (widget.style != .opaque) {
-      webView.backgroundColor = UIColor.clear
-      webView.scrollView.backgroundColor = UIColor.clear
-//    }
+    //    if (widget.style != .opaque) {
+    webView.backgroundColor = UIColor.clear
+    webView.scrollView.backgroundColor = UIColor.clear
+    //    }
     
     if let url = URL(string:location!) {
       if (webView.url == nil) {
         let request = URLRequest(url: url)
         webView.load(request)
       } else {
-        saveSnapshot(webView)
+        DispatchQueue.main.async {
+          saveSnapshot(webView)
+        }
       }
     }
     
@@ -152,11 +174,11 @@ struct WebView: UIViewRepresentable {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
       print(message.name)
       print(message.body)
-//      openWindow(id: "SecondWindow")
+      //      openWindow(id: "SecondWindow")
     }
   }
   
-
+  
   func saveSnapshot(_ webView: WKWebView) {
     
     let image = webView.snapshot
@@ -167,12 +189,12 @@ struct WebView: UIViewRepresentable {
       
       if let data = image.pngData(){
         let filename = path.appendingPathComponent(widget.id.uuidString + ".png")
-//        print("data \(data) \(filename)")
+        //        print("data \(data) \(filename)")
         try? data.write(to: filename)
       }
     }
   }
-
+  
   
   
   
@@ -180,11 +202,11 @@ struct WebView: UIViewRepresentable {
 
 
 extension UIView {
-
-    var snapshot: UIImage {
-        return UIGraphicsImageRenderer(size: bounds.size).image { _ in
-            drawHierarchy(in: bounds, afterScreenUpdates: true)
-        }
+  
+  var snapshot: UIImage {
+    return UIGraphicsImageRenderer(size: bounds.size).image { _ in
+      drawHierarchy(in: bounds, afterScreenUpdates: true)
     }
-
+  }
+  
 }
