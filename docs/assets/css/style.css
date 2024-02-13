@@ -32,25 +32,26 @@ a.button {
   margin:0;
   box-sizing:border-box;
   background: hsla(var(--hue), 20%, 50%, 0.2);
-
+  
   backdrop-filter: blur(40px);
   border-radius: 30px;
-  }
+  position:relative;
+}
 
 
-  a.button::before {
-content: "";
-position: absolute;
-inset: 0;
-border-radius: 30px; 
-padding: 1px; 
-background: conic-gradient(from -60deg, #ffffff44, #ffffff11, #ffffff33, #ffffff11, #ffffff44);
--webkit-mask: 
-linear-gradient(#fff 0 0) content-box, 
-linear-gradient(#fff 0 0);
--webkit-mask-composite: xor;
-mask-composite: exclude; 
-pointer-events: none;
+a.button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 30px; 
+  padding: 1px; 
+  background: conic-gradient(from -60deg, #ffffff44, #ffffff11, #ffffff33, #ffffff11, #ffffff44);
+  -webkit-mask: 
+  linear-gradient(#fff 0 0) content-box, 
+  linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude; 
+  pointer-events: none;
 }
 .spacer {
   box-sizing:border-box;
@@ -85,13 +86,13 @@ body {
   gap:8px;
   align-items:center;
   justify-content:center;
-width:100%;
-max-width:670px;
-margin:auto;
+  width:100%;
+  max-width:670px;
+  margin:auto;
 }
 .spacer {
   opacity:0.0;
-    height:1px;
+  height:1px;
 }
 div.title {
   white-space: nowrap;
@@ -103,20 +104,20 @@ div.location {
   color: hsla(var(--hue), 90%, 70%, 0.5);
   overflow:hidden;
   text-overflow:ellipsis;
-
+  
 }
 
 svg.title {
-max-width:400px;
-display:block;
-opacity:0.2;
-margin:auto;
-margin-bottom:4vmin;
-margin-top:4vmin;
+  max-width:400px;
+  display:block;
+  opacity:0.2;
+  margin:auto;
+  margin-bottom:4vmin;
+  margin-top:4vmin;
 }   
 svg.title path{
-
-fill:hsl(var(--hue), 50%, 70%);
+  
+  fill:hsl(var(--hue), 50%, 70%);
 }
 .explainer {
   color:white;
@@ -124,19 +125,19 @@ fill:hsl(var(--hue), 50%, 70%);
   padding:24px;
   box-sizing:border-box;
   background: rgb(255 255 255 / 5%);
-/*           box-shadow: inset 1px 1.5px 2px #fff1, inset 1px -0.5px 2px #ffffff1d,
-    0 0.6021873017743928px 0.6021873017743928px -1.25px #0000001e,
-    0 2.288533303243457px 2.288533303243457px -2.5px #00000019,
-    0 10px 10px -3.75px #00000010; */
+  /*           box-shadow: inset 1px 1.5px 2px #fff1, inset 1px -0.5px 2px #ffffff1d,
+  0 0.6021873017743928px 0.6021873017743928px -1.25px #0000001e,
+  0 2.288533303243457px 2.288533303243457px -2.5px #00000019,
+  0 10px 10px -3.75px #00000010; */
   backdrop-filter: blur(40px);
   border-radius: 30px;
   opacity:0.8
 }
 
 .ventilation {
-background-image: radial-gradient(black 2px, transparent 0);
-background-size: 8px 8px;
-background-position: 0px 0px;
+  background-image: radial-gradient(black 2px, transparent 0);
+  background-size: 8px 8px;
+  background-position: 0px 0px;
   width:672px;
   height:160px;
   margin:auto;

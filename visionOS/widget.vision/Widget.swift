@@ -29,7 +29,7 @@ import SwiftData
   var lastOpened: Date?
   var options: String = ""
   var userAgent: String = "mobile"
-  var icon: String = "square.on.square"
+  var icon: String = "globe"
   var clearClasses: String?
   var removeClasses: String?
 
@@ -84,7 +84,7 @@ import SwiftData
       }
       options.split(separator: "&").forEach({ param in
         let kv = param.split(separator:"=")
-        if let key = kv.first?.removingPercentEncoding, let value = kv.last?.removingPercentEncoding {
+        if let key = kv.first?.removingPercentEncoding, let value = kv.last?.removingPercentEncoding?.replacingOccurrences(of: "+", with: " ") {
           switch key {
           case "style":
             if (value == "transparent") { self.style = .transparent}

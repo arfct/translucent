@@ -13,14 +13,22 @@ struct WidgetListItem: View {
     } label: {
       VStack(alignment: .center) {
         Image(systemName: widget.icon)
+          .resizable()
+          .aspectRatio(contentMode: .fit)
+          .frame(width: 40, height: 40)
           .padding(.bottom, 10)
+        
+          .font(Font.title.weight(.light))
+        
+        
         Text(widget.displayName)
           .font(.headline)
           .foregroundColor(widget.foreColor)
           .lineLimit(1)
       }
       .frame(maxWidth: .infinity)
-      .padding()
+      .padding(.horizontal, 0)
+      .padding(.vertical , 20)
     }
     .buttonStyle(.borderless)
     .buttonBorderShape(.roundedRectangle)

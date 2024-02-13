@@ -38,13 +38,13 @@ layout: default
             {%- if widget.remove %}&remove={{ widget.remove | url_encode}}{% endif -%}
             {%- if widget.clear %}&clear={{ widget.clear | url_encode}}{% endif -%}
             {%- if widget.ua %}&ua={{ widget.ua }}{% endif -%}
-            ">
+              ">
 
 
-              <span class="material-symbols-rounded">{{widget.micon}}</span>
-              <div class="title">{{widget.name}}</div>
-              <div class="location">{{widget.href |  replace: "https://", "" }}</div>
-          </a>
+                <span class="material-symbols-rounded">{{widget.micon}}</span>
+                <div class="title">{{widget.name}}</div>
+                <div class="location">{{widget.href |  replace: "https://", "" }}</div>
+            </a>
       {%- endfor -%}
     </div>
 
