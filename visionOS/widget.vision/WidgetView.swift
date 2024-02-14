@@ -17,8 +17,10 @@ struct WidgetView: View {
   @Environment(\.modelContext) private var modelContext
   
   @State var widget: Widget
+  var app: WidgetApp?
+
+
   @State private var flipped: Bool = false
-  
   @State var isLoading: Bool = true
   @State var showOrnaments: Bool = true
   @State var ornamentTimer: Timer?
@@ -80,12 +82,10 @@ struct WidgetView: View {
                
             }
             .simultaneousGesture(LongPressGesture().onEnded { _ in
-              print("Long press")
-                openWindow(id: "widgetSetting", value: widget.persistentModelID)
-              
+              openWindow(id:"main")
+              app?.openWindow(id: "widgetSettings", value: widget.persistentModelID)
             })
             .simultaneousGesture(TapGesture().onEnded {
-                print("Boring regular tap")
               toggleSettings()
             })
             .buttonBorderShape(.circle)
@@ -101,8 +101,6 @@ struct WidgetView: View {
         }
       }
       .rotation3DEffect(.degrees(flipped ? -180.0 : 0.0), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
-      
-
       .onChange(of: geometry.size) {
         widget.width = geometry.size.width
         widget.height = geometry.size.height

@@ -13,6 +13,7 @@ import UniformTypeIdentifiers
 @main
 struct WidgetApp: App {
   @Environment(\.openWindow) var openWindow
+  @Environment(\.dismissWindow) var dismissWindow
   @Environment(\.scenePhase) private var scenePhase
   @AppStorage("windowWidth") var windowWidth = 540.0
   @AppStorage("windowHeight") var windowHeight = 680.0
@@ -44,7 +45,10 @@ struct WidgetApp: App {
     WindowGroup(id: "main") {
       GeometryReader { geometry in
         WidgetPickerView(app: self)
-          .onOpenURL { showWindowForURL($0) }
+          .onOpenURL { 
+            showWindowForURL($0)
+            dismissWindow(id: "main")
+          }
           .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
             showWindowForURL($0.webpageURL)
           }
@@ -78,7 +82,7 @@ struct WidgetApp: App {
     
     WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in
       if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
-        WidgetView(widget:widget)
+        WidgetView(widget:widget, app:self)
           .onOpenURL { showWindowForURL($0) }
           .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
             showWindowForURL($0.webpageURL)
@@ -99,7 +103,13 @@ struct WidgetApp: App {
       if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
         WidgetSettingsView(widget:widget, callback: {
           print("done")
-        })
+          dismissWindow(id: "widgetSettings")
+          
+        }).task{
+          print("Open Settings for \(widget.name)")
+        }
+      } else {
+        
       }
     }
     .modelContainer(container!)

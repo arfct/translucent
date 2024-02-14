@@ -26,265 +26,247 @@ struct WidgetSettingsView: View {
   }
   
   let spacing = 20.0
-  let leftColumn = 120.0
+  let labelWidth = 72.0
+  let columns = [
+    GridItem(.adaptive(minimum: 240, maximum: 480))
+  ]
+  
   
   var body: some View {
-    
-    ScrollView {
-      HStack(spacing:20){
-
-        Button {
-          print("back")
-          self.callback()
-        } label: {
-          Label("Done", systemImage: "arrow.left")
-        }
-        .buttonBorderShape(.circle)
-        .labelStyle(.iconOnly)
-        Spacer(minLength: 0)
+    GeometryReader { g in
+      ScrollView {
         
-        Button {
-          openWindow(id:"main")
-        } label: {
-          Label("List", systemImage: "rectangle.grid.2x2")
-        }
-        .labelStyle(.iconOnly)
-        .buttonBorderShape(.circle)
-        
-        .buttonStyle(.borderless)
-        ShareLink(
-          item: URL(string: widget.shareURL)!,
-          preview: SharePreview(
-            "Widget \(widget.name)",
-            image: Image(systemName: "plus"))
+        // MARK: Toolbar
+        HStack(spacing:20){
           
-        ) {
-          Image(systemName: "square.and.arrow.up")
-        }            .buttonBorderShape(.circle)
-        
-          .buttonStyle(.borderless)
-        
-        Menu {
-          Button("User Agent", action: {
-            
-          }).disabled(true)
-          Picker("User Agent", selection: $widget.userAgent) {
-            Text("Mobile").tag("mobile")
-            Text("Desktop").tag("desktop")
-            //              Text("Custom").tag("custom")
+          Button { self.callback() } label: {
+            Label("Done", systemImage: "chevron.left")
           }
+          .buttonBorderShape(.circle)
+          .labelStyle(.iconOnly)
           
-          Divider()
-          Button("Show All Options", action: {
-            showAllOptions = true
-          })
+          Spacer(minLength: 0)
           
-        } label: {
-          Label("Location", systemImage: "ellipsis")
-        }.labelStyle(.iconOnly)
+          Button { openWindow(id:"main") } label: {
+            Label("List", systemImage: "rectangle.grid.2x2")
+          }
+          .labelStyle(.iconOnly)
+          .buttonBorderShape(.circle)
           .buttonStyle(.borderless)
-      }.padding()
-      VStack(alignment:.leading, spacing: 20) { // Settings
-        
-        
-        HStack(spacing:spacing) {
-          HStack {
-            Label("Location", systemImage: "ellipsis").labelStyle(.titleOnly)
-            
-            
-          }.frame(maxWidth: leftColumn, alignment: .leading)
           
-          TextField("location", text: $locationTempString)
-            .textFieldStyle(.roundedBorder)
-            .autocapitalization(.none)
-            .disableAutocorrection(true)
-            .keyboardType(.URL)
-            .onAppear {
-              locationTempString = widget.location!
-              backColor = widget.backColor
-              foreColor = widget.foreColor
-              tintColor = widget.tintColor
-            }
-            .onSubmit {
-              print(locationTempString)
-              if let url = clean(url:locationTempString) {
-                widget.location = url
-                locationTempString = url
-                callback();
-              }
-            }
+          ShareLink(
+            item: URL(string: widget.shareURL)!,
+            preview: SharePreview(
+              "Widget \(widget.name)",
+              image: Image(systemName: "plus"))
+          ) {
+            Image(systemName: "square.and.arrow.up")
+          }
+          .buttonBorderShape(.circle)
+          .buttonStyle(.borderless)
           
-            .focused($isTextFieldFocused)
-            .onChange(of: isTextFieldFocused) {
-              if isTextFieldFocused {
-                DispatchQueue.main.async {
-                  UIApplication.shared.sendAction(#selector(UIResponder.selectAll(_:)), to: nil, from: nil, for: nil)
+          // MARK: Menu
+          Menu {
+            Button("User Agent", action: {}).disabled(true)
+            Picker("User Agent", selection: $widget.userAgent) {
+              Text("Mobile").tag("mobile")
+              Text("Desktop").tag("desktop")
+            }
+            Divider()
+            Button("Show All Options", action: {
+              showAllOptions = true
+            })
+          } label: {
+            Label("Location", systemImage: "ellipsis")
+          }.labelStyle(.iconOnly)
+            .buttonStyle(.borderless)
+        }.padding()
+        VStack(alignment:.leading, spacing: 20) { // Settings
+          
+          
+          
+          // MARK: Style
+          LazyVGrid(columns: columns, spacing: 20) {
+            HStack() {
+              Text("Style").frame(maxWidth: labelWidth, alignment: .leading)
+              Picker("Style", selection: $widget.style) {
+                ForEach(ViewStyle.allCases, id: \.self) { value in
+                  HStack {
+                    Text(value.localizedName)
+                      .tag(value)
+                      .frame(maxWidth: .infinity, alignment:.leading)
+                    Image(systemName: value.iconName)
+                  }
                 }
               }
-            }
-          
-        }
-        
-        
-        HStack(spacing:spacing) {
-          Label("Title", systemImage: "link")
-            .labelStyle(.titleOnly)
-            .frame(maxWidth: leftColumn, alignment: .leading)
-          
-          TextField(widget.title ?? "", text: $widget.name)
-            .textFieldStyle(.roundedBorder)
-          
-            .autocapitalization(.none)
-            .disableAutocorrection(true)
-            .keyboardType(.URL)
-        }
-        HStack(spacing:spacing) {
-          ColorPicker(selection: $backColor) {
-            Text("Style")
-  
-      
-        }
-          .frame(maxWidth: leftColumn)
-          .onChange(of: backColor) {
-            if let hex = backColor.toHex() { widget.backHex = hex }
-          }
-          Picker("Select an option", selection: $widget.style) {
-            ForEach(ViewStyle.allCases, id: \.self) { value in
-              HStack {
-                Text(value.localizedName)
-                  .tag(value)
-                  .frame(maxWidth: .infinity, alignment:.leading)
-//                Image(systemName: value.iconName)
+              .background(.ultraThickMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+            }.frame(maxWidth:.infinity, alignment:.leading)
+            HStack(spacing:30) {
+              Spacer()
+              ColorPicker(selection: $backColor) {
+                Image(systemName: "square.fill")
+              }.frame(maxWidth:64).onChange(of: backColor) {
+                if let hex = backColor.toHex() { widget.backHex = hex }
               }
-            }
+              ColorPicker(selection: $foreColor, supportsOpacity: true) {
+                Image(systemName: "textformat.size.smaller")
+              }.frame(maxWidth:64).onChange(of: foreColor) {
+                if let hex = foreColor.toHex() { widget.foreHex = hex }
+              }
+              ColorPicker(selection: $tintColor, supportsOpacity: true) {
+                Image(systemName: "a.square")
+              }.frame(maxWidth:64).onChange(of: tintColor) {
+                if let hex = tintColor.toHex() { widget.tintHex = hex }
+              }
+            }.frame(maxWidth:.infinity)
           }
-          .background(.ultraThickMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
           
           
+          // MARK: Location
+          HStack(spacing:spacing) {
+            HStack {
+              Label("Location", systemImage: "ellipsis").labelStyle(.titleOnly)
+              
+              
+            }.frame(maxWidth: labelWidth, alignment: .leading)
+            
+            TextField("location", text: $locationTempString)
+              .textFieldStyle(.roundedBorder)
+              .autocapitalization(.none)
+              .disableAutocorrection(true)
+              .keyboardType(.URL)
+              .onAppear {
+                locationTempString = widget.location!
+                backColor = widget.backColor
+                foreColor = widget.foreColor
+                tintColor = widget.tintColor
+              }
+              .onSubmit {
+                print(locationTempString)
+                if let url = clean(url:locationTempString) {
+                  widget.location = url
+                  locationTempString = url
+                  callback();
+                }
+              }
+            
+              .focused($isTextFieldFocused)
+              .onChange(of: isTextFieldFocused) {
+                if isTextFieldFocused {
+                  DispatchQueue.main.async {
+                    UIApplication.shared.sendAction(#selector(UIResponder.selectAll(_:)), to: nil, from: nil, for: nil)
+                  }
+                }
+              }
+            
+          }
           
-        }
-        
-        // Foreground
-        HStack(spacing:spacing) {
+          // MARK: Name
+          HStack(spacing:spacing) {
+            Label("Title", systemImage: "link")
+              .labelStyle(.titleOnly)
+              .frame(maxWidth: labelWidth, alignment: .leading)
+            
+            TextField(widget.title ?? "", text: $widget.name)
+              .textFieldStyle(.roundedBorder)
+            
+              .autocapitalization(.none)
+              .disableAutocorrection(true)
+              .keyboardType(.URL)
+          }
           
-          ColorPicker(selection: $foreColor, supportsOpacity: true) {
+          
+          // MARK: Font
+          HStack(spacing:spacing) {
             Text("Font")
+              .frame(maxWidth: labelWidth, alignment:.leading)
+            
+            
+            TextField("default font", text:$widget.fontName)
+              .textFieldStyle(.roundedBorder)
+              .autocapitalization(.none)
+              .disableAutocorrection(true)
+              .frame(maxWidth: .infinity)
+            //          Picker("Select an option", selection: $widgetModel.font) {
+            //            ForEach(ViewStyle.allCases, id: \.self) { value in
+            //              Text("System font")
+            //            }
+            //          }
           }
           
-          .frame(maxWidth: leftColumn)
-          .onChange(of: foreColor) {
-            if let hex = foreColor.toHex() {
-              print("changed \(hex)")
-              widget.foreHex = hex
+          if (showAllOptions) {
+            HStack(spacing:spacing) {
+              
+              TextField("viewport", text:$widget.userAgent)
+                .textFieldStyle(.roundedBorder)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                .frame(maxWidth: .infinity)
             }
-          }
-          
-          TextField("default font", text:$widget.fontName)
-            .textFieldStyle(.roundedBorder)
-            .autocapitalization(.none)
-            .disableAutocorrection(true)
-            .frame(maxWidth: .infinity)
-          //          Picker("Select an option", selection: $widgetModel.font) {
-          //            ForEach(ViewStyle.allCases, id: \.self) { value in
-          //              Text("System font")
-          //            }
-          //          }
-        }
-        
-        if (showAllOptions) {
-          HStack(spacing:spacing) {
-            ColorPicker(selection: $tintColor, supportsOpacity: true) {
-              Text("Tint")
+            
+            // MARK: Icon
+            HStack(spacing:spacing) {
+              Label("Icon", systemImage: "link")
+                .labelStyle(.titleOnly)
+                .frame(maxWidth: labelWidth, alignment: .leading)
+              TextField("icon name", text:$widget.icon)
+                .textFieldStyle(.roundedBorder)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                .frame(maxWidth: .infinity)
+              TextField("radius", value:$widget.radius, formatter: NumberFormatter())
+                .textFieldStyle(.roundedBorder)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: leftColumn)
-            .onChange(of: tintColor) {
-              if let hex = tintColor.toHex() {
-                print("changed \(hex)")
-                widget.tintHex = hex
-              }
+            
+            // MARK: Viewport
+            HStack(spacing:spacing) {
+              Label("Zoom", systemImage: "link")
+                .labelStyle(.titleOnly)
+                .frame(maxWidth: labelWidth, alignment: .leading)
+              TextField("zoom", value:$widget.zoom, formatter: NumberFormatter())
+                .textFieldStyle(.roundedBorder)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                .frame(maxWidth: .infinity)
+              
+              TextField("viewport", value:$widget.viewportWidth, formatter: NumberFormatter())
+                .textFieldStyle(.roundedBorder)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                .frame(maxWidth: .infinity)
             }
-            TextField("viewport", text:$widget.userAgent)
-              .textFieldStyle(.roundedBorder)
-              .autocapitalization(.none)
-              .disableAutocorrection(true)
-              .frame(maxWidth: .infinity)
+            
+            // MARK: Overrides
+            //          HStack(spacing:spacing) {
+            //            Label("Hide", systemImage: "link")
+            //              .labelStyle(.titleOnly)
+            //              .frame(maxWidth: leftColumn, alignment: .leading)
+            //            TextField("clear classes", text:$widget.clearClasses ?? Binding.constant("my string"))
+            //              .textFieldStyle(.roundedBorder)
+            //              .autocapitalization(.none)
+            //              .disableAutocorrection(true)
+            //              .frame(maxWidth: .infinity)
+            //            TextField("remove classes", text:$widget.removeClasses)
+            //              .textFieldStyle(.roundedBorder)
+            //              .autocapitalization(.none)
+            //              .disableAutocorrection(true)
+            //              .frame(maxWidth: .infinity)
+            //          }
+            
           }
           
-          
-          HStack(spacing:spacing) {
-            Label("Icon", systemImage: "link")
-              .labelStyle(.titleOnly)
-              .frame(maxWidth: leftColumn, alignment: .leading)
-            TextField("icon name", text:$widget.icon)
-              .textFieldStyle(.roundedBorder)
-              .autocapitalization(.none)
-              .disableAutocorrection(true)
-              .frame(maxWidth: .infinity)
-            TextField("radius", value:$widget.radius, formatter: NumberFormatter())
-              .textFieldStyle(.roundedBorder)
-              .autocapitalization(.none)
-              .disableAutocorrection(true)
-              .frame(maxWidth: .infinity)
-          }
-          
-          
-          HStack(spacing:spacing) {
-            Label("Zoom", systemImage: "link")
-              .labelStyle(.titleOnly)
-              .frame(maxWidth: leftColumn, alignment: .leading)
-            TextField("zoom", value:$widget.zoom, formatter: NumberFormatter())
-              .textFieldStyle(.roundedBorder)
-              .autocapitalization(.none)
-              .disableAutocorrection(true)
-              .frame(maxWidth: .infinity)
-
-            TextField("viewport", value:$widget.viewportWidth, formatter: NumberFormatter())
-              .textFieldStyle(.roundedBorder)
-              .autocapitalization(.none)
-              .disableAutocorrection(true)
-              .frame(maxWidth: .infinity)
-          }
-          
-//          HStack(spacing:spacing) {
-//            Label("Hide", systemImage: "link")
-//              .labelStyle(.titleOnly)
-//              .frame(maxWidth: leftColumn, alignment: .leading)
-//            TextField("clear classes", text:$widget.clearClasses ?? Binding.constant("my string"))
-//              .textFieldStyle(.roundedBorder)
-//              .autocapitalization(.none)
-//              .disableAutocorrection(true)
-//              .frame(maxWidth: .infinity)
-//            TextField("remove classes", text:$widget.removeClasses)
-//              .textFieldStyle(.roundedBorder)
-//              .autocapitalization(.none)
-//              .disableAutocorrection(true)
-//              .frame(maxWidth: .infinity)
-//          }
-
-          
-          
-        }
-        Spacer()
-        
-        
-        
-        
-        
-        
-        
-        
-      }.padding(.horizontal, 20)
-        .padding(.top, 20)
-        .frame(maxWidth: 640, maxHeight: .infinity, alignment: .center)
-      
-      
-      
-      
-      
+        }.padding(.horizontal, 20)
+          .padding(.top, 20)
+          .frame(maxWidth: 640, maxHeight: .infinity, alignment: .center)
+      }
+      .padding(min(g.size.width/32, 20)) // Collapse small size padding
     }
   }
 }
 
-//#Preview {
-//  WidgetSettingsView(selectedViewStyle: <#Binding<String>#>, locString: <#Binding<String>#>, callback: <#() -> Void#>)
-//}
+#Preview(windowStyle: .automatic) {
+  WidgetSettingsView(widget:Widget.preview, callback: {})
+}

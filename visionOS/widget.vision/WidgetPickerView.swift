@@ -25,6 +25,9 @@ struct WidgetPickerView: View {
     dismissWindow(id: "main")
 
   }
+  func updateHue() {
+    hue = fmod(floor(Date().timeIntervalSince1970), 360) / 360.0
+  }
   
   var body: some View {
     NavigationStack {
@@ -104,12 +107,10 @@ struct WidgetPickerView: View {
         Color(hue: fmod(hue + 1.0/6.0, 1.0), saturation: 0.2, brightness: 0.1).opacity(0.7)
       ]), startPoint: .topLeading, endPoint: .bottomTrailing)
       )
-    .task {
+    .onAppear() {
+      updateHue()
       Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-        
-        let currentTime = floor(Date().timeIntervalSince1970)
-        let hueDeg = fmod(currentTime, 360)
-        hue = hueDeg / 360.0
+        updateHue()
       }
     }
   }
