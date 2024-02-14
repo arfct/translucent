@@ -93,7 +93,20 @@ struct WidgetApp: App {
     .windowStyle(.plain)
     .windowResizability(.contentSize)
     .defaultSize(width: 360, height: 360)
+    
+    
+    WindowGroup("Settings", id: "widgetSettings", for: PersistentIdentifier.self) { $id in
+      if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
+        WidgetSettingsView(widget:widget, callback: {
+          print("done")
+        })
+      }
+    }
+    .modelContainer(container!)
+    .windowStyle(.plain)
+    .windowResizability(.contentSize)
+    .defaultSize(width: 360, height: 360)
   }
-
+  
 
 }

@@ -18,6 +18,7 @@ struct WidgetView: View {
   
   @State var widget: Widget
   @State private var flipped: Bool = false
+  
   @State var isLoading: Bool = true
   @State var showOrnaments: Bool = true
   @State var ornamentTimer: Timer?
@@ -58,9 +59,9 @@ struct WidgetView: View {
               
               }))
           }
-          WidgetSettingsView(widget:$widget, callback: toggleSettings)
+          WidgetSettingsView(widget:widget, callback: toggleSettings)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding()
+       
             .background(widget.backColor.opacity(0.2))
             .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius))
             .offset(z: flipped ? 1 : 0)
@@ -76,8 +77,17 @@ struct WidgetView: View {
                 .scaleEffect(1.0, anchor: .center)
             }
             Button("•", systemImage: flipped ? "arrow.backward" : "info") {
-              toggleSettings()
+               
             }
+            .simultaneousGesture(LongPressGesture().onEnded { _ in
+              print("Long press")
+                openWindow(id: "widgetSetting", value: widget.persistentModelID)
+              
+            })
+            .simultaneousGesture(TapGesture().onEnded {
+                print("Boring regular tap")
+              toggleSettings()
+            })
             .buttonBorderShape(.circle)
             .glassBackgroundEffect()
             .transition(.move(edge: .top))

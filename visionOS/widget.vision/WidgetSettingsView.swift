@@ -3,12 +3,13 @@ import SwiftUI
 struct WidgetSettingsView: View {
   @Environment(\.openWindow) private var openWindow
   
-  @Binding var widget: Widget
+  @State var widget: Widget
   var callback: () -> Void
   
   @State var foreColor: Color = .white
   @State var backColor: Color = .clear
   @State var tintColor: Color = .blue
+  @State var showAllOptions: Bool = false
   
   @FocusState private var isTextFieldFocused: Bool
   @State private var locationTempString: String = "about:blank"
@@ -64,16 +65,19 @@ struct WidgetSettingsView: View {
           .buttonStyle(.borderless)
         
         Menu {
-          Button("Use Current", action: {
-            // Handle Option 1 tap
+          Button("User Agent", action: {
+            
           }).disabled(true)
-          Divider()
           Picker("User Agent", selection: $widget.userAgent) {
             Text("Mobile").tag("mobile")
             Text("Desktop").tag("desktop")
             //              Text("Custom").tag("custom")
           }
           
+          Divider()
+          Button("Show All Options", action: {
+            showAllOptions = true
+          })
           
         } label: {
           Label("Location", systemImage: "ellipsis")
@@ -187,13 +191,91 @@ struct WidgetSettingsView: View {
           //          }
         }
         
+        if (showAllOptions) {
+          HStack(spacing:spacing) {
+            ColorPicker(selection: $tintColor, supportsOpacity: true) {
+              Text("Tint")
+            }
+            .frame(maxWidth: leftColumn)
+            .onChange(of: tintColor) {
+              if let hex = tintColor.toHex() {
+                print("changed \(hex)")
+                widget.tintHex = hex
+              }
+            }
+            TextField("viewport", text:$widget.userAgent)
+              .textFieldStyle(.roundedBorder)
+              .autocapitalization(.none)
+              .disableAutocorrection(true)
+              .frame(maxWidth: .infinity)
+          }
+          
+          
+          HStack(spacing:spacing) {
+            Label("Icon", systemImage: "link")
+              .labelStyle(.titleOnly)
+              .frame(maxWidth: leftColumn, alignment: .leading)
+            TextField("icon name", text:$widget.icon)
+              .textFieldStyle(.roundedBorder)
+              .autocapitalization(.none)
+              .disableAutocorrection(true)
+              .frame(maxWidth: .infinity)
+            TextField("radius", value:$widget.radius, formatter: NumberFormatter())
+              .textFieldStyle(.roundedBorder)
+              .autocapitalization(.none)
+              .disableAutocorrection(true)
+              .frame(maxWidth: .infinity)
+          }
+          
+          
+          HStack(spacing:spacing) {
+            Label("Zoom", systemImage: "link")
+              .labelStyle(.titleOnly)
+              .frame(maxWidth: leftColumn, alignment: .leading)
+            TextField("zoom", value:$widget.zoom, formatter: NumberFormatter())
+              .textFieldStyle(.roundedBorder)
+              .autocapitalization(.none)
+              .disableAutocorrection(true)
+              .frame(maxWidth: .infinity)
+
+            TextField("viewport", value:$widget.viewportWidth, formatter: NumberFormatter())
+              .textFieldStyle(.roundedBorder)
+              .autocapitalization(.none)
+              .disableAutocorrection(true)
+              .frame(maxWidth: .infinity)
+          }
+          
+//          HStack(spacing:spacing) {
+//            Label("Hide", systemImage: "link")
+//              .labelStyle(.titleOnly)
+//              .frame(maxWidth: leftColumn, alignment: .leading)
+//            TextField("clear classes", text:$widget.clearClasses ?? Binding.constant("my string"))
+//              .textFieldStyle(.roundedBorder)
+//              .autocapitalization(.none)
+//              .disableAutocorrection(true)
+//              .frame(maxWidth: .infinity)
+//            TextField("remove classes", text:$widget.removeClasses)
+//              .textFieldStyle(.roundedBorder)
+//              .autocapitalization(.none)
+//              .disableAutocorrection(true)
+//              .frame(maxWidth: .infinity)
+//          }
+
+          
+          
+        }
         Spacer()
+        
+        
+        
+        
+        
+        
+        
         
       }.padding(.horizontal, 20)
         .padding(.top, 20)
         .frame(maxWidth: 640, maxHeight: .infinity, alignment: .center)
-      
-      //          .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 20))
       
       
       
