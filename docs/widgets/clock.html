@@ -3,21 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,700&display=swap" rel="stylesheet">
   <title>Digital Clock</title>
   <style>
     body {
-      background-color:#88888888;
+      margin:0;
+      padding:0;
+
+      background-color:var(--transparent, #88888888);
       color:var(--fore-color, white);
-      font-family:-apple-system, BlinkMacSystemFont, sans-serif;
       text-align:center;
-      font-weight:500;
-      font-size:50vmin;
       display:flex;
       justify-content:center;
       align-items:center;
+
+      font-family: var(--font-family, -apple-system, BlinkMacSystemFont, sans-serif);
+      font-size:min(100vh, 33vw);
+      line-height:100vh;
       min-height:100vh;
-      margin:0;
-      padding:0;
+      font-weight:600;
     }
   </style>
 </head>
@@ -34,8 +40,14 @@
       .replace(/ AM/, 'ᴀᴍ').replace(/ PM/, 'ᴘᴍ')
       document.getElementById('clock').textContent = localizedTime;
     }
+    
+    setTimeout(() => {
+      setInterval(updateClock, 60 * 1000);
+      updateClock();
+    }, 60 - new Date().getSeconds() * 1000);
+    updateClock();
 
-    setInterval(updateClock, 1000);
+    
   </script>
 </body>
 </html>

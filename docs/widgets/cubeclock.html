@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,700&display=swap" rel="stylesheet">
+  <title>Digital Clock</title>
+  <style>
+    body {
+      margin:0;
+      padding:0;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-family: var(--font-family, "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif);
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    #clock {
+      display:flex;
+      gap:1vw;
+      font-size:12vw;
+    }
+    #clock > div {
+      background-color:var(--fore-color, #f1f1f1);
+      color:var(--theme-color, #DB4437);
+      line-height:19vw;
+      width:19vw; height: 19vw;
+      display:block;
+
+      border-radius: 0.1em;
+    }
+    #clock > #m1 {
+      background-color:var(--theme-color, #DB4437);
+      color:var(--fore-color, #f1f1f1);
+    }
+  </style>
+</head>
+<body>
+  <center>
+  <div id="clock">
+    <div id="h1"></div>
+    <div id="h2"></div>
+    <div id="h3"></div>
+    <div id="h4"></div>
+    <div id="m1"></div>
+  </div>
+  </center>
+  <script>
+    function updateClock() {
+      var now = new Date();
+      var options = { hour: 'numeric', minute: 'numeric' };
+      var localizedTime = now.toLocaleTimeString(undefined, options)
+      .replace(/ AM/, 'a').replace(/ PM/, 'p').replace(":", "");
+
+      // Add leading zero to localizedTime if necessary
+      if (localizedTime.length === 4) {
+        localizedTime = '0' + localizedTime;
+      }
+
+      var timeDivs = document.querySelectorAll('#clock > div');
+      for (var i = 0; i < localizedTime.length; i++) {
+        timeDivs[i].textContent = localizedTime[i];
+      }
+    }
+    setTimeout(() => {
+      setInterval(updateClock, 60 * 1000);
+      updateClock();
+    }, 60 - new Date().getSeconds() * 1000);
+    updateClock();
+
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
