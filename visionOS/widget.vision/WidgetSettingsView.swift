@@ -28,7 +28,7 @@ struct WidgetSettingsView: View {
   let spacing = 20.0
   let labelWidth = 72.0
   let columns = [
-    GridItem(.adaptive(minimum: 240, maximum: 480))
+    GridItem(.adaptive(minimum: 240, maximum: 480), spacing: 20)
   ]
   
   
@@ -92,7 +92,7 @@ struct WidgetSettingsView: View {
               Picker("Style", selection: $widget.style) {
                 ForEach(ViewStyle.allCases, id: \.self) { value in
                   HStack {
-                    Text(value.localizedName)
+                    Text(value.displayName)
                       .tag(value)
                       .frame(maxWidth: .infinity, alignment:.leading)
                     Image(systemName: value.iconName)
@@ -125,7 +125,7 @@ struct WidgetSettingsView: View {
           // MARK: Location
           HStack(spacing:spacing) {
             HStack {
-              Label("Location", systemImage: "ellipsis").labelStyle(.titleOnly)
+              Label("URL", systemImage: "ellipsis").labelStyle(.titleOnly)
               
               
             }.frame(maxWidth: labelWidth, alignment: .leading)
@@ -195,49 +195,57 @@ struct WidgetSettingsView: View {
           }
           
           if (showAllOptions) {
-            HStack(spacing:spacing) {
-              
-              TextField("viewport", text:$widget.userAgent)
-                .textFieldStyle(.roundedBorder)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .frame(maxWidth: .infinity)
-            }
             
-            // MARK: Icon
-            HStack(spacing:spacing) {
-              Label("Icon", systemImage: "link")
-                .labelStyle(.titleOnly)
-                .frame(maxWidth: labelWidth, alignment: .leading)
-              TextField("icon name", text:$widget.icon)
-                .textFieldStyle(.roundedBorder)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .frame(maxWidth: .infinity)
-              TextField("radius", value:$widget.radius, formatter: NumberFormatter())
-                .textFieldStyle(.roundedBorder)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .frame(maxWidth: .infinity)
-            }
-            
-            // MARK: Viewport
-            HStack(spacing:spacing) {
-              Label("Zoom", systemImage: "link")
-                .labelStyle(.titleOnly)
-                .frame(maxWidth: labelWidth, alignment: .leading)
-              TextField("zoom", value:$widget.zoom, formatter: NumberFormatter())
-                .textFieldStyle(.roundedBorder)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .frame(maxWidth: .infinity)
+            LazyVGrid(columns: columns, spacing: 20) {
+              // MARK: Icon
+              HStack(spacing:spacing) {
+                Label("Icon", systemImage: "link")
+                  .labelStyle(.titleOnly)
+                  .frame(maxWidth: labelWidth, alignment: .leading)
+                TextField("icon name", text:$widget.icon)
+                  .textFieldStyle(.roundedBorder)
+                  .autocapitalization(.none)
+                  .disableAutocorrection(true)
+                  .frame(maxWidth: .infinity)
+              }
+              HStack(spacing:spacing) {
+                Label("Radius", systemImage: "link")
+                  .labelStyle(.titleOnly)
+                  .frame(maxWidth: labelWidth, alignment: .leading)
+                  
+                TextField("radius", value:$widget.radius, formatter: NumberFormatter())
+                  .textFieldStyle(.roundedBorder)
+                  .autocapitalization(.none)
+                  .disableAutocorrection(true)
+                  .frame(maxWidth: .infinity)
+              }
               
-              TextField("viewport", value:$widget.viewportWidth, formatter: NumberFormatter())
-                .textFieldStyle(.roundedBorder)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .frame(maxWidth: .infinity)
+              // MARK: Viewport
+              HStack(spacing:spacing) {
+                Label("Zoom", systemImage: "link")
+                  .labelStyle(.titleOnly)
+                  .frame(maxWidth: labelWidth, alignment: .leading)
+                  
+                TextField("zoom", value:$widget.zoom, formatter: NumberFormatter())
+                  .textFieldStyle(.roundedBorder)
+                  .autocapitalization(.none)
+                  .disableAutocorrection(true)
+                  .frame(maxWidth: .infinity)
+              }
+              
+              HStack(spacing:spacing) {
+                Label("Viewport", systemImage: "link")
+                  .labelStyle(.titleOnly)
+                  .frame(maxWidth: labelWidth, alignment: .leading)
+                  
+                TextField("viewport", value:$widget.viewportWidth, formatter: NumberFormatter())
+                  .textFieldStyle(.roundedBorder)
+                  .autocapitalization(.none)
+                  .disableAutocorrection(true)
+                  .frame(maxWidth: .infinity)
+              }
             }
+
             
             // MARK: Overrides
             //          HStack(spacing:spacing) {

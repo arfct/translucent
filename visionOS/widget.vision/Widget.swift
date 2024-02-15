@@ -204,10 +204,17 @@ enum ViewStyle: String, Equatable, CaseIterable, Codable {
 //  case opaque  = "Opaque"
   
   var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
+  
+  var displayName: String {
+    switch self {
+    case .transparent: return "Clear"
+    case .glass: return "Frosted"
+    }
+  }
   var iconName: String {
     switch self {
-    case .transparent: return "square.on.square.intersection.dashed"
-    case .glass: return "square.on.square"
+    case .transparent: return "square.dotted"
+    case .glass: return "square.fill"
       //    case .glass_forced: return "square.on.square"
 //    case .opaque: return "square.filled.on.square"
     }

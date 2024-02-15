@@ -67,18 +67,7 @@ struct WebView: UIViewRepresentable {
       let head = document.getElementsByTagName('head')[0]
       head.appendChild(metaTag);
       """
-    
-    if (widget.fontName != "") {
-      source += """
-      var fontTag = document.createElement('link');
-      fontTag.rel = 'stylesheet';
-      fontTag.href = 'https://fonts.googleapis.com/css?family=\(widget.fontName.replacingOccurrences(of: " ", with: "+"))&display=swap';
-      head.appendChild(fontTag);
-      document.body.style.fontFamily = '\(widget.fontName), initial`;
-      
-      """
-      
-    }
+  
     
     if (true) { //widget.style != .opaque) {
       let clearClasses = widget.clearClasses ?? "body"
@@ -98,6 +87,7 @@ struct WebView: UIViewRepresentable {
         --fore-color: \(widget.foreColor.description);
         --back-color: \(widget.backColor.description);
         --tint-color: \(widget.tintColor.description);
+      
       }
       
       body {
@@ -105,6 +95,30 @@ struct WebView: UIViewRepresentable {
       }
       
       """
+      
+      if (widget.fontName != "") {
+        source += """
+        var fontTag = document.createElement('link');
+        fontTag.rel = 'stylesheet';
+        fontTag.href = 'https://fonts.googleapis.com/css?family=\(widget.fontName.replacingOccurrences(of: " ", with: "+"))&display=swap';
+        head.appendChild(fontTag);
+        """
+        
+        css += """
+        :root {
+          --font-family: '\(widget.fontName)';
+        }
+        body {
+          font-family: var(--font-family) !important;
+        }
+
+        """
+        
+        
+      }
+      
+      
+      
       
       source += """
       var cssTag = document.createElement('style');
@@ -151,7 +165,7 @@ struct WebView: UIViewRepresentable {
     default:
       userAgent = widget.userAgent
     }
-    
+    webView.overrideUserInterfaceStyle = .dark
     webView.customUserAgent = userAgent ?? "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
     
 //    webView.pageZoom = widget.zoom
