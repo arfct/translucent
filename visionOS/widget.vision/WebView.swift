@@ -107,15 +107,24 @@ struct WebView: UIViewRepresentable {
         
         """
 
-      source += """
-      
-      var cssTag = document.createElement('style');
-      cssTag.innerHTML = `
-      \(css)
-      `
-      head.appendChild(cssTag);
-      
-      """
+    }
+    
+    if let injectCSS = widget.injectCSS, injectCSS.count > 0 {
+      css += "\n\(injectCSS)\n"
+    }
+    
+    source += """
+    
+    var cssTag = document.createElement('style');
+    cssTag.innerHTML = `
+    \(css)
+    `
+    head.appendChild(cssTag);
+    
+    """
+    
+    if let injectJS = widget.injectJS, injectJS.count > 0 {
+      source += "\n\(injectJS)\n"
     }
     
     print("css \(source)")
@@ -149,6 +158,7 @@ struct WebView: UIViewRepresentable {
       userAgent = widget.userAgent
     }
     webView.overrideUserInterfaceStyle = .dark
+    
     webView.customUserAgent = userAgent ?? "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
     
     webView.backgroundColor = UIColor.clear

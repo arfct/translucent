@@ -51,10 +51,10 @@ struct WidgetView: View {
               .disabled(flipped)
 //              .offset(z:flipped ? 1 : 0)
               .opacity(flipped ? 0.0 : 1.0)
-              .background(widget.backColor)
               .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
                                      displayMode: (widget.style == .glass ) ? .always : .never)
-              .cornerRadius(widget.style != .glass ? 20 : 10)
+              .background(widget.backColor)
+              .cornerRadius(widget.radius)
               .gesture(TapGesture().onEnded({ gesture in
                 showOrnaments = true
                 scheduleHide()
@@ -104,6 +104,7 @@ struct WidgetView: View {
       .onChange(of: geometry.size) {
         widget.width = geometry.size.width
         widget.height = geometry.size.height
+        print("Widget size changed to \(widget.width)×\(widget.height)")
         try? modelContext.save()
        }
     }

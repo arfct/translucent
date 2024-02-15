@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 import Darwin
 import UniformTypeIdentifiers
-
+import AVFAudio
 @main
 struct WidgetApp: App {
   @Environment(\.openWindow) var openWindow
@@ -27,6 +27,10 @@ struct WidgetApp: App {
         configurations: ModelConfiguration()
       )
       container?.mainContext.autosaveEnabled = true
+      
+      try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+      try AVAudioSession.sharedInstance().setActive(true)
+      
     } catch {
       print("An error occurred: \(error)")
       exit(0)

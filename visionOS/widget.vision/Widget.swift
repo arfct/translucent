@@ -14,7 +14,7 @@ import SwiftData
   var style: ViewStyle
   var backHex: String = "0000"
   var foreHex: String = "ffff"
-  var tintHex: String = "8Aff"
+  var tintHex: String = "ffff"
   var fontName: String = ""
   var width: CGFloat = 360
   var height: CGFloat = 360
@@ -32,6 +32,8 @@ import SwiftData
   var icon: String = "globe"
   var clearClasses: String?
   var removeClasses: String?
+  var injectCSS: String?
+  var injectJS: String?
   
   
   func sizeFor(dimensions: String) -> CGSize {
@@ -82,7 +84,7 @@ import SwiftData
       }
       options.split(separator: "&").forEach({ param in
         let kv = param.split(separator:"=")
-        if let key = kv.first?.removingPercentEncoding, let value = kv.last?.removingPercentEncoding?.replacingOccurrences(of: "+", with: " ") {
+        if let key = kv.first?.removingPercentEncoding, let value = kv.last?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding {
           switch key {
           case "style":
             if (value == "transparent") { self.style = .transparent}
@@ -122,6 +124,11 @@ import SwiftData
             self.removeClasses = String(value)
           case "clear":
             self.clearClasses = String(value)
+            
+          case "js":
+            self.injectJS = String(value)
+          case "css":
+            self.injectCSS = String(value)
           case "icon":
             self.icon = String(value)
           default:

@@ -17,7 +17,10 @@ struct WidgetListItem: View {
           .aspectRatio(contentMode: .fit)
           .frame(width: 40, height: 40)
           .padding(.bottom, 10)
+        
+        .foregroundColor(widget.tintColor)
           .font(Font.title.weight(.light))
+        
         Text(widget.displayName)
           .font(.headline)
           .foregroundColor(widget.foreColor)
@@ -29,6 +32,7 @@ struct WidgetListItem: View {
     }
     .buttonStyle(.borderless)
     .buttonBorderShape(.roundedRectangle)
+    .background(widget.backColor)
     .background(.white.opacity(0.1))
     .cornerRadius(30)
     .frame(maxWidth: .infinity, maxHeight:200, alignment:.leading)
