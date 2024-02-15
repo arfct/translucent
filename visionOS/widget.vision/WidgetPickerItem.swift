@@ -17,10 +17,7 @@ struct WidgetListItem: View {
           .aspectRatio(contentMode: .fit)
           .frame(width: 40, height: 40)
           .padding(.bottom, 10)
-        
           .font(Font.title.weight(.light))
-        
-        
         Text(widget.displayName)
           .font(.headline)
           .foregroundColor(widget.foreColor)
@@ -34,8 +31,6 @@ struct WidgetListItem: View {
     .buttonBorderShape(.roundedRectangle)
     .background(.white.opacity(0.1))
     .cornerRadius(30)
-//  .blendMode(.multiply)
-//    .glassBackgroundEffect()
     .frame(maxWidth: .infinity, maxHeight:200, alignment:.leading)
   }
 }

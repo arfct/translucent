@@ -128,7 +128,5 @@ struct WidgetApp: App {
     .windowResizability(.contentSize)
     .defaultSize(width: 360, height: 360)
     
-    
-    
   }
 }

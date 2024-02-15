@@ -187,11 +187,6 @@ struct WidgetSettingsView: View {
               .autocapitalization(.none)
               .disableAutocorrection(true)
               .frame(maxWidth: .infinity)
-            //          Picker("Select an option", selection: $widgetModel.font) {
-            //            ForEach(ViewStyle.allCases, id: \.self) { value in
-            //              Text("System font")
-            //            }
-            //          }
           }
           
           if (showAllOptions) {

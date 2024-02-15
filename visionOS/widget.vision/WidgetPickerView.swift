@@ -131,5 +131,4 @@ struct WidgetPickerView: View {
 
 #Preview {
   WidgetPickerView(app:nil)
-//        .modelContainer(PreviewSampleData.container)
 }

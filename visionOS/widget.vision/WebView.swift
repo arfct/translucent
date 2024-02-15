@@ -50,12 +50,10 @@ struct WebView: UIViewRepresentable {
     if let width = widget.viewportWidth {
       viewport = String(width)
     }
-   
+    
     let zoom = widget.zoom
     var source =
       """
-      console.log("Loading Widget.vision")
-      
       window.widget = window.webkit.messageHandlers.widget
       document.addEventListener('click', function(){
         window.webkit.messageHandlers.widget.postMessage('Clicked Page!');
@@ -67,21 +65,19 @@ struct WebView: UIViewRepresentable {
       let head = document.getElementsByTagName('head')[0]
       head.appendChild(metaTag);
       """
-  
     
-    if (true) { //widget.style != .opaque) {
-      let clearClasses = widget.clearClasses ?? "body"
-      
-      var css = ""
-      let selectors = clearClasses
-      css += "\(selectors) { background-color:transparent !important; background-image:none !important;}\n"
-      
-      
-      if let selectors = widget.removeClasses {
-        css += "\(selectors) { display:none !important; }\n"
-      }
-      
-      css += """
+    let clearClasses = widget.clearClasses ?? "body"
+    
+    var css = ""
+    let selectors = clearClasses
+    css += "\(selectors) { background-color:transparent !important; background-image:none !important;}\n"
+    
+    
+    if let selectors = widget.removeClasses {
+      css += "\(selectors) { display:none !important; }\n"
+    }
+    
+    css += """
       
       :root {
         --fore-color: \(widget.foreColor.description);
@@ -95,43 +91,31 @@ struct WebView: UIViewRepresentable {
       }
       
       """
-      
-      if (widget.fontName != "") {
-        source += """
+    
+    if (widget.fontName != "") {
+      source += """
         var fontTag = document.createElement('link');
         fontTag.rel = 'stylesheet';
         fontTag.href = 'https://fonts.googleapis.com/css?family=\(widget.fontName.replacingOccurrences(of: " ", with: "+"))&display=swap';
         head.appendChild(fontTag);
-        """
         
-        css += """
-        :root {
-          --font-family: '\(widget.fontName)';
-        }
-        body {
-          font-family: var(--font-family) !important;
-        }
+        """
+      
+      css += """
+        :root { --font-family: '\(widget.fontName)';}
+        body { font-family: var(--font-family) !important; }
+        
+        """
 
-        """
-        
-        
-      }
-      
-      
-      
-      
       source += """
+      
       var cssTag = document.createElement('style');
-      cssTag.innerHTML = `\(css)`
+      cssTag.innerHTML = `
+      \(css)
+      `
       head.appendChild(cssTag);
       
-      
-      
-              widget.postMessage(document.innerHTML);
-      console.log("Loaded Widget.vision")
       """
-      
-      
     }
     
     print("css \(source)")
@@ -147,7 +131,6 @@ struct WebView: UIViewRepresentable {
     webView.isOpaque = false
     
     webView.navigationDelegate = context.coordinator
-    
     updateUIView(webView, context: context)
     
     return webView
@@ -168,11 +151,8 @@ struct WebView: UIViewRepresentable {
     webView.overrideUserInterfaceStyle = .dark
     webView.customUserAgent = userAgent ?? "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
     
-//    webView.pageZoom = widget.zoom
-    //    if (widget.style != .opaque) {
     webView.backgroundColor = UIColor.clear
     webView.scrollView.backgroundColor = UIColor.clear
-    //    }
     
     if let url = URL(string:location!) {
       if (webView.url == nil) {
@@ -184,9 +164,6 @@ struct WebView: UIViewRepresentable {
         }
       }
     }
-    
-    
-    
   }
   
   class ContentController: NSObject, WKScriptMessageHandler {
@@ -208,15 +185,10 @@ struct WebView: UIViewRepresentable {
       
       if let data = image.pngData(){
         let filename = path.appendingPathComponent(widget.id.uuidString + ".png")
-        //        print("data \(data) \(filename)")
         try? data.write(to: filename)
       }
     }
   }
-  
-  
-  
-  
 }
 
 

@@ -32,7 +32,7 @@ import SwiftData
   var icon: String = "globe"
   var clearClasses: String?
   var removeClasses: String?
-
+  
   
   func sizeFor(dimensions: String) -> CGSize {
     let dims = dimensions.split(separator: "x")
@@ -54,7 +54,7 @@ import SwiftData
     if let regex = try? Regex(#"(?:%23|#)wv\?(.*)"#) {
       
       if let match = location.firstMatch(of: regex) {
-      
+        
         parameters = String(match[1].substring!)
         location = location.replacing(regex, with: "")
       }
@@ -130,14 +130,14 @@ import SwiftData
           print("\(key) = \(value)")
         }
       })
-
-
+      
+      
     }
     if let zoom = zoom { self.zoom = zoom }
   }
   
 }
- 
+
 extension Widget {
   @Transient
   var backColor: Color { Color.withHex(backHex) }
@@ -171,37 +171,35 @@ extension Widget {
     let urlString = "https://widget.vision/\(String(describing: encodedURL))"
     return urlString
   }
-    
+  
   @Transient
   var description: String {
     return "Widget \(id) - \(location ?? "")"
   }
-    
-    
-    static var preview: Widget {
-      Widget(name: "Test", location: "https://example.com", style: .glass, options: "bg=0000&fg=ffff&tg=8aff&sz=360x360&zoom=1.0&icon=graduationcap")
-    }
+  
+  
+  static var preview: Widget {
+    Widget(name: "Test", location: "https://example.com", style: .glass, options: "bg=0000&fg=ffff&tg=8aff&sz=360x360&zoom=1.0&icon=graduationcap")
+  }
 }
 
 private extension Color {
-    static var random: Color {
-        var generator: RandomNumberGenerator = SystemRandomNumberGenerator()
-        return random(using: &generator)
-    }
-    
-    static func random(using generator: inout RandomNumberGenerator) -> Color {
-        let red = Double.random(in: 0..<1, using: &generator)
-        let green = Double.random(in: 0..<1, using: &generator)
-        let blue = Double.random(in: 0..<1, using: &generator)
-        return Color(red: red, green: green, blue: blue)
-    }
+  static var random: Color {
+    var generator: RandomNumberGenerator = SystemRandomNumberGenerator()
+    return random(using: &generator)
+  }
+  
+  static func random(using generator: inout RandomNumberGenerator) -> Color {
+    let red = Double.random(in: 0..<1, using: &generator)
+    let green = Double.random(in: 0..<1, using: &generator)
+    let blue = Double.random(in: 0..<1, using: &generator)
+    return Color(red: red, green: green, blue: blue)
+  }
 }
 
 enum ViewStyle: String, Equatable, CaseIterable, Codable {
   case glass = "Glass"
   case transparent  = "Transparent"
-  //  case glass_forced  = "Glass (no body background)"
-//  case opaque  = "Opaque"
   
   var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
   
@@ -215,8 +213,6 @@ enum ViewStyle: String, Equatable, CaseIterable, Codable {
     switch self {
     case .transparent: return "square.dotted"
     case .glass: return "square.fill"
-      //    case .glass_forced: return "square.on.square"
-//    case .opaque: return "square.filled.on.square"
     }
   }
 }
