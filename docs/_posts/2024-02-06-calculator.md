@@ -2,6 +2,7 @@
 name: Calculator
 micon: calculate
 icon: av.remote
-href: https://calculator.bitty.app/
+size: 420x640
+href: https://widget.vision/widgets/calculator
 ---
         
