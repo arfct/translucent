@@ -47,9 +47,7 @@ struct WidgetView: View {
                 }
               }
               .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
               .disabled(flipped)
-//              .offset(z:flipped ? 1 : 0)
               .opacity(flipped ? 0.0 : 1.0)
               .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
                                      displayMode: (widget.style == .glass ) ? .always : .never)
@@ -63,7 +61,6 @@ struct WidgetView: View {
           }
           WidgetSettingsView(widget:widget, callback: toggleSettings)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-       
             .background(widget.backColor.opacity(0.2))
             .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius))
             .offset(z: flipped ? 1 : 0)
@@ -71,15 +68,20 @@ struct WidgetView: View {
             .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
             .disabled(!flipped)
         }
+
         .ornament(attachmentAnchor: .scene(flipped ? .topLeading : .topTrailing)) {
           ZStack {
-            if widget.isLoading {
-              ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: .primary))
-                .scaleEffect(1.0, anchor: .center)
-            }
-            Button("•", systemImage: flipped ? "arrow.backward" : "info") {
-               
+            Button { } label: {
+              if isLoading {
+                ProgressView()
+                  .progressViewStyle(CircularProgressViewStyle(tint: .primary))
+                  .scaleEffect(1.0, anchor: .center)
+              } else {
+                Image(systemName: flipped ? "arrow.backward" : "info")
+                  .resizable()
+                  .aspectRatio(contentMode: .fit)
+                  .frame(width: 16, height: 16)
+              }
             }
             .simultaneousGesture(LongPressGesture().onEnded { _ in
               openWindow(id:"main")
