@@ -1,0 +1,85 @@
+---
+layout: default
+---
+
+<div class="content">
+  <div class="ventilation" style="height:160px"></div>
+  
+  {% include logo.html %}
+
+  {% assign posts = site.links reversed %}
+  {%- if posts.size > 0 -%}
+  
+  <div class="tiles">
+
+    {%- for widget in posts -%}
+    
+    <a class="tile{% if widget.class %} {{ widget.class }}{% endif %} {{ widget.style }}" 
+    href="widget-{{widget.href}}#wv?widget
+    {%- if widget.name %}&name={{ widget.name | url_encode }}{% endif -%}
+    {%- if widget.icon %}&icon={{ widget.icon }}{% endif -%}
+    {%- if widget.style %}&style={{ widget.style }}{% endif -%}
+    {%- if widget.size %}&size={{ widget.size }}{% endif -%}
+    {%- if widget.zoom %}&zoom={{ widget.zoom }}{% endif -%}
+    {%- if widget.radius %}&radius={{ widget.radius }}{% endif -%}
+    {%- if widget.minsize %}&minsize={{ widget.minsize }}{% endif -%}
+    {%- if widget.maxsize %}&maxsize={{ widget.maxsize }}{% endif -%}
+    {%- if widget.bg %}&bg={{ widget.bg | url_encode}}{% endif -%}
+    {%- if widget.fg %}&fg={{ widget.fg | url_encode}}{% endif -%}
+    {%- if widget.remove %}&remove={{ widget.remove | url_encode}}{% endif -%}
+    {%- if widget.clear %}&clear={{ widget.clear | url_encode}}{% endif -%}
+    {%- if widget.vw %}&vw={{ widget.vw }}{% endif -%}
+    {%- if widget.ua %}&ua={{ widget.ua }}{% endif -%}
+    {%- if widget.css %}&css={{ widget.css }}{% endif -%}
+    "
+    style="
+    background-image:url({{widget.url | replace: "html", "png" }});
+    background-color:#{{ widget.bg | replace: "#", "" }};
+    border-radius: {{ widget.radius }}px;
+    
+    "
+    >
+    <div class="icon">
+      <div class="material-symbols-rounded">{{widget.micon}}</div>
+    </div>
+    <div class="info">
+      <div class="title">{{widget.name}}</div>
+      <div class="location">{{widget.href |  replace: "https://", "" }}</div>
+    </div>
+  </a>
+  {%- endfor -%}
+  
+  
+  <div class="explainer">
+    {{ content }}
+  </div>
+  
+  
+</div>
+
+<div class="ventilation" style="height:80px; margin:40px auto;"></div>
+
+{% if site.paginate %}
+<div class="pager">
+  <ul class="pagination">
+    {%- if paginator.previous_page %}
+    <li><a href="{{ paginator.previous_page_path | relative_url }}" class="previous-page">{{ paginator.previous_page }}</a></li>
+    {%- else %}
+    <li><div class="pager-edge">•</div></li>
+    {%- endif %}
+    <li><div class="current-page">{{ paginator.page }}</div></li>
+    {%- if paginator.next_page %}
+    <li><a href="{{ paginator.next_page_path | relative_url }}" class="next-page">{{ paginator.next_page }}</a></li>
+    {%- else %}
+    <li><div class="pager-edge">•</div></li>
+    {%- endif %}
+  </ul>
+</div>
+{%- endif %}
+
+{%- endif -%}
+
+
+
+
+</div>

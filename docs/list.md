@@ -1,9 +1,9 @@
 ---
-layout: grid
+layout: list
 ---
 
-### Even more from the web
+<b>Widgets from the web</b>
 
-widget.vision adds simple web widgets to visionOS—they can come from this site, or anywhere on the web. <br>
-Use the <span class="material-symbols-rounded" style="font-size:75%">ios_share</span>Share action to open any website in widget.vision, 
-or just append <u>widget.vision/</u>https://… to the beginning of a url
+These widgets can come from this site, or <i>anywhere</i> on the web.
+
+Use the browser's <span class="material-symbols-rounded" style="font-size:80%; color: #ffffff">ios_share</span> share action to open any website in widget.vision and then customize them.

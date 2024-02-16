@@ -1,6 +1,5 @@
 ---
 name: ChatGPT
-micon: chat
 icon: bubble
 href: https://chat.openai.com
 clear: >
