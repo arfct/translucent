@@ -26,6 +26,7 @@ layout: default
     {%- if widget.maxsize %}&maxsize={{ widget.maxsize }}{% endif -%}
     {%- if widget.bg %}&bg={{ widget.bg | url_encode}}{% endif -%}
     {%- if widget.fg %}&fg={{ widget.fg | url_encode}}{% endif -%}
+    {%- if widget.tint %}&tint={{ widget.tint | url_encode}}{% endif -%}
     {%- if widget.remove %}&remove={{ widget.remove | url_encode}}{% endif -%}
     {%- if widget.clear %}&clear={{ widget.clear | url_encode}}{% endif -%}
     {%- if widget.vw %}&vw={{ widget.vw }}{% endif -%}
