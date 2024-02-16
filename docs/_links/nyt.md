@@ -1,6 +1,6 @@
 ---
 name: NYT Front Page
-order: 2
+order: 100
 icon: newspaper
 href: https://nytfrontpage.glitch.me
 size: 660x720

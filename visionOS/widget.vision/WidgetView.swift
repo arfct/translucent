@@ -113,11 +113,9 @@ struct WidgetView: View {
         widget.width = geometry.size.width
         widget.height = geometry.size.height
         print("↔️ Widget size changed to \(widget.width)×\(widget.height)")
-        webView.saveSnapshot(webView.webView)
         try? modelContext.save()
        }
       .onDisappear {
-        webView.saveSnapshot(webView.webView)
         try? modelContext.save()
       }
     }

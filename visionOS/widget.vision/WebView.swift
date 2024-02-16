@@ -73,14 +73,7 @@ struct WebView: UIViewRepresentable {
       css.append("--tint-color: \(hex);")
     }
     css.append("}")
-    //    css.append("""
-//      :root {
-//        --fore-color: \(widget.foreColor.description);
-//        --back-color: \(widget.backColor.description);
-//        --tint-color: \(widget.tintColor.description);
-//      }
-//      """
-//    )
+
     
     if (widget.fontName != "" && widget.fontName != "-apple-system") {
       source.append ("""
@@ -98,9 +91,6 @@ struct WebView: UIViewRepresentable {
         body { font-family: var(--font-family) !important; }
         """)
     }
- 
-    
-    
     
     if let injectCSS = widget.injectCSS, injectCSS.count > 0 {
       css.append("\(injectCSS)")
@@ -113,9 +103,9 @@ struct WebView: UIViewRepresentable {
     
     """)
     
-    //    if let injectJS = widget.injectJS, injectJS.count > 0 {
-    //      source.append("\n\(injectJS)\n")
-    //    }
+    if false, let injectJS = widget.injectJS, injectJS.count > 0 {
+      source.append("\n\(injectJS)\n")
+    }
     
     print("💉 Injecting Source:\n\n\(source.joined(separator:"\n"))")
     return source.joined(separator:"\n")
@@ -155,7 +145,6 @@ struct WebView: UIViewRepresentable {
     return webView
   }
   
-  
   func updateUIView(_ webView: WKWebView, context: Context) {
     updateSnapshot(webView)
   }
@@ -163,7 +152,6 @@ struct WebView: UIViewRepresentable {
   func updateSnapshot(_ webView: WKWebView) {
     NSObject.cancelPreviousPerformRequests(withTarget: webView)
     webView.perform(#selector(WKWebView.saveSnapshot(path:)), with:widget.thumbnailFile, afterDelay: 1.0)
-  
   }
 
   func sizeThatFits(
@@ -172,22 +160,6 @@ struct WebView: UIViewRepresentable {
   ) -> CGSize? {
     return CGSizeMake(360, 640)
   }
-  
-  
-  func saveSnapshot(_ view: WKWebView?) {
-    let image = (view ?? webView).snapshot
-    if let path = widget.thumbnailFile {
-      if let data = image.pngData(){
-        print("🖼️ Saved Snapshot, \(webView.url)")
-        try? data.write(to: path)
-      } else {
-        print("❌ Failed Snapshot, \(webView)")
-      }
-    }
-  }
-
-
-
 
 class Coordinator: NSObject, WKNavigationDelegate {
   let parent: WebView
@@ -225,12 +197,11 @@ class ContentController: NSObject, WKScriptMessageHandler {
 extension WKWebView {
   @objc func saveSnapshot(path: URL) {
     let image = self.snapshot
-
       if let data = image.pngData(){
-        print("🖼️ Saved Snapshot, \(self.url)")
+        print("🖼️ Saved Snapshot, \(String(describing: self.url))")
         try? data.write(to: path)
       } else {
-        print("❌ Failed Snapshot, \(self.url)")
+        print("❌ Failed Snapshot, \(String(describing: self.url))")
       }
     }
     
