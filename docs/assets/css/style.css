@@ -1,6 +1,3 @@
----
----
-
 html {
   --hue: 0;
 }
@@ -75,7 +72,7 @@ a.tile:hover {
   transform: scale(1.05);
 }
 a.tile.wide {
-  background-position: center 40%;
+  background-position: center 30%;
 }
 a.tile.hidden {
   opacity: 0.2;
