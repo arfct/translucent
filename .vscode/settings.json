@@ -1,0 +1,5 @@
+{
+  "livePreview.defaultPreviewPath": "widgets/calculator.html",
+  "livePreview.debugOnExternalPreview": false,
+  "livePreview.serverRoot": "docs/"
+}
