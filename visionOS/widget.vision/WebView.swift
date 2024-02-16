@@ -46,89 +46,101 @@ struct WebView: UIViewRepresentable {
   let contentController = ContentController()
   
   func overrideJS(widget:Widget) -> String{
+    let zoom = widget.zoom
     var viewport = "device-width"
     if let width = widget.viewportWidth {
       viewport = String(width)
     }
     
-    let zoom = widget.zoom
-    var source =
+    
+    var source: [String] = []
+    
+    // Post messages with widget.postMessage('Clicked Page!');
+    source.append("window.widget = window.webkit.messageHandlers.widget;")
+    
+    source.append("let head = document.getElementsByTagName('head')[0];")
+    
+    source.append(
       """
-      window.widget = window.webkit.messageHandlers.widget
-      document.addEventListener('click', function(){
-        window.webkit.messageHandlers.widget.postMessage('Clicked Page!');
-      });
-      
-      var metaTag=document.createElement('meta');
-      metaTag.name = "viewport"
-      metaTag.content = "width=\(viewport), initial-scale=\(zoom), maximum-scale=\(zoom), user-scalable=0"
-      let head = document.getElementsByTagName('head')[0]
-      head.appendChild(metaTag);
-      """
-    
-    let clearClasses = widget.clearClasses ?? "body"
-    
-    var css = ""
-    let selectors = clearClasses
-    css += "\(selectors) { background-color:transparent !important; background-image:none !important;}\n"
+      // Viewport Tag
+      var viewportTag = document.createElement('meta');
+      viewportTag.name = "viewport"
+      viewportTag.content = "width=\(viewport), initial-scale=\(zoom), maximum-scale=\(zoom), user-scalable=0"
+      head.appendChild(viewportTag);
+      """)
     
     
+    var css: [String] = []
+    
+    let clearSelectors = widget.clearClasses ?? "body"
+    
+    // Selectors that should have transparent backgrounds
+    let selectors = clearSelectors
+    css.append("\(selectors) { background-color:transparent !important; background-image:none !important;}\n")
+    
+    // Selectors that should be hidden
     if let selectors = widget.removeClasses {
-      css += "\(selectors) { display:none !important; }\n"
+      css.append("\(selectors) { display:none !important; }\n")
     }
     
-    css += """
-      
-      :root {
-        --fore-color: \(widget.foreColor.description);
-        --back-color: \(widget.backColor.description);
-        --tint-color: \(widget.tintColor.description);
-      
-      }
-      
-      body {
-      color: var(--fore-color, white);
-      }
-      
-      """
+    css.append(":root {")
+    if let hex = widget.backColor?.description {
+      css.append("--back-color: \(hex);")
+    }
+    if let hex = widget.foreColor?.description {
+      css.append("--fore-color: \(hex);")
+    }
+    if let hex = widget.tintColor?.description {
+      css.append("--tint-color: \(hex);")
+    }
     
-    if (widget.fontName != "") {
-      source += """
+    css.append("}")
+    //    css.append("""
+//      :root {
+//        --fore-color: \(widget.foreColor.description);
+//        --back-color: \(widget.backColor.description);
+//        --tint-color: \(widget.tintColor.description);
+//      }
+//      """
+//    )
+    
+    if (widget.fontName != "" && widget.fontName != "-apple-system") {
+      source.append ("""
+        // Font Tag
         var fontTag = document.createElement('link');
         fontTag.rel = 'stylesheet';
         fontTag.href = 'https://fonts.googleapis.com/css?family=\(widget.fontName.replacingOccurrences(of: " ", with: "+"))&display=swap';
         head.appendChild(fontTag);
-        
-        """
-      
-      css += """
+        """)
+    }
+    
+    if (widget.fontName.count > 0 ) {
+      css.append ("""
         :root { --font-family: '\(widget.fontName)';}
         body { font-family: var(--font-family) !important; }
-        
-        """
-
+        """)
     }
+ 
+    
+    
     
     if let injectCSS = widget.injectCSS, injectCSS.count > 0 {
-      css += "\n\(injectCSS)\n"
+      css.append("\(injectCSS)")
     }
     
-    source += """
-    
+    source.append("""
     var cssTag = document.createElement('style');
-    cssTag.innerHTML = `
-    \(css)
-    `
+    cssTag.innerHTML = `\n\(css.joined(separator:"\n\n"))\n`
     head.appendChild(cssTag);
     
-    """
+    """)
     
-    if let injectJS = widget.injectJS, injectJS.count > 0 {
-      source += "\n\(injectJS)\n"
-    }
+    //    if let injectJS = widget.injectJS, injectJS.count > 0 {
+    //      source.append("\n\(injectJS)\n")
+    //    }
     
-    print("css \(source)")
-    return source
+    print("💉 Injecting Source:\n \(source.joined(separator:"\n\n"))")
+    return source.joined(separator:"\n")
   }
   
   func makeUIView(context: Context) -> WKWebView {
@@ -177,17 +189,17 @@ struct WebView: UIViewRepresentable {
   }
   
   func sizeThatFits(
-      _ proposal: ProposedViewSize,
-      uiView: WebView, context: Context
+    _ proposal: ProposedViewSize,
+    uiView: WebView, context: Context
   ) -> CGSize? {
-      return CGSizeMake(360, 640)
+    return CGSizeMake(360, 640)
   }
   
   class ContentController: NSObject, WKScriptMessageHandler {
     @Environment(\.openWindow) var openWindow
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-      print("💬 Message:\n\(message.body)")
+      print("💬 Web Message:\n\(message.body)")
     }
   }
   

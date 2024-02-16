@@ -138,12 +138,11 @@ struct WidgetSettingsView: View {
               .keyboardType(.URL)
               .onAppear {
                 locationTempString = widget.location!
-                backColor = widget.backColor
-                foreColor = widget.foreColor
-                tintColor = widget.tintColor
+                backColor = widget.backColor ?? .clear
+                foreColor = widget.foreColor ?? .white
+                tintColor = widget.tintColor ?? .blue
               }
               .onSubmit {
-                print(locationTempString)
                 if let url = clean(url:locationTempString) {
                   widget.location = url
                   locationTempString = url
@@ -209,7 +208,6 @@ struct WidgetSettingsView: View {
             } label: {
               Label("Location", systemImage: "ellipsis")
             }.onChange(of: fontMenu, {
-              print("Font", fontMenu)
               widget.fontName = fontMenu;
             })
             .onAppear() {

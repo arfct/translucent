@@ -12,9 +12,9 @@ import SwiftData
   var location: String?
   var originalLocation: String?
   var style: ViewStyle
-  var backHex: String = "0000"
-  var foreHex: String = "ffff"
-  var tintHex: String = "ffff"
+  var backHex: String?
+  var foreHex: String?
+  var tintHex: String?
   var fontName: String = ""
   var width: CGFloat = 360
   var height: CGFloat = 360
@@ -45,9 +45,10 @@ import SwiftData
     if let height = dims.last.map(String.init), let heightDouble = Double(height) {
       size.height = CGFloat(heightDouble)
     }
-    print("size \(size)")
     return size;
   }
+  
+  // MARK: Init
   
   convenience init(url: URL) {
     print("🌐 Opening URL: \(url.absoluteString)")
@@ -90,9 +91,9 @@ import SwiftData
             if (value == "transparent") { self.style = .transparent}
           case "name":
             self.name = String(value)
-          case "bg":
+          case "bg", "back":
             self.backHex = String(value)
-          case "fg":
+          case "fg", "fore":
             self.foreHex = String(value)
           case "tg", "tint":
             self.tintHex = String(value)
@@ -134,26 +135,34 @@ import SwiftData
           default:
             break
           }
-          print("\(key) = \(value)")
         }
       })
-      
-      
     }
     if let zoom = zoom { self.zoom = zoom }
   }
   
 }
 
+// MARK: Transient Props
+
 extension Widget {
   @Transient
-  var backColor: Color { Color.withHex(backHex) }
+  var backColor: Color? {
+    if let hex = backHex { return Color.withHex(hex) }
+    return nil
+  }
   
   @Transient
-  var foreColor: Color { Color.withHex(foreHex) }
+  var foreColor: Color? {
+    if let hex = foreHex { return Color.withHex(hex) }
+    return nil
+  }
   
   @Transient
-  var tintColor: Color { Color.withHex(tintHex) }
+  var tintColor: Color? {
+    if let hex = tintHex { return Color.withHex(hex) }
+    return nil
+  }
   
   @Transient
   var displayName: String {

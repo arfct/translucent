@@ -32,6 +32,9 @@ struct WidgetPickerView: View {
   var body: some View {
     NavigationStack {
       ScrollView {
+        
+        // MARK: Toolbar
+        
         Image("widget.vision")
           .renderingMode(.template)
           .resizable()
@@ -49,7 +52,6 @@ struct WidgetPickerView: View {
               .padding()
               .frame(maxWidth:320)
             PasteButton(payloadType: URL.self) { urls in
-              print("url \(urls)")
               if let url = urls.first {
                 DispatchQueue.main.async {
                   app?.showWindowForURL(url)
@@ -65,8 +67,7 @@ struct WidgetPickerView: View {
           Spacer(minLength: 20)
         }
 
-
-        
+        // MARK: Grid
         LazyVGrid(columns: columns, spacing: 30) {
           ForEach(widgets) { widget in
             WidgetListItem(widget: widget)

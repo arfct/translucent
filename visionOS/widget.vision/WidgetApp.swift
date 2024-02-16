@@ -42,7 +42,6 @@ struct WidgetApp: App {
     let widget = Widget(url:url)
     container?.mainContext.insert(widget)
     try! container?.mainContext.save()
-    print("widget.persistentModelID \(widget.persistentModelID.id.hashValue)")
     openWindow(id: "widget", value: widget.persistentModelID)
   }
   
@@ -54,7 +53,7 @@ struct WidgetApp: App {
     WindowGroup(id: "main") {
       GeometryReader { geometry in
         WidgetPickerView(app: self)
-          .onOpenURL { 
+          .onOpenURL {
             showWindowForURL($0)
             dismissWindow(id: "main")
           }
@@ -66,12 +65,8 @@ struct WidgetApp: App {
             windowHeight = geometry.size.height
           }
           .onDrop(of: [.url], isTargeted: nil) { providers, point in
-            
             for provider in providers {
-              
-              print("Provider \(provider)");
               _ = provider.loadObject(ofClass: URL.self) { url,arg  in
-                
                 DispatchQueue.main.async {
                   showWindowForURL(url)
                 }
@@ -89,16 +84,33 @@ struct WidgetApp: App {
     .windowResizability(.contentSize)
     .defaultSize(width: windowWidth, height: windowHeight)
     
+    // MARK: - Widget Windows
     
-    
+    WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in
+      if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
+        
+        WidgetView(widget:widget, app:self)
+          .onOpenURL { showWindowForURL($0) }
+          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
+            showWindowForURL($0.webpageURL)
+          }
+          .task {
+            widget.lastOpened = .now
+          }
+      }
+    }
+    .modelContainer(container!)
+    .windowStyle(.plain)
+    .windowResizability(.contentSize)
+    .defaultSize(width: 360, height: 360)
     
     // MARK: - Settings Window
+    // TODO: These don't work for some reason?
+    
     WindowGroup("Settings", id: "widgetSettings", for: PersistentIdentifier.self) { $id in
       if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
         WidgetSettingsView(widget:widget, callback: {
-          print("done")
-          dismissWindow(id: "widgetSettings")
-          
+          dismissWindow(id: "widgetSettings")   
         }).task{
           print("Open Settings for \(widget.name)")
         }
@@ -111,27 +123,6 @@ struct WidgetApp: App {
     .windowResizability(.contentSize)
     .defaultSize(width: 360, height: 360)
     
-    
-    // MARK: - Widget Windows
-    
-    WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in
-      if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
-        
-        WidgetView(widget:widget, app:self)
-          .onOpenURL { showWindowForURL($0) }
-          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
-            showWindowForURL($0.webpageURL)
-          }
-          .task {
-            print("Opened", widget.description)
-            widget.lastOpened = .now
-          }
-      }
-    }
-    .modelContainer(container!)
-    .windowStyle(.plain)
-    .windowResizability(.contentSize)
-    .defaultSize(width: 360, height: 360)
     
   }
 }

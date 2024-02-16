@@ -18,7 +18,6 @@ class ShareViewController: UIViewController {
                 var urlString = "widget-\(url)"
                 if let title = title, (title.count > 0) {
                   urlString += "#wv?name=\(title)"}
-                print("Open URL \( urlString)")
                 application.perform(NSSelectorFromString("openURL:"),
                                     with: URL(string: urlString))
               }

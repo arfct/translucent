@@ -46,11 +46,8 @@ struct WidgetView: View {
           if (!flipped) {
             webView
               .onLoadStatusChanged { content, loading, error in
-                print("Loading - \(loading ? widget.location ?? "" : "done")")
                 self.isLoading = loading
-                if let error = error {
-                  print("Error: \(error)")
-                }
+                if let error = error { print("Loading error: \(error)") }
               }
               .frame(maxWidth: .infinity, maxHeight: .infinity)
               .disabled(flipped)
@@ -74,7 +71,10 @@ struct WidgetView: View {
             .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
             .disabled(!flipped)
         }
-
+//        .sheet(isPresented: $flipped) {
+//          WidgetSettingsView(widget:widget, callback: toggleSettings)
+//            .frame(maxWidth:.infinity)
+//        }.frame(maxWidth:.infinity)
         .ornament(attachmentAnchor: .scene(flipped ? .topLeading : .topTrailing)) {
           ZStack {
             Button { } label: {
@@ -112,7 +112,7 @@ struct WidgetView: View {
       .onChange(of: geometry.size) {
         widget.width = geometry.size.width
         widget.height = geometry.size.height
-        print("Widget size changed to \(widget.width)×\(widget.height)")
+        print("↔️ Widget size changed to \(widget.width)×\(widget.height)")
         webView.saveSnapshot(webView.webView)
         try? modelContext.save()
        }
@@ -120,8 +120,8 @@ struct WidgetView: View {
         webView.saveSnapshot(webView.webView)
         try? modelContext.save()
       }
-
     }
+    
     // Clamp the size initially to set the base size, but then allow it to change later.
     .frame(minWidth: clampInitialSize ? widget.width : widget.minWidth, idealWidth: widget.width, maxWidth: clampInitialSize ? widget.width : widget.maxWidth,
            minHeight: clampInitialSize ? widget.height : widget.minHeight, idealHeight: widget.height, maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
