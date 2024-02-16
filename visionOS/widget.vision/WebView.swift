@@ -4,17 +4,13 @@ import WebKit
 // https://www.swiftyplace.com/blog/loading-a-web-view-in-swiftui-with-wkwebview
 
 struct WebView: UIViewRepresentable {
+  @Environment(\.openWindow) var openWindow
   @Binding var title: String?
   @Binding var location: String?
-  @Environment(\.openWindow) var openWindow
   @Binding var widget: Widget
+  
   var webView: WKWebView = WKWebView()
   var loadStatusChanged: ((WebView, Bool, Error?) -> Void)? = nil
-  
-  
-  func makeCoordinator() -> Coordinator {
-    Coordinator(self)
-  }
   
   func onLoadStatusChanged(perform: ((WebView, Bool, Error?) -> Void)?) -> some View {
     var copy = self
@@ -22,25 +18,8 @@ struct WebView: UIViewRepresentable {
     return copy
   }
   
-  class Coordinator: NSObject, WKNavigationDelegate {
-    let parent: WebView
-    
-    init(_ parent: WebView) {
-      self.parent = parent
-    }
-    
-    func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-      parent.loadStatusChanged?(parent, true, nil)
-    }
-    
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-      parent.title = webView.title ?? ""
-      parent.loadStatusChanged?(parent, false, nil)
-    }
-    
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-      parent.loadStatusChanged?(parent, false, error)
-    }
+  func makeCoordinator() -> Coordinator {
+    Coordinator(self)
   }
   
   let contentController = ContentController()
@@ -80,7 +59,7 @@ struct WebView: UIViewRepresentable {
     
     // Selectors that should be hidden
     if let selectors = widget.removeClasses {
-      css.append("\(selectors) { display:none !important; }\n")
+      css.append("\(selectors) { display:none !important; }")
     }
     
     css.append(":root {")
@@ -93,7 +72,6 @@ struct WebView: UIViewRepresentable {
     if let hex = widget.tintColor?.description {
       css.append("--tint-color: \(hex);")
     }
-    
     css.append("}")
     //    css.append("""
 //      :root {
@@ -130,7 +108,7 @@ struct WebView: UIViewRepresentable {
     
     source.append("""
     var cssTag = document.createElement('style');
-    cssTag.innerHTML = `\n\(css.joined(separator:"\n\n"))\n`
+    cssTag.innerHTML = `\n\(css.joined(separator:"\n"))\n`
     head.appendChild(cssTag);
     
     """)
@@ -139,26 +117,21 @@ struct WebView: UIViewRepresentable {
     //      source.append("\n\(injectJS)\n")
     //    }
     
-    print("💉 Injecting Source:\n \(source.joined(separator:"\n\n"))")
+    print("💉 Injecting Source:\n\n\(source.joined(separator:"\n"))")
     return source.joined(separator:"\n")
   }
   
   func makeUIView(context: Context) -> WKWebView {
-    
     let config = webView.configuration
     let script = WKUserScript(source: overrideJS(widget: widget), injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     config.userContentController.addUserScript(script)
     config.userContentController.add(ContentController(), name: "widget")
+    
     webView.isOpaque = false
-    
     webView.navigationDelegate = context.coordinator
-    updateUIView(webView, context: context)
     
-    return webView
-  }
-  
-  
-  func updateUIView(_ webView: WKWebView, context: Context) {
+    webView.backgroundColor = UIColor.clear
+    webView.scrollView.backgroundColor = UIColor.clear
     
     var userAgent: String?
     switch (widget.userAgent) {
@@ -173,21 +146,26 @@ struct WebView: UIViewRepresentable {
     
     webView.customUserAgent = userAgent ?? "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
     
-    webView.backgroundColor = UIColor.clear
-    webView.scrollView.backgroundColor = UIColor.clear
-    
     if let url = URL(string:location!) {
-      if (webView.url == nil) {
-        let request = URLRequest(url: url)
-        webView.load(request)
-      } else {
-        DispatchQueue.main.async {
-          saveSnapshot(webView)
-        }
-      }
+      let request = URLRequest(url: url)
+      webView.load(request)
     }
+
+    updateSnapshot(webView)
+    return webView
   }
   
+  
+  func updateUIView(_ webView: WKWebView, context: Context) {
+    updateSnapshot(webView)
+  }
+  
+  func updateSnapshot(_ webView: WKWebView) {
+    NSObject.cancelPreviousPerformRequests(withTarget: webView)
+    webView.perform(#selector(WKWebView.saveSnapshot(path:)), with:widget.thumbnailFile, afterDelay: 1.0)
+  
+  }
+
   func sizeThatFits(
     _ proposal: ProposedViewSize,
     uiView: WebView, context: Context
@@ -195,29 +173,67 @@ struct WebView: UIViewRepresentable {
     return CGSizeMake(360, 640)
   }
   
-  class ContentController: NSObject, WKScriptMessageHandler {
-    @Environment(\.openWindow) var openWindow
-    
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-      print("💬 Web Message:\n\(message.body)")
-    }
-  }
   
-  
-  func saveSnapshot(_ webView: WKWebView) {
-    
-    let image = webView.snapshot
-    if var path = widget.thumbnailFile {
+  func saveSnapshot(_ view: WKWebView?) {
+    let image = (view ?? webView).snapshot
+    if let path = widget.thumbnailFile {
       if let data = image.pngData(){
+        print("🖼️ Saved Snapshot, \(webView.url)")
         try? data.write(to: path)
+      } else {
+        print("❌ Failed Snapshot, \(webView)")
       }
     }
+  }
+
+
+
+
+class Coordinator: NSObject, WKNavigationDelegate {
+  let parent: WebView
+  
+  init(_ parent: WebView) {
+    self.parent = parent
+  }
+  
+  func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+    parent.loadStatusChanged?(parent, true, nil)
+  }
+  
+  func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    parent.title = webView.title ?? ""
+    parent.loadStatusChanged?(parent, false, nil)
+  }
+  
+  func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+    parent.loadStatusChanged?(parent, false, error)
   }
 }
 
 
-extension UIView {
+class ContentController: NSObject, WKScriptMessageHandler {
+  @Environment(\.openWindow) var openWindow
   
+  func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    print("💬 Web Message:\n\(message.body)")
+  }
+}
+
+}
+
+
+extension WKWebView {
+  @objc func saveSnapshot(path: URL) {
+    let image = self.snapshot
+
+      if let data = image.pngData(){
+        print("🖼️ Saved Snapshot, \(self.url)")
+        try? data.write(to: path)
+      } else {
+        print("❌ Failed Snapshot, \(self.url)")
+      }
+    }
+    
   var snapshot: UIImage {
     return UIGraphicsImageRenderer(size: bounds.size).image { _ in
       drawHierarchy(in: bounds, afterScreenUpdates: true)
