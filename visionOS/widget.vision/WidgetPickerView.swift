@@ -17,7 +17,7 @@ struct WidgetPickerView: View {
   var app: WidgetApp?
   
   let columns = [
-    GridItem(.adaptive(minimum: 240, maximum: 240), spacing: 60, alignment: .center)
+    GridItem(.adaptive(minimum: 240, maximum: 240), spacing: 40, alignment: .center)
   ]
   
   func getMoreWidgets() {
@@ -67,7 +67,7 @@ struct WidgetPickerView: View {
 
 
         
-        LazyVGrid(columns: columns, spacing: 80) {
+        LazyVGrid(columns: columns, spacing: 30) {
           ForEach(widgets) { widget in
             WidgetListItem(widget: widget)
               .contextMenu(ContextMenu(menuItems: {
@@ -112,6 +112,7 @@ struct WidgetPickerView: View {
     
     }
     .background(
+      
       LinearGradient(gradient: Gradient(colors: [
         Color(hue: hue, saturation: 1.0, brightness: 0.3).opacity(0.5),
         Color(hue: fmod(hue + 1.0/6.0, 1.0), saturation: 0.2, brightness: 0.1).opacity(0.7)

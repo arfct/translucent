@@ -56,7 +56,7 @@ struct WidgetListItem: View {
         Text(widget.displayName)
           .font(.headline)
           .lineLimit(1)
-      }.padding(.top, 16)
+      }.padding(.top, 4)
     }
     .buttonBorderShape(.roundedRectangle(radius: 40))
     .buttonStyle(.borderless)
