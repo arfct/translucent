@@ -13,11 +13,11 @@ struct WidgetPickerView: View {
   @Environment(\.openURL) var openURL
   @Environment(\.openWindow) private var openWindow
   @Environment(\.dismissWindow) private var dismissWindow
-  
+  @State private var searchText: String = ""
   var app: WidgetApp?
   
   let columns = [
-    GridItem(.adaptive(minimum: 240, maximum: 480))
+    GridItem(.adaptive(minimum: 240, maximum: 240), spacing: 60, alignment: .center)
   ]
   
   func getMoreWidgets() {
@@ -39,10 +39,35 @@ struct WidgetPickerView: View {
           .aspectRatio(contentMode: .fit)
           .frame(maxWidth: 480)
           .padding(.horizontal, 60)
-          .padding(.bottom, 60)
+          .padding(.bottom, 80)
           .padding(.top, 20)
           .opacity(0.8)
-        LazyVGrid(columns: columns, spacing: 20) {
+        
+        if (false){
+          HStack() {
+            TextField("Search", text: $searchText)
+              .padding()
+              .frame(maxWidth:320)
+            PasteButton(payloadType: URL.self) { urls in
+              print("url \(urls)")
+              if let url = urls.first {
+                DispatchQueue.main.async {
+                  app?.showWindowForURL(url)
+                }
+              }
+            }
+            .buttonBorderShape(.circle)
+            .buttonStyle(.borderless)
+            .labelStyle(.titleOnly)
+            .tint(.secondary)
+          }.padding(.horizontal, 20)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 100))
+          Spacer(minLength: 20)
+        }
+
+
+        
+        LazyVGrid(columns: columns, spacing: 80) {
           ForEach(widgets) { widget in
             WidgetListItem(widget: widget)
               .contextMenu(ContextMenu(menuItems: {
@@ -54,34 +79,19 @@ struct WidgetPickerView: View {
               }))
           }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 40)
       }
       .frame(maxHeight:.infinity)
       
      
       .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
-          PasteButton(payloadType: URL.self) { urls in
-            print("url \(urls)")
-            if let url = urls.first {
-              DispatchQueue.main.async {
-                app?.showWindowForURL(url)
-              }
-            }
-          }
-          .frame(minWidth:90, minHeight:90)
-          .buttonBorderShape(.circle)
-          .buttonStyle(.borderless)
-          .labelStyle(.titleOnly)
-          .tint(.secondary)
-        }
+
         ToolbarItem(placement: .topBarLeading) {
           Button { getMoreWidgets() } label: {
-            Label("Get widgets", systemImage: "plus")
-          }.labelStyle(.titleOnly)
-            .frame(maxHeight:36)
-            .buttonStyle(.borderless)
-            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18))
+            Label("Get more widgets", systemImage: "safari")
+          }.labelStyle(.titleAndIcon)
+            .buttonStyle(.bordered)
+//            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18))
         }
       }
       .overlay {

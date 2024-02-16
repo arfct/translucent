@@ -188,14 +188,9 @@ struct WebView: UIViewRepresentable {
   func saveSnapshot(_ webView: WKWebView) {
     
     let image = webView.snapshot
-    if var path = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-      path.append(path: "thumbnails")
-      
-      try? FileManager.default.createDirectory(at: path, withIntermediateDirectories: true)
-      
+    if var path = widget.thumbnailFile {
       if let data = image.pngData(){
-        let filename = path.appendingPathComponent(widget.id.uuidString + ".png")
-        try? data.write(to: filename)
+        try? data.write(to: path)
       }
     }
   }

@@ -170,6 +170,17 @@ extension Widget {
   }
   
   @Transient
+  var thumbnailFile: URL? {
+    if var path = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+      path.append(path: "thumbnails")
+      try? FileManager.default.createDirectory(at: path, withIntermediateDirectories: true)
+      let filename = path.appendingPathComponent(self.id.uuidString + ".png")
+      return filename
+    }
+    return nil
+  }
+  
+  @Transient
   var shareURL: String {
     if (originalLocation != nil) {
       return originalLocation!

@@ -4,38 +4,64 @@ struct WidgetListItem: View {
   
   @Environment(\.openWindow) private var openWindow
   @Environment(\.dismissWindow) private var dismissWindow
-    var widget: Widget
-    
+  var widget: Widget
+  
   var body: some View {
-    
-    Button {
-      openWindow(id: "widget", value: widget.persistentModelID)
-    } label: {
-      VStack(alignment: .center) {
-        Image(systemName: widget.icon)
-          .resizable()
-          .aspectRatio(contentMode: .fit)
-          .frame(width: 40, height: 40)
-          .padding(.bottom, 10)
+    VStack(alignment: .center) {
+      Button {
+        openWindow(id: "widget", value: widget.persistentModelID)
+      } label: {
         
-        .foregroundColor(widget.tintColor)
-          .font(Font.title.weight(.light))
         
+        ZStack() {
+          if let file = widget.thumbnailFile, let image = UIImage(contentsOfFile: file.path) {
+            if (image.size.width / image.size.height > 1.618) {
+              Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth:240, maxHeight:170, alignment: .center)
+                .fixedSize()
+                .background(widget.backColor)
+                .cornerRadius(widget.radius / widget.width * 200)
+                .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 40),
+                                       displayMode: (widget.style == .glass ) ? .always : .never)
+              
+            } else {
+              Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+              
+                .frame(maxWidth:240, maxHeight:170, alignment: .top)
+                .fixedSize()
+                .background(widget.backColor)
+                .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 40),
+                                       displayMode: (widget.style == .glass ) ? .always : .never)
+            }
+          } else {
+            Image(systemName: widget.icon)
+              .resizable()
+              .aspectRatio(contentMode: .fit)
+              .frame(width: 24, height: 24)
+              .padding(.bottom, 10)
+              .font(Font.title.weight(.light))
+          }
+        }
+        .cornerRadius(30)
+        .frame(maxWidth:.infinity)
+      }
+      
+      .frame(maxWidth: .infinity)
+      
+      HStack(alignment: .center, spacing: 10) {
         Text(widget.displayName)
           .font(.headline)
-          .foregroundColor(widget.foreColor)
           .lineLimit(1)
-      }
-      .frame(maxWidth: .infinity)
-      .padding(.horizontal, 0)
-      .padding(.vertical , 20)
+      }.padding(.top, 16)
     }
+    .buttonBorderShape(.roundedRectangle(radius: 40))
     .buttonStyle(.borderless)
-    .buttonBorderShape(.roundedRectangle)
-    .background(widget.backColor)
-    .background(.white.opacity(0.1))
-    .cornerRadius(30)
-    .frame(maxWidth: .infinity, maxHeight:200, alignment:.leading)
+    .hoverEffect(.lift)
+    .frame(maxWidth: .infinity, alignment:.leading)
   }
 }
 

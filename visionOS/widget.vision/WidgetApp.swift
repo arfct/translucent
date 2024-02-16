@@ -91,6 +91,7 @@ struct WidgetApp: App {
     
     
     
+    
     // MARK: - Settings Window
     WindowGroup("Settings", id: "widgetSettings", for: PersistentIdentifier.self) { $id in
       if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
