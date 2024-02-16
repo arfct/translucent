@@ -176,6 +176,13 @@ struct WebView: UIViewRepresentable {
     }
   }
   
+  func sizeThatFits(
+      _ proposal: ProposedViewSize,
+      uiView: WebView, context: Context
+  ) -> CGSize? {
+      return CGSizeMake(360, 640)
+  }
+  
   class ContentController: NSObject, WKScriptMessageHandler {
     @Environment(\.openWindow) var openWindow
     

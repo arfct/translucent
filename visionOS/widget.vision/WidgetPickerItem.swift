@@ -36,14 +36,18 @@ struct WidgetListItem: View {
                 .background(widget.backColor)
                 .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 40),
                                        displayMode: (widget.style == .glass ) ? .always : .never)
+              
             }
           } else {
-            Image(systemName: widget.icon)
-              .resizable()
-              .aspectRatio(contentMode: .fit)
-              .frame(width: 24, height: 24)
-              .padding(.bottom, 10)
-              .font(Font.title.weight(.light))
+            VStack {
+              Image(systemName: widget.icon)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 72, height: 72)
+                .font(Font.title.weight(.light))
+            }
+            .frame(minWidth:240, maxWidth:.infinity, minHeight:170, maxHeight:170, alignment: .center)
+            .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 40))
           }
         }
         .cornerRadius(30)

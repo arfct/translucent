@@ -14,7 +14,41 @@
             symbolName = "print_cycle"
             moduleName = "">
             <Locations>
+               <Location
+                  uuid = "C0D8E96B-36C7-40F6-BCA1-4AD8D5F9A209 - cc86abe8c9557793"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "AG::Graph::print_cycle(AG::data::ptr&lt;AG::Node&gt;) const"
+                  moduleName = "AttributeGraph"
+                  usesParentBreakpointCondition = "Yes">
+               </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6F9D8CEA-1083-431A-BE7B-ED946C099AE7"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "Yes"
+            filePath = "widget.vision/WebView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "200"
+            endingLineNumber = "200"
+            landmarkName = "saveSnapshot(_:)"
+            landmarkType = "7">
+            <Actions>
+               <BreakpointActionProxy
+                  ActionExtensionID = "Xcode.BreakpointAction.Log">
+                  <ActionContent
+                     message = "open @path@"
+                     conveyanceType = "0">
+                  </ActionContent>
+               </BreakpointActionProxy>
+            </Actions>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

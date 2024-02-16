@@ -33,12 +33,18 @@ struct WidgetView: View {
     }
   }
   
+  // Webview var
+  private var webView: WebView {
+    WebView(title: $widget.title, location: $widget.location, widget: $widget)
+  }
+  
+  
   var body: some View {
     GeometryReader { geometry in
       VStack(alignment: .center) {
         ZStack(alignment: .bottomTrailing) {
           if (!flipped) {
-            WebView(title: $widget.title, location: $widget.location, widget: $widget)
+            webView
               .onLoadStatusChanged { content, loading, error in
                 print("Loading - \(loading ? widget.location ?? "" : "done")")
                 self.isLoading = loading
@@ -107,8 +113,14 @@ struct WidgetView: View {
         widget.width = geometry.size.width
         widget.height = geometry.size.height
         print("Widget size changed to \(widget.width)×\(widget.height)")
+        webView.saveSnapshot(webView.webView)
         try? modelContext.save()
        }
+      .onDisappear {
+        webView.saveSnapshot(webView.webView)
+        try? modelContext.save()
+      }
+
     }
     // Clamp the size initially to set the base size, but then allow it to change later.
     .frame(minWidth: clampInitialSize ? widget.width : widget.minWidth, idealWidth: widget.width, maxWidth: clampInitialSize ? widget.width : widget.maxWidth,
