@@ -2,6 +2,7 @@ import SwiftUI
 
 struct WidgetSettingsView: View {
   @Environment(\.openWindow) private var openWindow
+  @Environment(\.openURL) private var openURL
   
   @State var widget: Widget
   var callback: () -> Void
@@ -10,7 +11,7 @@ struct WidgetSettingsView: View {
   @State var backColor: Color = .clear
   @State var tintColor: Color = .blue
   @State var showAllOptions: Bool = false
-  
+  @State var fontMenu: String = ""
   @FocusState private var isTextFieldFocused: Bool
   @State private var locationTempString: String = "about:blank"
   
@@ -101,21 +102,21 @@ struct WidgetSettingsView: View {
               }
               .background(.ultraThickMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
             }.frame(maxWidth:.infinity, alignment:.leading)
-            HStack(spacing:30) {
+            HStack(spacing:10) {
               Spacer()
               ColorPicker(selection: $backColor) {
                 Image(systemName: "square.fill")
-              }.frame(maxWidth:64).onChange(of: backColor) {
+              }.frame(maxWidth:56).onChange(of: backColor) {
                 if let hex = backColor.toHex() { widget.backHex = hex }
               }
               ColorPicker(selection: $foreColor, supportsOpacity: true) {
                 Image(systemName: "textformat.size.smaller")
-              }.frame(maxWidth:64).onChange(of: foreColor) {
+              }.frame(maxWidth:56).onChange(of: foreColor) {
                 if let hex = foreColor.toHex() { widget.foreHex = hex }
               }
               ColorPicker(selection: $tintColor, supportsOpacity: true) {
                 Image(systemName: "a.square")
-              }.frame(maxWidth:64).onChange(of: tintColor) {
+              }.frame(maxWidth:56).onChange(of: tintColor) {
                 if let hex = tintColor.toHex() { widget.tintHex = hex }
               }
             }.frame(maxWidth:.infinity)
@@ -187,6 +188,35 @@ struct WidgetSettingsView: View {
               .autocapitalization(.none)
               .disableAutocorrection(true)
               .frame(maxWidth: .infinity)
+            
+            // MARK: Menu
+            Menu {
+              Picker("Font Override", selection: $fontMenu) {
+                Text("Default").tag("")
+                Text("System (San Francisco)").tag("-apple-system")
+                Divider()
+                Text("Archivo Narrow").tag("Archivo Narrow")
+                Text("Bungee").tag("Bungee")
+                Text("DM Sans").tag("DM Sans")
+                Text("Space Mono").tag("Space Mono")
+                Text("VF Semi Cond").tag("VF Semi Cond")
+              }
+              Divider()
+
+              Button("More on Google Fonts…") {
+                openURL(URL(string:"https://fonts.google.com")!)
+              }
+            } label: {
+              Label("Location", systemImage: "ellipsis")
+            }.onChange(of: fontMenu, {
+              print("Font", fontMenu)
+              widget.fontName = fontMenu;
+            })
+            .onAppear() {
+              fontMenu = widget.fontName
+            }
+            .labelStyle(.iconOnly)
+            .buttonStyle(.borderless)
           }
           
           if (showAllOptions) {
