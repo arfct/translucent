@@ -57,15 +57,6 @@ struct WidgetApp: App {
             showWindowForURL($0)
             dismissWindow(id: "main")
           }
-          .onContinueUserActivity(Activity.openWidget, perform: { activity in
-            if let info = activity.userInfo {
-              if let data = info["modelId"] as? Data {
-                let modelID = try! JSONDecoder().decode(PersistentIdentifier.self, from: data)
-                openWindow(id: "widget", value: modelID)
-              }
-            }
-          })
-        
           .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
             showWindowForURL($0.webpageURL)
           }
@@ -98,35 +89,28 @@ struct WidgetApp: App {
     // MARK: - Widget Windows
     
     WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in
-      if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
-        WidgetView(widget:widget, app:self)
-          .onOpenURL { showWindowForURL($0) }
-          .onContinueUserActivity("openWidget", perform: { activity in
-            print("Activity")
-          })
-          .onContinueUserActivity(Activity.openWidget, perform: { activity in
-            print("Activity")
-            if let info = activity.userInfo {
-              if let data = info["modelId"] as? Data {
-                let modelID = try! JSONDecoder().decode(PersistentIdentifier.self, from: data)
-                openWindow(id: "widget", value: modelID)
-              }
-            }
-          })
-        
-          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
-            showWindowForURL($0.webpageURL)
-          }
-          .task {
-            widget.lastOpened = .now
-          }
-      } else {
-        Text("No Widget with ID: \(id)")
+      ZStack {
+        if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
+          WidgetView(widget:widget, app:self)
+            .onAppear() { widget.lastOpened = .now }
+        } else { Text("Loading…") }
       }
+      .onContinueUserActivity(Activity.openWidget, perform: { activity in
+        if let info = activity.userInfo,
+           let data = info["modelId"] as? Data,
+           let modelID = try? JSONDecoder().decode(PersistentIdentifier.self, from: data) {
+          id = modelID
+        }
+      })
+      .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
+        showWindowForURL($0.webpageURL)
+      }
+      .onOpenURL { showWindowForURL($0) }
+
     }
     .handlesExternalEvents(matching: ["openWidget"])
     .modelContainer(container!)
-//    .windowStyle(.plain)
+    .windowStyle(.plain)
     .windowResizability(.contentSize)
     .defaultSize(width: 360, height: 360)
     
