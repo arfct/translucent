@@ -35,7 +35,7 @@ struct WidgetSettingsView: View {
   let spacing = 20.0
   let labelWidth = 72.0
   let columns = [
-    GridItem(.adaptive(minimum: 240, maximum: 480), spacing: 20)
+    GridItem(.adaptive(minimum: 96, maximum: 480), spacing: 20)
   ]
   
   
@@ -120,34 +120,38 @@ struct WidgetSettingsView: View {
               }
             }
             
-            
-            
-            
             HStack(spacing:spacing) {
-              LazyVGrid(columns:#column) {
                 Label("Colors", systemImage: "ellipsis").labelStyle(.titleOnly)
                 
                   .frame(maxWidth: labelWidth, alignment:.leading)
-                ColorPicker(selection: $backColor) {
-                  Image(systemName: "square.fill")
-                }.frame(maxWidth:56).onChange(of: backColor) {
-                  if let hex = backColor.toHex() { widget.backHex = hex }
-                }.labelsHidden().scaleEffect(1.2)
-                Text("Back")
-                ColorPicker(selection: $foreColor, supportsOpacity: true) {
-                  Image(systemName: "textformat.size.smaller")
-                }.frame(maxWidth:56).onChange(of: foreColor) {
-                  if let hex = foreColor.toHex() { widget.foreHex = hex }
-                }.labelsHidden().scaleEffect(1.2)
-                Text("Text")
-                ColorPicker(selection: $tintColor, supportsOpacity: true) {
-                  Image(systemName: "a.square")
-                }.frame(maxWidth:56).onChange(of: tintColor) {
-                  if let hex = tintColor.toHex() { widget.tintHex = hex }
-                }.labelsHidden().scaleEffect(1.2)
-                Text("Tint")
-                
-                Spacer()
+              
+              LazyVGrid(columns:columns) {
+                HStack {
+                  ColorPicker(selection: $backColor) {
+                    Image(systemName: "square.fill")
+                  }.frame(maxWidth:56).onChange(of: backColor) {
+                    if let hex = backColor.toHex() { widget.backHex = hex }
+                  }.labelsHidden().scaleEffect(1.2)
+                  Text("Back")
+                }
+                HStack {
+                  ColorPicker(selection: $foreColor, supportsOpacity: true) {
+                    Image(systemName: "textformat.size.smaller")
+                  }.frame(maxWidth:56).onChange(of: foreColor) {
+                    if let hex = foreColor.toHex() { widget.foreHex = hex }
+                  }.labelsHidden().scaleEffect(1.2)
+                  Text("Text")
+                }
+                HStack {
+                  ColorPicker(selection: $tintColor, supportsOpacity: true) {
+                    Image(systemName: "a.square")
+                  }.frame(maxWidth:56).onChange(of: tintColor) {
+                    if let hex = tintColor.toHex() { widget.tintHex = hex }
+                  }.labelsHidden().scaleEffect(1.2)
+                  Text("Tint")
+                }
+              
+              
               }.frame(maxWidth:.infinity)
             }
             

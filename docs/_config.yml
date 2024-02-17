@@ -2,11 +2,9 @@ theme: minima
 
 collections:
   links:
+    sort_by: order
     output: true
     layout: link
-    title: "Links"
-    description: "A collection of widget links"
-    sort_by: order
 
 plugins:
   - jekyll-feed
