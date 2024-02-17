@@ -7,7 +7,7 @@ layout: default
   
   {% include logo.html %}
 
-  {% assign posts = site.links | sort: 'order' %}
+  {% assign posts = site.links | sort: 'order' | reversed %}
   {%- if posts.size > 0 -%}
   
   <div class="tiles">
