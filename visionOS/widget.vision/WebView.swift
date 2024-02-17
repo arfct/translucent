@@ -69,19 +69,6 @@ struct WebView: UIViewRepresentable {
     
     var source: [String] = []
     
-    // Post messages with widget.postMessage('Clicked Page!');
-    source.append("""
-      window.widget = new Proxy(window.webkit.messageHandlers.widget, {
-      get(target, prop, receiver) {
-        if (prop === "message2") {
-          return "world";
-        }
-        return Reflect.get(...arguments);
-      },
-      );
-      
-      """)
-    
     source.append("document.head = document.getElementsByTagName('head')[0];")
     
     let zoom = widget.zoom
@@ -136,7 +123,6 @@ struct WebView: UIViewRepresentable {
 //      source.append("\n\(injectJS)\n")
 //    }
     
-    print("💉 Injecting Source:\n\n\(source.joined(separator:"\n"))")
     return source.joined(separator:"\n")
   }
   
@@ -146,13 +132,43 @@ struct WebView: UIViewRepresentable {
     webView.backgroundColor = UIColor.clear
     webView.scrollView.backgroundColor = UIColor.clear
     webView.overrideUserInterfaceStyle = .dark
-    webView.customUserAgent = widget.userAgent
     
-    let config = webView.configuration
-    //    config.userContentController.add(context.coordinator, name: "widget")
-    config.userContentController.addScriptMessageHandler(context.coordinator, contentWorld: .defaultClient, name: "widget")
+    print("User Agent \(widget.userAgent)")
+    webView.customUserAgent = widget.userAgentString
+    
+    UIDevice.current.isBatteryMonitoringEnabled = true
 
-    let script = WKUserScript(source: jsSrc(widget: widget), injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+    let config = webView.configuration
+    
+    // Post messages with widget.postMessage('Clicked Page!');
+    //        config.userContentController.add(context.coordinator, name: "widget")
+    config.userContentController.addScriptMessageHandler(context.coordinator, contentWorld: .page, name: "widget")
+    
+    config.userContentController.addUserScript(WKUserScript(
+      source:"""
+      window.widget = window.webkit.messageHandlers.widget
+      console.log("window.widget", window.widget)
+      window.widgetproxy = new Proxy(window.widget, {
+        get(target, prop, receiver) {
+          return Reflect.get(...arguments);
+        }
+      })
+            console.log("window.widget", window.widget)
+
+      """,
+      injectionTime: .atDocumentStart,
+      forMainFrameOnly: false))
+  
+    
+    
+    var js =  jsSrc(widget: widget)
+    js += """
+      window.widget?.postMessage({"event":"loaded"})
+      """
+    
+    print("💉 Injecting Source:\n\n\(js)")
+
+    let script = WKUserScript(source:js, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     config.userContentController.addUserScript(script)
     
     if let url = URL(string:location!) {
@@ -182,9 +198,9 @@ struct WebView: UIViewRepresentable {
 
   func updateWebView(_ webView: WKWebView, context: Context) {
     webView.evaluateJavaScript(jsSrc(widget: widget)) { object, error in
-      print("🔥 Evaluated JS \(error)")}
-    if (webView.customUserAgent != widget.userAgent) {
-      webView.customUserAgent = widget.userAgent
+      print("Updated overrides\(error)")}
+    if (webView.customUserAgent != widget.userAgentString) {
+      webView.customUserAgent = widget.userAgentString
     }
     
   }
@@ -195,6 +211,7 @@ struct WebView: UIViewRepresentable {
     webView.navigationDelegate = nil
     webView.saveSnapshot(path: widget.thumbnailFile!);
     webView.removeFromSuperview()
+    
   }
   
   func updateSnapshot(_ webView: WKWebView) {
@@ -220,17 +237,21 @@ struct WebView: UIViewRepresentable {
       print("💬 Web Message:\n\(message.body)")
     }
     
+    @MainActor
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) async -> (Any?, String?) {
+    
       let body = message.body;
+      print("💬 Web Message:\(body)")
+
       if let body = message.body as? NSDictionary {
         let action = body.value(forKey: "action") as? String
         let args = body.value(forKey: "args") as? NSDictionary
-        print("💬 Web Message -> :\n\(body)")
         
-        if (action == "batteryLevel") {
-          return await (UIDevice.current.batteryLevel, nil)
+        if (action == "battery") {
+          print("battery level: \(UIDevice.current.batteryLevel)")
+          return (["level": String(UIDevice.current.batteryLevel),
+                   "state": String(UIDevice.current.batteryState.rawValue)] as? NSDictionary, nil)
         }
-        
       }
       return (nil, nil)
     }

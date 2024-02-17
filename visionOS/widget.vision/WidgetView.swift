@@ -22,6 +22,8 @@ struct WidgetView: View {
 
   @State private var flipped: Bool = false
   @State var isLoading: Bool = true
+  @State var finishedFirstLoad: Bool = false
+  @State var loadedWindow: Bool = false
   @State var showOrnaments: Bool = true
   @State var ornamentTimer: Timer?
   @State var clampInitialSize: Bool = true
@@ -32,26 +34,26 @@ struct WidgetView: View {
       flipped.toggle()
     }
   }
-  
-  // Webview var
-  private var webView: WebView {
-    WebView(title: $widget.title, location: $widget.location, widget: $widget)
-  }
-  
+
   
   var body: some View {
     GeometryReader { geometry in
       VStack(alignment: .center) {
-        ZStack(alignment: .bottomTrailing) {
-          if (!flipped) {
-            webView
+        
+        ZStack(alignment: .center) {
+
+          if (loadedWindow && !flipped) {
+            WebView(title: $widget.title, location: $widget.location, widget: $widget)
               .onLoadStatusChanged { content, loading, error in
                 self.isLoading = loading
+                if (loading && !finishedFirstLoad) {
+                  finishedFirstLoad = true;
+                }
                 if let error = error { print("Loading error: \(error)") }
               }
               .frame(maxWidth: .infinity, maxHeight: .infinity)
               .disabled(flipped)
-              .opacity(flipped ? 0.0 : 1.0)
+              .opacity(flipped || !finishedFirstLoad ? 0.0 : 1.0)
               .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
                                      displayMode: (widget.style == .glass ) ? .always : .never)
               .background(widget.backColor)
@@ -59,8 +61,19 @@ struct WidgetView: View {
               .gesture(TapGesture().onEnded({ gesture in
                 showOrnaments = true
                 scheduleHide()
-              
               }))
+          }
+          if (!finishedFirstLoad) {
+            ZStack {
+              Image(systemName: widget.icon)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 64, height: 64)
+                .font(Font.title.weight(.light))
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .glassBackgroundEffect()
+            
           }
           WidgetSettingsView(widget:widget, callback: toggleSettings)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -91,20 +104,16 @@ struct WidgetView: View {
             }
             .onDrag {
               let userActivity = NSUserActivity(activityType: Activity.openSettings)
-              
+              userActivity.targetContentIdentifier = "settings"
               try? userActivity.setTypedPayload(["modelId": widget.modelID])
               let itemProvider = NSItemProvider(object: widget.id.uuidString as NSString)
               itemProvider.registerObject(userActivity, visibility: .all)
               return itemProvider
             } preview: {
-              Button { } label: {
-                  Image(systemName: flipped ? "arrow.backward" : "info")
-                    .resizable()
-                    .buttonBorderShape(.circle)
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 16, height: 16)
-                
-              }
+              ZStack {
+                Text("Widget Settings")
+              }.frame(width:100, height: 100).fixedSize()
+                .background(.white.opacity(0.2))
             }
             .simultaneousGesture(LongPressGesture().onEnded { _ in
 //              openWindow(id:"main")
@@ -132,6 +141,7 @@ struct WidgetView: View {
         print("↔️ Widget size changed to \(widget.width)×\(widget.height)")
         try? modelContext.save()
        }
+
       .onDisappear {
         try? modelContext.save()
       }
@@ -140,11 +150,14 @@ struct WidgetView: View {
     // Clamp the size initially to set the base size, but then allow it to change later.
     .frame(minWidth: clampInitialSize ? widget.width : widget.minWidth, idealWidth: widget.width, maxWidth: clampInitialSize ? widget.width : widget.maxWidth,
            minHeight: clampInitialSize ? widget.height : widget.minHeight, idealHeight: widget.height, maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
-    
+    .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
     .persistentSystemOverlays(showOrnaments ? .automatic : .hidden)
   
-    .task{
-      DispatchQueue.main.asyncAfter(deadline: .now() + 1) { clampInitialSize = false }
+    .onAppear(){
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+        clampInitialSize = false
+        loadedWindow = true;
+      }
       scheduleHide()
     }
     

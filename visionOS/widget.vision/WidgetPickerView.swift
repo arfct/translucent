@@ -47,7 +47,8 @@ struct WidgetPickerView: View {
             Label("Get more widgets", systemImage: "plus")
           }.labelStyle(.iconOnly)
             .buttonBorderShape(.circle)
-        }.padding(40)
+        }.padding(.top, 24)
+          .padding(.trailing, 24)
           .frame(maxWidth:.infinity, alignment:.trailing)
         Image("widget.vision")
           .renderingMode(.template)
@@ -83,6 +84,7 @@ struct WidgetPickerView: View {
         LazyVGrid(columns: columns, spacing: 30) {
           ForEach(widgets) { widget in
             WidgetListItem(widget: widget)
+            
               .contextMenu(ContextMenu(menuItems: {
                 Button(role: .destructive) {
                   deleteWidget(widget)
@@ -92,7 +94,7 @@ struct WidgetPickerView: View {
               }))
               .onDrag {
                 let userActivity = NSUserActivity(activityType: Activity.openWidget)
-                userActivity.targetContentIdentifier = "openWidget"
+                userActivity.targetContentIdentifier = Activity.openWidget
                 try? userActivity.setTypedPayload(["modelId": widget.modelID])
                 let itemProvider = NSItemProvider(object: widget.id.uuidString as NSString)
                 itemProvider.registerObject(userActivity, visibility: .all)

@@ -38,7 +38,6 @@ struct WidgetSettingsView: View {
     GridItem(.adaptive(minimum: 96, maximum: 480), spacing: 20)
   ]
   
-  
   var body: some View {
     GeometryReader { g in
       NavigationStack {

@@ -93,7 +93,11 @@ struct WidgetApp: App {
         if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
           WidgetView(widget:widget, app:self)
             .onAppear() { widget.lastOpened = .now }
-        } else { Text("Loading…") }
+        } else { 
+          ProgressView()
+            .progressViewStyle(CircularProgressViewStyle(tint: .primary))
+            .scaleEffect(1.0, anchor: .center)
+        }
       }
       .onContinueUserActivity(Activity.openWidget, perform: { activity in
         if let info = activity.userInfo,
@@ -108,7 +112,7 @@ struct WidgetApp: App {
       .onOpenURL { showWindowForURL($0) }
 
     }
-    .handlesExternalEvents(matching: ["openWidget"])
+    .handlesExternalEvents(matching: [Activity.openWidget])
     .modelContainer(container!)
     .windowStyle(.plain)
     .windowResizability(.contentSize)
@@ -119,19 +123,27 @@ struct WidgetApp: App {
     // TODO: These don't work for some reason?
     
     WindowGroup("Settings", id: "widgetSettings", for: Foundation.Data.self) { $data in
-      if let data = data {
-        if let modelID = try? JSONDecoder().decode(PersistentIdentifier.self, from: data ) {
-          if let widget = container?.mainContext.model(for: modelID) as? Widget{
-            WidgetSettingsView(widget:widget, callback: {
-              dismissWindow(id: "widgetSettings")
-            }).task{
-              print("Open Settings for \(widget.name)")
-            }
-          } else {
-            
-          }
+      ZStack {
+        if let data = data,
+           let modelID = try? JSONDecoder().decode(PersistentIdentifier.self, from: data ),
+           let widget = container?.mainContext.model(for: modelID) as? Widget{
+              WidgetSettingsView(widget:widget, callback: {
+                dismissWindow(id: "widgetSettings")
+              }).task{
+                print("Open Settings for \(widget.name)")
+              }
+        } else {
+          ProgressView()
+            .progressViewStyle(CircularProgressViewStyle(tint: .primary))
+            .scaleEffect(1.0, anchor: .center)
         }
       }
+      .onContinueUserActivity(Activity.openSettings, perform: { activity in
+        if let info = activity.userInfo,
+           let modelData = info["modelId"] as? Data {
+          data = modelData
+        }
+      })
     }
     .handlesExternalEvents(matching: ["settings"])
     .modelContainer(container!)
