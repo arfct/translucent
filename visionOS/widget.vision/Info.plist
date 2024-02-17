@@ -32,12 +32,14 @@
 			</array>
 		</dict>
 	</array>
-  <key>NSUserActivityTypes</key>
-  <array>
-      <string>vision.widget.open</string>
-  </array>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>vision.widget.open</string>
+	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationPreferredDefaultSceneSessionRole</key>

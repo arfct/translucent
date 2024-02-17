@@ -85,7 +85,8 @@ struct WidgetApp: App {
     .modelContainer(container!)
     .windowResizability(.contentSize)
     .defaultSize(width: windowWidth, height: windowHeight)
-    
+    .windowStyle(.plain)
+
     // MARK: - Widget Windows
     
     WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in

@@ -46,7 +46,7 @@ struct WidgetListItem: View {
         .background(widget.backColor)
         .background(asDrag ? .white.opacity(0.05) : .clear)
         .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 40),
-                               displayMode: (widget.style == .glass && !asDrag) ? .always : .never)
+                               displayMode: (true && !asDrag) ? .always : .never)
         .cornerRadius(30)
         .frame(maxWidth:.infinity)
         

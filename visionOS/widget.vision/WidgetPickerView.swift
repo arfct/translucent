@@ -37,7 +37,7 @@ struct WidgetPickerView: View {
   }
   
   var body: some View {
-    NavigationStack {
+    VStack {
       ScrollView {
         
         // MARK: Toolbar
@@ -49,7 +49,7 @@ struct WidgetPickerView: View {
             .buttonBorderShape(.circle)
         }.padding(.top, 24)
           .padding(.trailing, 24)
-          .frame(maxWidth:.infinity, alignment:.trailing)
+          .frame(maxWidth:.infinity, alignment:.center)
         Image("widget.vision")
           .renderingMode(.template)
           .resizable()
@@ -58,6 +58,7 @@ struct WidgetPickerView: View {
           .frame(maxWidth: 480)
           .padding(.horizontal, 60)
           .opacity(0.8)
+          .shadow(color:.black, radius: 10, y: 3)
         
         if (false){
           HStack() {
@@ -128,13 +129,13 @@ struct WidgetPickerView: View {
       }
     
     }
-    .background(
-      
-      LinearGradient(gradient: Gradient(colors: [
-        Color(hue: hue, saturation: 1.0, brightness: 0.3).opacity(0.5),
-        Color(hue: fmod(hue + 1.0/6.0, 1.0), saturation: 0.2, brightness: 0.1).opacity(0.7)
-      ]), startPoint: .topLeading, endPoint: .bottomTrailing)
-      )
+//    .background(
+//      
+//      LinearGradient(gradient: Gradient(colors: [
+//        Color(hue: hue, saturation: 1.0, brightness: 0.3).opacity(0.5),
+//        Color(hue: fmod(hue + 1.0/6.0, 1.0), saturation: 0.2, brightness: 0.1).opacity(0.7)
+//      ]), startPoint: .topLeading, endPoint: .bottomTrailing)
+//      )
     .onAppear() {
       updateHue()
       Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
