@@ -7,7 +7,7 @@ struct WebView: UIViewRepresentable {
   @Environment(\.openWindow) var openWindow
   @Binding var title: String?
   @Binding var location: String?
-  @Binding var widget: Widget
+  @ObservedObject var widget: Widget
   
   var webView: WKWebView = WKWebView()
   var loadStatusChanged: ((WebView, Bool, Error?) -> Void)? = nil
@@ -73,7 +73,7 @@ struct WebView: UIViewRepresentable {
       css.append("--tint-color: \(hex);")
     }
     css.append("}")
-
+    
     
     if (widget.fontName != "" && widget.fontName != "-apple-system") {
       source.append ("""
@@ -140,75 +140,83 @@ struct WebView: UIViewRepresentable {
       let request = URLRequest(url: url)
       webView.load(request)
     }
-
+    
     updateSnapshot(webView)
     return webView
   }
-  
+
   func updateUIView(_ webView: WKWebView, context: Context) {
+    print("Updated \(webView.url)")
     updateSnapshot(webView)
   }
+  
+  func dismantleUIView(_ webView: WKWebView,coordinator: Coordinator ) {
+    print("Dismantling \(webView) \(coordinator)")
+    webView.stopLoading()
+    webView.navigationDelegate = nil
+    webView.saveSnapshot(path: widget.thumbnailFile!);
+    webView.removeFromSuperview()
+  }
+  
   
   func updateSnapshot(_ webView: WKWebView) {
     NSObject.cancelPreviousPerformRequests(withTarget: webView)
     webView.perform(#selector(WKWebView.saveSnapshot(path:)), with:widget.thumbnailFile, afterDelay: 1.0)
   }
-
+  
   func sizeThatFits(
     _ proposal: ProposedViewSize,
     uiView: WebView, context: Context
   ) -> CGSize? {
     return CGSizeMake(360, 640)
   }
-
-class Coordinator: NSObject, WKNavigationDelegate {
-  let parent: WebView
   
-  init(_ parent: WebView) {
-    self.parent = parent
+  class Coordinator: NSObject, WKNavigationDelegate {
+    let parent: WebView
+    
+    
+    init(_ parent: WebView) {
+      self.parent = parent
+    }
+    
+    func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+      parent.loadStatusChanged?(parent, true, nil)
+    }
+    
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+      parent.title = webView.title ?? ""
+      parent.loadStatusChanged?(parent, false, nil)
+    }
+    
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+      parent.loadStatusChanged?(parent, false, error)
+    }
   }
   
-  func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-    parent.loadStatusChanged?(parent, true, nil)
-  }
   
-  func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-    parent.title = webView.title ?? ""
-    parent.loadStatusChanged?(parent, false, nil)
-  }
-  
-  func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-    parent.loadStatusChanged?(parent, false, error)
+  class ContentController: NSObject, WKScriptMessageHandler {
+    @Environment(\.openWindow) var openWindow
+    
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+      print("💬 Web Message:\n\(message.body)")
+    }
   }
 }
-
-
-class ContentController: NSObject, WKScriptMessageHandler {
-  @Environment(\.openWindow) var openWindow
-  
-  func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-    print("💬 Web Message:\n\(message.body)")
-  }
-}
-
-}
-
 
 extension WKWebView {
   @objc func saveSnapshot(path: URL) {
-    let image = self.snapshot
-      if let data = image.pngData(){
-        print("🖼️ Saved Snapshot, \(String(describing: self.url))")
-        try? data.write(to: path)
-      } else {
-        print("❌ Failed Snapshot, \(String(describing: self.url))")
-      }
+    let image = self.snapshotImage
+    if let data = image.pngData(){
+      print("🖼️ Saved Snapshot, \(String(describing: self.url))")
+      try? data.write(to: path)
+    } else {
+      print("❌ Failed Snapshot, \(String(describing: self.url))")
     }
-    
-  var snapshot: UIImage {
+  }
+  
+  var snapshotImage: UIImage {
     return UIGraphicsImageRenderer(size: bounds.size).image { _ in
       drawHierarchy(in: bounds, afterScreenUpdates: true)
     }
   }
-  
 }

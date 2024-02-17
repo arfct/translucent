@@ -35,7 +35,7 @@ struct WidgetView: View {
   
   // Webview var
   private var webView: WebView {
-    WebView(title: $widget.title, location: $widget.location, widget: $widget)
+    WebView(title: $widget.title, location: $widget.location, widget: widget)
   }
   
   
@@ -90,8 +90,8 @@ struct WidgetView: View {
               }
             }
             .simultaneousGesture(LongPressGesture().onEnded { _ in
-              openWindow(id:"main")
-              app?.openWindow(id: "widgetSettings", value: widget.persistentModelID)
+//              openWindow(id:"main")
+              app?.openWindow(id: "widgetSettings", value: widget.modelID)
             })
             .simultaneousGesture(TapGesture().onEnded {
               toggleSettings()

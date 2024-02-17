@@ -56,10 +56,18 @@ struct WidgetApp: App {
           .onOpenURL {
             showWindowForURL($0)
             dismissWindow(id: "main")
-          }
-          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
-            showWindowForURL($0.webpageURL)
-          }
+          }     
+          .onContinueUserActivity(Activity.openWindow, perform: { activity in
+            if let info = activity.userInfo {
+              if let data = info["modelId"] as? Data {
+                let modelID = try! JSONDecoder().decode(PersistentIdentifier.self, from: data)
+                openWindow(id: "widget", value: modelID)
+              }
+            }
+          })
+//          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
+//            showWindowForURL($0.webpageURL)
+//          }
           .onChange(of: geometry.size) {
             windowWidth = geometry.size.width
             windowHeight = geometry.size.height
@@ -91,9 +99,11 @@ struct WidgetApp: App {
         
         WidgetView(widget:widget, app:self)
           .onOpenURL { showWindowForURL($0) }
-          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
-            showWindowForURL($0.webpageURL)
-          }
+//          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
+//            showWindowForURL($0.webpageURL)
+//          }
+        
+
           .task {
             widget.lastOpened = .now
           }
@@ -104,24 +114,29 @@ struct WidgetApp: App {
     .windowResizability(.contentSize)
     .defaultSize(width: 360, height: 360)
     
+    
     // MARK: - Settings Window
     // TODO: These don't work for some reason?
     
-    WindowGroup("Settings", id: "widgetSettings", for: PersistentIdentifier.self) { $id in
-      if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
-        WidgetSettingsView(widget:widget, callback: {
-          dismissWindow(id: "widgetSettings")   
-        }).task{
-          print("Open Settings for \(widget.name)")
+    WindowGroup("Settings", id: "widgetSettings", for: Foundation.Data.self) { $data in
+      if let data = data {
+        if let modelID = try? JSONDecoder().decode(PersistentIdentifier.self, from: data ) {
+          if let widget = container?.mainContext.model(for: modelID) as? Widget{
+            WidgetSettingsView(widget:widget, callback: {
+              dismissWindow(id: "widgetSettings")
+            }).task{
+              print("Open Settings for \(widget.name)")
+            }
+          } else {
+            
+          }
         }
-      } else {
-        
       }
     }
     .modelContainer(container!)
-    .windowStyle(.plain)
+    .windowStyle(.automatic)
     .windowResizability(.contentSize)
-    .defaultSize(width: 360, height: 360)
+    .defaultSize(width: 480, height: 360)
     
     
   }

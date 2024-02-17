@@ -2,6 +2,42 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Widget</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>vision.widget</string>
+			</array>
+			<key>NSUbiquitousDocumentUserActivityType</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).document</string>
+		</dict>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLIconFile</key>
+			<string>document</string>
+			<key>CFBundleURLName</key>
+			<string>com.blacktree.vision.widget</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>widget-https</string>
+			</array>
+		</dict>
+	</array>
+  <key>NSUserActivityTypes</key>
+  <array>
+      <string>vision.widget.open</string>
+  </array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationPreferredDefaultSceneSessionRole</key>
@@ -11,19 +47,24 @@
 		<key>UISceneConfigurations</key>
 		<dict/>
 	</dict>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>CFBundleURLTypes</key>
+	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLName</key>
-			<string>com.blacktree.vision.widget</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>widget-https</string>
-			</array>
+			<key>UTTypeDescription</key>
+			<string>Vision Widget</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>vision.widget</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>vwdgt</string>
+				</array>
+				<key>public.mime-type</key>
+				<array/>
+			</dict>
 		</dict>
 	</array>
 </dict>

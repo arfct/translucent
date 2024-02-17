@@ -1,6 +1,12 @@
 import SwiftUI
 import SwiftData
 
+
+struct Activity {
+  static let openWindow = "vision.widget.open"
+}
+
+
 struct WidgetPickerView: View {
   @Environment(\.modelContext) private var modelContext
   @Query(sort: \Widget.lastOpened, order: .reverse)
@@ -17,7 +23,7 @@ struct WidgetPickerView: View {
   var app: WidgetApp?
   
   let columns = [
-    GridItem(.adaptive(minimum: 240, maximum: 240), spacing: 40, alignment: .center)
+    GridItem(.adaptive(minimum: 200, maximum: 200), spacing: 40, alignment: .center)
   ]
   
   func getMoreWidgets() {
@@ -78,6 +84,16 @@ struct WidgetPickerView: View {
                   Label("Remove", systemImage: "trash")
                 }
               }))
+              .onDrag {
+                let userActivity = NSUserActivity(activityType: Activity.openWindow)
+                
+                try? userActivity.setTypedPayload(["modelId": widget.modelID])
+                let itemProvider = NSItemProvider(object: widget.id.uuidString as NSString)
+                itemProvider.registerObject(userActivity, visibility: .all)
+                return itemProvider
+              } preview: {
+                WidgetListItem(widget: widget, asDrag:true)
+              }
           }
         }
         .padding(.horizontal, 40)
@@ -86,8 +102,7 @@ struct WidgetPickerView: View {
       
      
       .toolbar {
-
-        ToolbarItem(placement: .topBarLeading) {
+        ToolbarItem(placement: .bottomBar) {
           Button { getMoreWidgets() } label: {
             Label("Get more widgets", systemImage: "safari")
           }.labelStyle(.titleAndIcon)

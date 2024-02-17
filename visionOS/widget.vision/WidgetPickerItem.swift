@@ -5,7 +5,10 @@ struct WidgetListItem: View {
   @Environment(\.openWindow) private var openWindow
   @Environment(\.dismissWindow) private var dismissWindow
   var widget: Widget
-  
+  @State var asDrag = false;
+
+  let iconSize = CGSize(width: 200, height: 141)
+
   var body: some View {
     VStack(alignment: .center) {
       Button {
@@ -14,44 +17,39 @@ struct WidgetListItem: View {
         
         
         ZStack() {
-          if let file = widget.thumbnailFile, let image = UIImage(contentsOfFile: file.path) {
+          if let image = widget.thumbnail {
             if (image.size.width / image.size.height > 1.618) {
               Image(uiImage: image)
                 .resizable()
                 .scaledToFit()
-                .frame(maxWidth:240, maxHeight:170, alignment: .center)
+                .frame(maxWidth:iconSize.width, maxHeight:iconSize.height, alignment: .center)
                 .fixedSize()
-                .background(widget.backColor)
-                .cornerRadius(widget.radius / widget.width * 200)
-                .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 40),
-                                       displayMode: (widget.style == .glass ) ? .always : .never)
-              
             } else {
               Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
-              
-                .frame(maxWidth:240, maxHeight:170, alignment: .top)
+                .frame(maxWidth:iconSize.width, maxHeight:iconSize.height, alignment: .top)
                 .fixedSize()
-                .background(widget.backColor)
-                .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 40),
-                                       displayMode: (widget.style == .glass ) ? .always : .never)
-              
             }
           } else {
             VStack {
               Image(systemName: widget.icon)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 72, height: 72)
+                .frame(width: 64, height: 64)
                 .font(Font.title.weight(.light))
             }
-            .frame(minWidth:240, maxWidth:.infinity, minHeight:170, maxHeight:170, alignment: .center)
+            .frame(minWidth:iconSize.width, maxWidth:.infinity, minHeight:iconSize.height, maxHeight:iconSize.height, alignment: .center)
             .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 40))
           }
         }
+        .background(widget.backColor)
+        .background(asDrag ? .white.opacity(0.05) : .clear)
+        .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 40),
+                               displayMode: (widget.style == .glass && !asDrag) ? .always : .never)
         .cornerRadius(30)
         .frame(maxWidth:.infinity)
+        
       }
       
       .frame(maxWidth: .infinity)
@@ -60,6 +58,7 @@ struct WidgetListItem: View {
         Text(widget.displayName)
           .font(.headline)
           .lineLimit(1)
+          .opacity(asDrag ? 0.0 : 1.0)
       }.padding(.top, 4)
     }
     .buttonBorderShape(.roundedRectangle(radius: 40))

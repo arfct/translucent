@@ -4,7 +4,7 @@ import SwiftData
 
 
 
-@Model final class Widget {
+@Model final class Widget: ObservableObject {
   var id: UUID
   var name: String = ""
   var title: String?
@@ -176,6 +176,20 @@ extension Widget {
   @Transient
   var hostName: String? {
     URLComponents(string: location!)?.host
+  }
+  
+  @Transient
+  var modelID: Data {
+    let mid = try! JSONEncoder().encode(persistentModelID);
+    return  mid;
+  }
+  
+  @Transient
+  var thumbnail: UIImage? {
+    if let file = thumbnailFile, let image = UIImage(contentsOfFile: file.path) {
+      return image;
+    }
+    return nil;
   }
   
   @Transient

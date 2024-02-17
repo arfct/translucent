@@ -43,8 +43,7 @@ struct WidgetSettingsView: View {
           Button { self.callback() } label: {
             Label("Done", systemImage: "chevron.left")
           }
-          .buttonBorderShape(.circle)
-          .labelStyle(.iconOnly)
+          .labelStyle(.titleOnly)
           
           Spacer(minLength: 0)
           
