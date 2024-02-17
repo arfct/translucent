@@ -7,51 +7,27 @@ struct WebView: UIViewRepresentable {
   @Environment(\.openWindow) var openWindow
   @Binding var title: String?
   @Binding var location: String?
-  @ObservedObject var widget: Widget
+  @Binding var widget: Widget
   
   var webView: WKWebView = WKWebView()
-  var loadStatusChanged: ((WebView, Bool, Error?) -> Void)? = nil
   
+  var loadStatusChanged: ((WebView, Bool, Error?) -> Void)? = nil
   func onLoadStatusChanged(perform: ((WebView, Bool, Error?) -> Void)?) -> some View {
     var copy = self
     copy.loadStatusChanged = perform
     return copy
   }
   
-  func makeCoordinator() -> Coordinator {
-    Coordinator(self)
-  }
+  func makeCoordinator() -> Coordinator { Coordinator(self) }
   
-  let contentController = ContentController()
-  
-  func overrideJS(widget:Widget) -> String{
-    let zoom = widget.zoom
-    var viewport = "device-width"
-    if let width = widget.viewportWidth {
-      viewport = String(width)
-    }
-    
-    
-    var source: [String] = []
-    
-    // Post messages with widget.postMessage('Clicked Page!');
-    source.append("window.widget = window.webkit.messageHandlers.widget;")
-    
-    source.append("let head = document.getElementsByTagName('head')[0];")
-    
-    source.append(
-      """
-      // Viewport Tag
-      var viewportTag = document.createElement('meta');
-      viewportTag.name = "viewport"
-      viewportTag.content = "width=\(viewport), initial-scale=\(zoom), maximum-scale=\(zoom), user-scalable=0"
-      head.appendChild(viewportTag);
-      """)
-    
+  func cssSrc(widget:Widget) -> String {
     
     var css: [String] = []
     
-    let clearSelectors = widget.clearClasses ?? "body"
+    var clearSelectors = "body"
+    if let selectors = widget.clearClasses {
+      clearSelectors += ", \(selectors)"
+    }
     
     // Selectors that should have transparent backgrounds
     let selectors = clearSelectors
@@ -75,20 +51,10 @@ struct WebView: UIViewRepresentable {
     css.append("}")
     
     
-    if (widget.fontName != "" && widget.fontName != "-apple-system") {
-      source.append ("""
-        // Font Tag
-        var fontTag = document.createElement('link');
-        fontTag.rel = 'stylesheet';
-        fontTag.href = 'https://fonts.googleapis.com/css?family=\(widget.fontName.replacingOccurrences(of: " ", with: "+"))&display=swap';
-        head.appendChild(fontTag);
-        """)
-    }
-    
     if (widget.fontName.count > 0 ) {
       css.append ("""
         :root { --font-family: '\(widget.fontName)';}
-        body { font-family: var(--font-family) !important; }
+        * { font-family: var(--font-family) !important; }
         """)
     }
     
@@ -96,45 +62,88 @@ struct WebView: UIViewRepresentable {
       css.append("\(injectCSS)")
     }
     
+    return css.joined(separator:"\n");
+  }
+  
+  func jsSrc(widget:Widget) -> String{
+    
+    var source: [String] = []
+    
+    // Post messages with widget.postMessage('Clicked Page!');
+    source.append("window.widget = window.webkit.messageHandlers.widget;")
+    
+    source.append("document.head = document.getElementsByTagName('head')[0];")
+    
+    let zoom = widget.zoom
+    var viewport = "device-width"
+    if let width = widget.viewportWidth {
+      viewport = String(width)
+    }
+    
+    source.append(
+      """
+      // Viewport Tag
+      var viewportTag = document.querySelector("meta[name=viewport]");
+      if (!viewportTag) {
+        viewportTag = document.createElement('meta');
+        viewportTag.name = "viewport"
+        document.head.appendChild(viewportTag);
+      }
+      viewportTag.content = "width=\(viewport), initial-scale=\(zoom), maximum-scale=\(zoom), user-scalable=0"
+      """)
+    
+    
+    if (widget.fontName != "" && widget.fontName != "-apple-system") {
+      source.append ("""
+        // Font Tag
+        var fontTag = document.getElementById('widgetVisionFontTag') 
+        if (!fontTag) {
+          fontTag = document.createElement('link');
+          fontTag.id = "widgetVisionFontTag";
+          fontTag.rel = 'stylesheet';
+          document.head.appendChild(fontTag);
+        }
+        fontTag.href = 'https://fonts.googleapis.com/css?family=\(widget.fontName.replacingOccurrences(of: " ", with: "+"))&display=swap';
+        """)
+    }
+    
+    let css = cssSrc(widget: widget)
+  
     source.append("""
-    var cssTag = document.createElement('style');
-    cssTag.innerHTML = `\n\(css.joined(separator:"\n"))\n`
-    head.appendChild(cssTag);
+    
+    var cssTag = document.getElementById('widgetVisionCSSTag')
+    if (!cssTag) {
+      cssTag = document.createElement('style');
+      cssTag.id = "widgetVisionCSSTag"
+      document.head.appendChild(cssTag);
+    }
+
+    cssTag.innerHTML = `\n\(css)\n`
     
     """)
-    
-    if false, let injectJS = widget.injectJS, injectJS.count > 0 {
-      source.append("\n\(injectJS)\n")
-    }
+
+//    if let injectJS = widget.injectJS, injectJS.count > 0 {
+//      source.append("\n\(injectJS)\n")
+//    }
     
     print("💉 Injecting Source:\n\n\(source.joined(separator:"\n"))")
     return source.joined(separator:"\n")
   }
   
   func makeUIView(context: Context) -> WKWebView {
-    let config = webView.configuration
-    let script = WKUserScript(source: overrideJS(widget: widget), injectionTime: .atDocumentEnd, forMainFrameOnly: false)
-    config.userContentController.addUserScript(script)
-    config.userContentController.add(ContentController(), name: "widget")
-    
-    webView.isOpaque = false
     webView.navigationDelegate = context.coordinator
-    
+    webView.isOpaque = false
     webView.backgroundColor = UIColor.clear
     webView.scrollView.backgroundColor = UIColor.clear
-    
-    var userAgent: String?
-    switch (widget.userAgent) {
-    case "desktop":
-      userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15"
-    case "mobile":
-      userAgent = nil
-    default:
-      userAgent = widget.userAgent
-    }
     webView.overrideUserInterfaceStyle = .dark
+    webView.customUserAgent = widget.userAgent
     
-    webView.customUserAgent = userAgent ?? "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
+    let config = webView.configuration
+    config.userContentController.add(context.coordinator, name: "widget")
+
+    let script = WKUserScript(source: jsSrc(widget: widget), injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+    config.userContentController.addUserScript(script)
+    
     
     if let url = URL(string:location!) {
       let request = URLRequest(url: url)
@@ -146,8 +155,27 @@ struct WebView: UIViewRepresentable {
   }
 
   func updateUIView(_ webView: WKWebView, context: Context) {
-    print("Updated \(webView.url)")
+    let size = CGSize(width:widget.width, height: widget.height)
+    print("\(size), \(context.coordinator.lastSize)")
+          
+    if (!CGSizeEqualToSize(size, context.coordinator.lastSize)) {
+      context.coordinator.lastSize = size
+      context.coordinator.queueUpdate() {
+        print("Callback after queue")
+      }
+    } else {
+      updateWebView(webView, context: context)
+    }
+    
     updateSnapshot(webView)
+  }
+
+  func updateWebView(_ webView: WKWebView, context: Context) {
+    let script = ""
+    webView.evaluateJavaScript(jsSrc(widget: widget)) { object, error in
+      print("🔥 Evaluated JS \(error)")}
+    
+    webView.customUserAgent = widget.userAgent
   }
   
   func dismantleUIView(_ webView: WKWebView,coordinator: Coordinator ) {
@@ -157,7 +185,6 @@ struct WebView: UIViewRepresentable {
     webView.saveSnapshot(path: widget.thumbnailFile!);
     webView.removeFromSuperview()
   }
-  
   
   func updateSnapshot(_ webView: WKWebView) {
     NSObject.cancelPreviousPerformRequests(withTarget: webView)
@@ -171,12 +198,24 @@ struct WebView: UIViewRepresentable {
     return CGSizeMake(360, 640)
   }
   
-  class Coordinator: NSObject, WKNavigationDelegate {
+  class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+    @Environment(\.openWindow) var openWindow
     let parent: WebView
+    var lastSize: CGSize = .zero
+    var updateWorkItem: DispatchWorkItem?
     
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+      print("💬 Web Message:\n\(message.body)")
+    }
     
     init(_ parent: WebView) {
       self.parent = parent
+    }
+    
+    // TODO: Not working yet
+    func queueUpdate(callback: @escaping (() -> Void)) {
+      updateWorkItem?.cancel()
+      updateWorkItem = DispatchWorkItem(block: callback)
     }
     
     func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
@@ -191,16 +230,10 @@ struct WebView: UIViewRepresentable {
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
       parent.loadStatusChanged?(parent, false, error)
     }
-  }
-  
-  
-  class ContentController: NSObject, WKScriptMessageHandler {
-    @Environment(\.openWindow) var openWindow
     
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-      print("💬 Web Message:\n\(message.body)")
-    }
   }
+  
+
 }
 
 extension WKWebView {

@@ -56,7 +56,7 @@ struct WidgetApp: App {
           .onOpenURL {
             showWindowForURL($0)
             dismissWindow(id: "main")
-          }     
+          }
           .onContinueUserActivity(Activity.openWindow, perform: { activity in
             if let info = activity.userInfo {
               if let data = info["modelId"] as? Data {
@@ -65,9 +65,10 @@ struct WidgetApp: App {
               }
             }
           })
-//          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
-//            showWindowForURL($0.webpageURL)
-//          }
+        
+          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
+            showWindowForURL($0.webpageURL)
+          }
           .onChange(of: geometry.size) {
             windowWidth = geometry.size.width
             windowHeight = geometry.size.height
@@ -84,9 +85,11 @@ struct WidgetApp: App {
             return true
           }
       }
+      
       .frame(minWidth: 360, idealWidth: 540, maxWidth: .infinity,
              minHeight: 400, idealHeight: 680, maxHeight: .infinity,
              alignment: .center)
+      
     }
     .modelContainer(container!)
     .windowResizability(.contentSize)
@@ -99,11 +102,20 @@ struct WidgetApp: App {
         
         WidgetView(widget:widget, app:self)
           .onOpenURL { showWindowForURL($0) }
-//          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
-//            showWindowForURL($0.webpageURL)
-//          }
+          .onContinueUserActivity(Activity.openSettings, perform: { activity in
+            print("open settings")
+            if let info = activity.userInfo {
+              if let data = info["modelId"] as? Data {
+                let modelID = try! JSONDecoder().decode(PersistentIdentifier.self, from: data)
+                openWindow(id: "settings", value: data)
+              }
+            }
+          })
+          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
+            showWindowForURL($0.webpageURL)
+          }
         
-
+        
           .task {
             widget.lastOpened = .now
           }
@@ -137,7 +149,5 @@ struct WidgetApp: App {
     .windowStyle(.automatic)
     .windowResizability(.contentSize)
     .defaultSize(width: 480, height: 360)
-    
-    
   }
 }

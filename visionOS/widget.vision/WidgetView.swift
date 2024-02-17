@@ -35,7 +35,7 @@ struct WidgetView: View {
   
   // Webview var
   private var webView: WebView {
-    WebView(title: $widget.title, location: $widget.location, widget: widget)
+    WebView(title: $widget.title, location: $widget.location, widget: $widget)
   }
   
   
@@ -87,6 +87,23 @@ struct WidgetView: View {
                   .resizable()
                   .aspectRatio(contentMode: .fit)
                   .frame(width: 16, height: 16)
+              }
+            }
+            .onDrag {
+              let userActivity = NSUserActivity(activityType: Activity.openSettings)
+              
+              try? userActivity.setTypedPayload(["modelId": widget.modelID])
+              let itemProvider = NSItemProvider(object: widget.id.uuidString as NSString)
+              itemProvider.registerObject(userActivity, visibility: .all)
+              return itemProvider
+            } preview: {
+              Button { } label: {
+                  Image(systemName: flipped ? "arrow.backward" : "info")
+                    .resizable()
+                    .buttonBorderShape(.circle)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 16, height: 16)
+                
               }
             }
             .simultaneousGesture(LongPressGesture().onEnded { _ in

@@ -4,6 +4,7 @@ import SwiftData
 
 struct Activity {
   static let openWindow = "vision.widget.open"
+  static let openSettings = "vision.widget.settings"
 }
 
 
@@ -41,6 +42,13 @@ struct WidgetPickerView: View {
         
         // MARK: Toolbar
         
+        HStack {
+          Button { getMoreWidgets() } label: {
+            Label("Get more widgets", systemImage: "plus")
+          }.labelStyle(.iconOnly)
+            .buttonBorderShape(.circle)
+        }.padding(40)
+          .frame(maxWidth:.infinity, alignment:.trailing)
         Image("widget.vision")
           .renderingMode(.template)
           .resizable()
@@ -48,8 +56,6 @@ struct WidgetPickerView: View {
           .aspectRatio(contentMode: .fit)
           .frame(maxWidth: 480)
           .padding(.horizontal, 60)
-          .padding(.bottom, 80)
-          .padding(.top, 20)
           .opacity(0.8)
         
         if (false){
@@ -96,20 +102,13 @@ struct WidgetPickerView: View {
               }
           }
         }
-        .padding(.horizontal, 40)
+        .padding(40)
+        
       }
+      
       .frame(maxHeight:.infinity)
       
-     
-      .toolbar {
-        ToolbarItem(placement: .bottomBar) {
-          Button { getMoreWidgets() } label: {
-            Label("Get more widgets", systemImage: "safari")
-          }.labelStyle(.titleAndIcon)
-            .buttonStyle(.bordered)
-//            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18))
-        }
-      }
+
       .overlay {
         if widgets.isEmpty {
           ContentUnavailableView {
@@ -142,11 +141,6 @@ struct WidgetPickerView: View {
     }
   }
   
-  private func deleteWidgets(at offsets: IndexSet) {
-    withAnimation {
-      offsets.map { widgets[$0] }.forEach(deleteWidget)
-    }
-  }
   
   private func deleteWidget(_ widget: Widget) {
     if widget.persistentModelID == selection?.persistentModelID {

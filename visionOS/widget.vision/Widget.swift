@@ -4,7 +4,7 @@ import SwiftData
 
 
 
-@Model final class Widget: ObservableObject {
+@Model final class Widget {
   var id: UUID
   var name: String = ""
   var title: String?
@@ -218,10 +218,21 @@ extension Widget {
     return "Widget \(id) - \(location ?? "")"
   }
   
-  
   static var preview: Widget {
     Widget(name: "Test", location: "https://example.com", style: .glass, options: "bg=0000&fg=ffff&tg=8aff&sz=360x360&zoom=1.0&icon=graduationcap")
   }
+  @Transient
+  var userAgentString: String {
+    if (userAgent == "desktop") {
+      return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15"
+    } else if (userAgent == "mobile" || userAgent.count == 0) {
+      return "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
+    } else {
+      return userAgent;
+    }
+    
+  }
+  
 }
 
 private extension Color {
