@@ -169,7 +169,6 @@ extension Widget {
     if name.count > 0 {
       return name;
     }
-    
     return title ?? hostName ?? "Untitled";
   }
   

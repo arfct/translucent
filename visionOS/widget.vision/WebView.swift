@@ -70,7 +70,17 @@ struct WebView: UIViewRepresentable {
     var source: [String] = []
     
     // Post messages with widget.postMessage('Clicked Page!');
-    source.append("window.widget = window.webkit.messageHandlers.widget;")
+    source.append("""
+      window.widget = new Proxy(window.webkit.messageHandlers.widget, {
+      get(target, prop, receiver) {
+        if (prop === "message2") {
+          return "world";
+        }
+        return Reflect.get(...arguments);
+      },
+      );
+      
+      """)
     
     source.append("document.head = document.getElementsByTagName('head')[0];")
     
@@ -139,11 +149,11 @@ struct WebView: UIViewRepresentable {
     webView.customUserAgent = widget.userAgent
     
     let config = webView.configuration
-    config.userContentController.add(context.coordinator, name: "widget")
+    //    config.userContentController.add(context.coordinator, name: "widget")
+    config.userContentController.addScriptMessageHandler(context.coordinator, contentWorld: .defaultClient, name: "widget")
 
     let script = WKUserScript(source: jsSrc(widget: widget), injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     config.userContentController.addUserScript(script)
-    
     
     if let url = URL(string:location!) {
       let request = URLRequest(url: url)
@@ -171,11 +181,12 @@ struct WebView: UIViewRepresentable {
   }
 
   func updateWebView(_ webView: WKWebView, context: Context) {
-    let script = ""
     webView.evaluateJavaScript(jsSrc(widget: widget)) { object, error in
       print("🔥 Evaluated JS \(error)")}
+    if (webView.customUserAgent != widget.userAgent) {
+      webView.customUserAgent = widget.userAgent
+    }
     
-    webView.customUserAgent = widget.userAgent
   }
   
   func dismantleUIView(_ webView: WKWebView,coordinator: Coordinator ) {
@@ -198,7 +209,8 @@ struct WebView: UIViewRepresentable {
     return CGSizeMake(360, 640)
   }
   
-  class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+  class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler, WKScriptMessageHandlerWithReply {
+
     @Environment(\.openWindow) var openWindow
     let parent: WebView
     var lastSize: CGSize = .zero
@@ -207,6 +219,22 @@ struct WebView: UIViewRepresentable {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
       print("💬 Web Message:\n\(message.body)")
     }
+    
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) async -> (Any?, String?) {
+      let body = message.body;
+      if let body = message.body as? NSDictionary {
+        let action = body.value(forKey: "action") as? String
+        let args = body.value(forKey: "args") as? NSDictionary
+        print("💬 Web Message -> :\n\(body)")
+        
+        if (action == "batteryLevel") {
+          return await (UIDevice.current.batteryLevel, nil)
+        }
+        
+      }
+      return (nil, nil)
+    }
+    
     
     init(_ parent: WebView) {
       self.parent = parent

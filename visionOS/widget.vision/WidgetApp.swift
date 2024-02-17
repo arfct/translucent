@@ -50,14 +50,14 @@ struct WidgetApp: App {
     
     // MARK: - Main Window
     
-    WindowGroup(id: "main") {
+    WindowGroup("Main", id: "main") {
       GeometryReader { geometry in
         WidgetPickerView(app: self)
           .onOpenURL {
             showWindowForURL($0)
             dismissWindow(id: "main")
           }
-          .onContinueUserActivity(Activity.openWindow, perform: { activity in
+          .onContinueUserActivity(Activity.openWidget, perform: { activity in
             if let info = activity.userInfo {
               if let data = info["modelId"] as? Data {
                 let modelID = try! JSONDecoder().decode(PersistentIdentifier.self, from: data)
@@ -99,30 +99,34 @@ struct WidgetApp: App {
     
     WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in
       if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
-        
         WidgetView(widget:widget, app:self)
           .onOpenURL { showWindowForURL($0) }
-          .onContinueUserActivity(Activity.openSettings, perform: { activity in
-            print("open settings")
+          .onContinueUserActivity("openWidget", perform: { activity in
+            print("Activity")
+          })
+          .onContinueUserActivity(Activity.openWidget, perform: { activity in
+            print("Activity")
             if let info = activity.userInfo {
               if let data = info["modelId"] as? Data {
                 let modelID = try! JSONDecoder().decode(PersistentIdentifier.self, from: data)
-                openWindow(id: "settings", value: data)
+                openWindow(id: "widget", value: modelID)
               }
             }
           })
+        
           .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
             showWindowForURL($0.webpageURL)
           }
-        
-        
           .task {
             widget.lastOpened = .now
           }
+      } else {
+        Text("No Widget with ID: \(id)")
       }
     }
+    .handlesExternalEvents(matching: ["openWidget"])
     .modelContainer(container!)
-    .windowStyle(.plain)
+//    .windowStyle(.plain)
     .windowResizability(.contentSize)
     .defaultSize(width: 360, height: 360)
     
@@ -145,6 +149,7 @@ struct WidgetApp: App {
         }
       }
     }
+    .handlesExternalEvents(matching: ["settings"])
     .modelContainer(container!)
     .windowStyle(.automatic)
     .windowResizability(.contentSize)

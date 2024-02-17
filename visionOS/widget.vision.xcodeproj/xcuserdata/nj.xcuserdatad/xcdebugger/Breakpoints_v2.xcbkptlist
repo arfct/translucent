@@ -14,7 +14,103 @@
             symbolName = "print_cycle"
             moduleName = "">
             <Locations>
+               <Location
+                  uuid = "C0D8E96B-36C7-40F6-BCA1-4AD8D5F9A209 - cc86abe8c9557793"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "AG::Graph::print_cycle(AG::data::ptr&lt;AG::Node&gt;) const"
+                  moduleName = "AttributeGraph"
+                  usesParentBreakpointCondition = "Yes">
+               </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "68AA3A61-8A47-4F69-88F2-903DF38E6704"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "Yes"
+            filePath = "widget.vision/WidgetApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "101"
+            endingLineNumber = "101"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Actions>
+               <BreakpointActionProxy
+                  ActionExtensionID = "Xcode.BreakpointAction.Log">
+                  <ActionContent
+                     message = "@id@"
+                     conveyanceType = "0">
+                  </ActionContent>
+               </BreakpointActionProxy>
+            </Actions>
+            <Locations>
+               <Location
+                  uuid = "68AA3A61-8A47-4F69-88F2-903DF38E6704 - 1fa77d7707f70fd6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (SwiftUI.Binding&lt;Swift.Optional&lt;SwiftData.PersistentIdentifier&gt;&gt;) -&gt; SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Text&gt; in implicit closure #1 (SwiftUI.Binding&lt;Swift.Optional&lt;SwiftData.PersistentIdentifier&gt;&gt;) -&gt; SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Text&gt; in widget_vision.WidgetApp.body.getter : some"
+                  moduleName = "widget.vision"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nj/Dropbox/Repo/widget.vision/visionOS/widget.vision/WidgetApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101">
+               </Location>
+               <Location
+                  uuid = "68AA3A61-8A47-4F69-88F2-903DF38E6704 - 1fa77d7707f70fd6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (SwiftUI.Binding&lt;Swift.Optional&lt;SwiftData.PersistentIdentifier&gt;&gt;) -&gt; SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Text&gt; in implicit closure #1 (SwiftUI.Binding&lt;Swift.Optional&lt;SwiftData.PersistentIdentifier&gt;&gt;) -&gt; SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of SwiftUI.View.task(priority: Swift.TaskPriority, _: @Sendable () async -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Text&gt; in widget_vision.WidgetApp.body.getter : some"
+                  moduleName = "widget.vision"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nj/Dropbox/Repo/widget.vision/visionOS/widget.vision/WidgetApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "51CBA789-7C37-4B66-AD96-7D512B930B4F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "widget.vision/WidgetApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "108"
+            endingLineNumber = "108"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5CCA3DBC-134F-412C-9E92-A885E2E35AEC"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "widget.vision/WidgetApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "105"
+            endingLineNumber = "105"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

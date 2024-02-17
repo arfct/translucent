@@ -3,7 +3,7 @@ import SwiftData
 
 
 struct Activity {
-  static let openWindow = "vision.widget.open"
+  static let openWidget = "vision.widget.open"
   static let openSettings = "vision.widget.settings"
 }
 
@@ -91,8 +91,8 @@ struct WidgetPickerView: View {
                 }
               }))
               .onDrag {
-                let userActivity = NSUserActivity(activityType: Activity.openWindow)
-                
+                let userActivity = NSUserActivity(activityType: Activity.openWidget)
+                userActivity.targetContentIdentifier = "openWidget"
                 try? userActivity.setTypedPayload(["modelId": widget.modelID])
                 let itemProvider = NSItemProvider(object: widget.id.uuidString as NSString)
                 itemProvider.registerObject(userActivity, visibility: .all)
