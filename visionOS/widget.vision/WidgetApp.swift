@@ -76,15 +76,18 @@ struct WidgetApp: App {
             return true
           }
       }
-      
-      .frame(minWidth: 360, idealWidth: 540, maxWidth: .infinity,
-             minHeight: 400, idealHeight: 680, maxHeight: .infinity,
+//      
+//      .frame(minWidth: 640, idealWidth: 640, maxWidth: 640,
+//             minHeight: 400, idealHeight: 680, maxHeight: .infinity,
+//             alignment: .center)
+      .frame(idealWidth: 640, idealHeight: 640,
              alignment: .center)
+      .fixedSize(horizontal: true, vertical:true)
       
     }
     .modelContainer(container!)
     .windowResizability(.contentSize)
-    .defaultSize(width: windowWidth, height: windowHeight)
+    .defaultSize(width: 640, height: 640)
     .windowStyle(.plain)
 
     // MARK: - Widget Windows

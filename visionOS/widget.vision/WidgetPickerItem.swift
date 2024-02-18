@@ -18,7 +18,7 @@ struct WidgetListItem: View {
         
         ZStack() {
           if let image = widget.thumbnail {
-            if (image.size.width / image.size.height > 1.618) {
+            if (image.size.width / image.size.height > (iconSize.width / iconSize.height)) {
               Image(uiImage: image)
                 .resizable()
                 .scaledToFit()

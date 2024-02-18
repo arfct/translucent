@@ -23,9 +23,12 @@ struct WidgetPickerView: View {
   @State private var searchText: String = ""
   var app: WidgetApp?
   
-  let columns = [
-    GridItem(.adaptive(minimum: 200, maximum: 200), spacing: 40, alignment: .center)
-  ]
+  let columns =
+    [
+      GridItem(.adaptive(minimum: 200, maximum: 1000), spacing: 20, alignment: .center)
+    ]
+
+  
   
   func getMoreWidgets() {
     openURL(URL(string: "https://widget.vision/list")!)
@@ -56,7 +59,7 @@ struct WidgetPickerView: View {
     case .minYEdge:
       start = outerFrame.minY
       end = outerFrame.minY + distance
-      value = innerFrame.minY
+      value = innerFrame.maxY
     case .maxYEdge:
       start = outerFrame.maxY
       end = outerFrame.maxY - distance
@@ -64,7 +67,6 @@ struct WidgetPickerView: View {
     }
 
     let fraction = max(0, min(1, (value - start) / (end - start)))
-    print("Frac \(start) \(value) \(end) = \(fraction)")
     return fraction;
   }
   
@@ -77,18 +79,12 @@ struct WidgetPickerView: View {
         .resizable()
         .foregroundColor(Color(hue: hue, saturation: 0.2, brightness: 1.0))
         .aspectRatio(contentMode: .fit)
-        .frame(maxWidth: 480)
-        .padding(.horizontal, 60)
-        .opacity(0.8)
-        .shadow(color:.black, radius: 10, y: 3)
-      Button { getMoreWidgets() } label: {
-        Label("Get more widgets", systemImage: "plus")
-      }.labelStyle(.titleAndIcon)
-//        .background(Color(hue: hue, saturation: 0.2, brightness: 0.5))
-        .buttonBorderShape(.roundedRectangle(radius: 40))
-        .buttonStyle(.borderless)
-        .glassBackgroundEffect()
-      
+//        .frame(maxWidth: 480)
+//        .padding(.horizontal, 60)
+        .opacity(1.0)
+        .shadow(color:.black.opacity(0.5), radius: 10, y: 3)
+        .offset(z: 40)
+//        .padding(.bottom, 40)
       // MARK: Toolbar
 
         if (false){
@@ -115,15 +111,15 @@ struct WidgetPickerView: View {
       
       
       GeometryReader { scrollView in
-        ScrollView(.horizontal) {
+        ScrollView() {
 
           
           // MARK: Grid
-          LazyHGrid(rows: columns, spacing: 30) {
+          LazyVGrid(columns: columns, alignment: .center, spacing: 20) {
             ForEach(widgets) { widget in
               GeometryReader { widgetView in
-                let minProx = proximity(of:widgetView, to:scrollView, distance:200, at: .minXEdge)
-                let maxProx = proximity(of:widgetView, to:scrollView, distance:200, at: .maxXEdge)
+                let minProx = proximity(of:widgetView, to:scrollView, distance:200, at: .minYEdge)
+                let maxProx = proximity(of:widgetView, to:scrollView, distance:200, at: .maxYEdge)
                 let combinedProx = minProx * maxProx
                 
                 WidgetListItem(widget: widget)
@@ -136,15 +132,13 @@ struct WidgetPickerView: View {
                     }
                   }))
 
-                  .scaleEffect(minProx, anchor:.trailing)
-                  .scaleEffect(maxProx, anchor:.leading)
-                
-                  .scrollTargetLayout()
-                  .offset(z:combinedProx * 100)
-                  .blur(radius: (1 - proximity(of:widgetView, to:scrollView)) * 10)
+                  .scaleEffect(minProx * 0.8 + 0.2, anchor:.bottom)
+                  .scaleEffect(maxProx * 0.8 + 0.2, anchor:.top)
+                  .offset(z:combinedProx * 20)
+                  .blur(radius: (1 - combinedProx) * 10)
                   .opacity(combinedProx)
-                  .rotation3DEffect(.degrees(-90.0 * (1.0 - minProx)), axis: (x: 0, y: 1, z: 0), anchor:.trailing)
-                  .rotation3DEffect(.degrees(90.0 * (1.0 - maxProx)), axis: (x: 0, y: 1, z: 0), anchor:.leading)
+                  .rotation3DEffect(.degrees(20.0 * (1.0 - minProx)), axis: (x: 1, y: 0, z: 0), anchor:.trailing)
+                  .rotation3DEffect(.degrees(-20.0 * (1.0 - maxProx)), axis: (x: 1, y: 0, z: 0), anchor:.leading)
                   .onDrag {
                     let userActivity = NSUserActivity(activityType: Activity.openWidget)
                     userActivity.targetContentIdentifier = Activity.openWidget
@@ -157,12 +151,13 @@ struct WidgetPickerView: View {
                   }
               }.frame(width:200, height:200)
             }
-          }
+          }   // Make the scroll view full-width
+          .frame(minHeight: scrollView.size.height)
+          .padding(.bottom, 40)
           
         }
-        
-          .scrollTargetBehavior(.viewAligned)
-        .frame(maxHeight:.infinity)
+        .padding(.vertical, 20)
+        .frame(maxHeight:.infinity, alignment:.center)
         
         
         .overlay {
@@ -177,23 +172,34 @@ struct WidgetPickerView: View {
                 Label("Add widget", systemImage: "plus")
               }
               
-            }
+            }.glassBackgroundEffect()
           }
         }
+        .frame(maxHeight:.infinity, alignment:.center)
       } // MARK: end scroll view
       
       
-      
+
       
     }
     .toolbar() {
       ToolbarItem(placement: .bottomOrnament) {
-        
+        if (!widgets.isEmpty) {
+          Button { getMoreWidgets() } label: {
+            Label("Get more widgets", systemImage: "plus")
+          }.labelStyle(.titleAndIcon)
+          //        .background(Color(hue: hue, saturation: 0.2, brightness: 0.5))
+            .buttonBorderShape(.roundedRectangle(radius: 40))
+            .buttonStyle(.borderless)
+//            .glassBackgroundEffect()
+            
+//            .padding(.vertical, 20)
+        }
         
         
         
       }
-    }
+    }.offset(z: -40)
     //    .background(
     //
     //      LinearGradient(gradient: Gradient(colors: [
