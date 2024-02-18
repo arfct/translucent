@@ -6,9 +6,9 @@ struct WidgetListItem: View {
   @Environment(\.dismissWindow) private var dismissWindow
   var widget: Widget
   @State var asDrag = false;
-
+  
   let iconSize = CGSize(width: 200, height: 141)
-
+  
   var body: some View {
     VStack(alignment: .center) {
       Button {
@@ -59,7 +59,7 @@ struct WidgetListItem: View {
           .font(.headline)
           .lineLimit(1)
           .opacity(asDrag ? 0.0 : 1.0)
-      }.padding(.top, 4)
+      }.padding(.top, 16)
     }
     .buttonBorderShape(.roundedRectangle(radius: 40))
     .buttonStyle(.borderless)

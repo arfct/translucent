@@ -51,7 +51,7 @@ struct WidgetApp: App {
     // MARK: - Main Window
     
     WindowGroup("Main", id: "main") {
-      GeometryReader { geometry in
+      GeometryReader { mainWindow in
         WidgetPickerView(app: self)
           .onOpenURL {
             showWindowForURL($0)
@@ -60,9 +60,9 @@ struct WidgetApp: App {
           .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
             showWindowForURL($0.webpageURL)
           }
-          .onChange(of: geometry.size) {
-            windowWidth = geometry.size.width
-            windowHeight = geometry.size.height
+          .onChange(of: mainWindow.size) {
+            windowWidth = mainWindow.size.width
+            windowHeight = mainWindow.size.height
           }
           .onDrop(of: [.url], isTargeted: nil) { providers, point in
             for provider in providers {
