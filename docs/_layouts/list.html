@@ -7,7 +7,7 @@ layout: default
   
   {% include logo.html %}
 
-  {% assign posts = site.links | sort: 'order' | reversed %}
+  {% assign posts = site.links | sort: "order",  "last" %}
   {%- if posts.size > 0 -%}
   
   <div class="tiles">
@@ -33,15 +33,19 @@ layout: default
     {%- if widget.ua %}&ua={{ widget.ua }}{% endif -%}
     {%- if widget.css %}&css={{ widget.css }}{% endif -%}
     "
-    style="
-    background-image:url({{widget.url | replace: "html", "png" }});
-    background-color:#{{ widget.bg | replace: "#", "" }};
+
+    >
+    <div class="thumbnail" style="
+    background-image:url({{widget.url | replace: 'html', 'png' }});
+    background-color:#{{ widget.bg | replace: '#', '' }};
     border-radius: {{ widget.radius }}px;
     
     "
     >
     <div class="icon">
       <div class="material-symbols-rounded">{{widget.micon}}</div>
+    </div>
+
     </div>
     <div class="info">
       <div class="title">{{widget.name}}</div>
