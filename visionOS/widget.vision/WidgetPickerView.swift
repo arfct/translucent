@@ -42,14 +42,7 @@ struct WidgetPickerView: View {
         
         // MARK: Toolbar
         
-        HStack {
-          Button { getMoreWidgets() } label: {
-            Label("Get more widgets", systemImage: "plus")
-          }.labelStyle(.iconOnly)
-            .buttonBorderShape(.circle)
-        }.padding(.top, 24)
-          .padding(.trailing, 24)
-          .frame(maxWidth:.infinity, alignment:.center)
+        
         Image("widget.vision")
           .renderingMode(.template)
           .resizable()
@@ -59,7 +52,14 @@ struct WidgetPickerView: View {
           .padding(.horizontal, 60)
           .opacity(0.8)
           .shadow(color:.black, radius: 10, y: 3)
-        
+        Button { getMoreWidgets() } label: {
+          Label("Get more widgets", systemImage: "plus")
+        }.labelStyle(.titleAndIcon)
+          .background(Color(hue: hue, saturation: 0.2, brightness: 0.5))
+          .buttonBorderShape(.roundedRectangle(radius: 40))
+          .buttonStyle(.borderless)
+      
+
         if (false){
           HStack() {
             TextField("Search", text: $searchText)
@@ -85,12 +85,12 @@ struct WidgetPickerView: View {
         LazyVGrid(columns: columns, spacing: 30) {
           ForEach(widgets) { widget in
             WidgetListItem(widget: widget)
-            
+              .contentShape(.contextMenuPreview,.rect(cornerRadius: 40))
               .contextMenu(ContextMenu(menuItems: {
                 Button(role: .destructive) {
                   deleteWidget(widget)
                 } label: {
-                  Label("Remove", systemImage: "trash")
+                  Label("Remove widget", systemImage: "minus.circle")
                 }
               }))
               .onDrag {
@@ -129,6 +129,14 @@ struct WidgetPickerView: View {
       }
     
     }
+    .toolbar() {
+      ToolbarItem(placement: .bottomOrnament) {
+ 
+
+        
+          
+      }
+    }
 //    .background(
 //      
 //      LinearGradient(gradient: Gradient(colors: [
@@ -142,6 +150,8 @@ struct WidgetPickerView: View {
         updateHue()
       }
     }
+    
+    .defaultHoverEffect(.lift)
   }
   
   

@@ -84,11 +84,13 @@ struct WidgetView: View {
             .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
             .disabled(!flipped)
         }
-//        .sheet(isPresented: $flipped) {
-//          WidgetSettingsView(widget:widget, callback: toggleSettings)
-//            .frame(maxWidth:.infinity)
-//        }.frame(maxWidth:.infinity)
-        .ornament(attachmentAnchor: .scene(flipped ? .topLeading : .topTrailing)) {
+
+        //        .popover(isPresented: $flipped, attachmentAnchor:.rect(.bounds), arrowEdge:.trailing) {
+        //          WidgetSettingsView(widget:widget, callback: toggleSettings)
+        //            .frame(width:200, height:400).fixedSize()
+        //        }
+          
+        .ornament(attachmentAnchor: .scene(flipped ? .topLeading : .topTrailing), contentAlignment:.bottomLeading) {
           ZStack {
             Button { } label: {
               if isLoading {
