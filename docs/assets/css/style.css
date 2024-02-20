@@ -21,13 +21,12 @@ content {
 }
 
 a.tile {
-  display: flex;
-  flex-direction: column;
   text-decoration: none;
   padding: 0;
   color: white;
   text-wrap: wrap;
   width: 200px;
+  height: 150px;
   gap: 16px;
   margin: 0;
   box-sizing: border-box;
@@ -36,7 +35,6 @@ a.tile {
   border-radius: var(--radius);
   position: relative;
 
-  display: flex;
   justify-content: flex-end;
   --radius: 24px;
 
@@ -89,7 +87,7 @@ a.tile .thumbnail {
   background-repeat: no-repeat;
   position:relative;
   background-color: rgba(200, 200, 200, 0.2);
-
+  display:flex;
 }
 
 div.icon {
@@ -106,6 +104,7 @@ div.icon > div {
 }
 div.info {
   /* padding: 16px 16px 20px 16px; */
+  margin-top:16px;
 text-align:center;
   bottom:0;
   width:100%;
@@ -123,7 +122,8 @@ div.location {
   text-overflow: ellipsis;
   text-wrap: nowrap;
   white-space: nowrap;
-  opacity:0.0
+  opacity:0.0;
+  display:none;
 }
 
 .tile:hover div.location{
@@ -158,7 +158,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 column-gap:40px;
-  row-gap:0px;
+  row-gap:70px;
   align-items: center;
   justify-content: center;
   width: 100%;
