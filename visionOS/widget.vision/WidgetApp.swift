@@ -78,7 +78,7 @@ struct WidgetApp: App {
 //      .frame(minWidth: 640, idealWidth: 640, maxWidth: 640,
 //             minHeight: 400, idealHeight: 680, maxHeight: .infinity,
 //             alignment: .center)
-      .frame(idealWidth: 640, idealHeight: 640,
+      .frame(idealWidth: 640, idealHeight: 680,
              alignment: .center)
       .fixedSize(horizontal: true, vertical:true)
       

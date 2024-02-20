@@ -1,7 +1,7 @@
 ---
 name: Block Clock
 icon: clock
-order: 10
+order: 9
 href: https://widget.vision/widgets/blockclock
 size: 940x180
 style: transparent

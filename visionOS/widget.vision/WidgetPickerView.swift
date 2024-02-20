@@ -87,7 +87,7 @@ struct WidgetPickerView: View {
         .opacity(1.0)
         .shadow(color:.black.opacity(0.5), radius: 10, y: 3)
         .offset(z: 40)
-        .padding(.bottom, -30)
+        .padding(.bottom, -20)
 
         if (false){
           HStack() {
