@@ -15,9 +15,14 @@ struct WidgetSettingsView: View {
   @FocusState private var isTextFieldFocused: Bool
   @State private var locationTempString: String = "about:blank"
   
-  let formatter: NumberFormatter = {
+  let percentFormatter: NumberFormatter = {
     let formatter = NumberFormatter()
-    formatter.numberStyle = .percent
+    formatter.multiplier = 100
+    return formatter
+  }()
+  
+  let simpleFormatter: NumberFormatter = {
+    let formatter = NumberFormatter()
     return formatter
   }()
   
@@ -59,7 +64,7 @@ struct WidgetSettingsView: View {
             // MARK: Location
             
             HStack(alignment: .center, spacing:spacing) {
-              Label("Clear", systemImage: "link")
+              Label("URL", systemImage: "link")
                 .labelStyle(.titleOnly)
                 .frame(maxWidth: labelWidth, alignment: .leading)
               
@@ -199,9 +204,17 @@ struct WidgetSettingsView: View {
             
             
             
-            
-            
-            
+            if (!showAllOptions) {
+              Section(header: Text("Appearance")) {
+                
+                Button {
+                  showAllOptions.toggle()
+                } label: {
+                  Label("Show All Options", systemImage: "ellipsis")
+                }
+                .labelStyle(.titleOnly)
+              }
+            }
             
           }
           
@@ -210,27 +223,29 @@ struct WidgetSettingsView: View {
             
             Section(header: Text("Advanced")) {
               
-              // MARK: Icon
               HStack(spacing:spacing) {
-                Label("Icon", systemImage: "link")
-                  .labelStyle(.titleOnly)
-                  .frame(maxWidth: labelWidth, alignment: .leading)
-                TextField("icon name", text:$widget.icon)
-                
-                  .autocapitalization(.none)
-                  .disableAutocorrection(true)
-                  .frame(maxWidth: .infinity)
-              }
-              HStack(spacing:spacing) {
-                Label("Radius", systemImage: "link")
-                  .labelStyle(.titleOnly)
-                  .frame(maxWidth: labelWidth, alignment: .leading)
-                
-                TextField("radius", value:$widget.radius, formatter: NumberFormatter())
-                
-                  .autocapitalization(.none)
-                  .disableAutocorrection(true)
-                  .frame(maxWidth: .infinity)
+                // MARK: Icon
+                HStack(spacing:spacing) {
+                  Label("Icon", systemImage: "link")
+                    .labelStyle(.titleOnly)
+                    .frame(maxWidth: labelWidth, alignment: .leading)
+                  TextField("icon name", text:$widget.icon)
+                  
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .frame(maxWidth: .infinity)
+                }
+                HStack(spacing:spacing) {
+                  Label("Radius", systemImage: "link")
+                    .labelStyle(.titleOnly)
+                    .frame(maxWidth: labelWidth, alignment: .leading)
+                  
+                  TextField("radius", value:$widget.radius, formatter: NumberFormatter())
+                  
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .frame(maxWidth: .infinity)
+                }
               }
               
               // MARK: Viewport
@@ -239,7 +254,7 @@ struct WidgetSettingsView: View {
                   .labelStyle(.titleOnly)
                   .frame(maxWidth: labelWidth, alignment: .leading)
                 
-                TextField("percent", value:$widget.zoom, formatter: formatter)
+                TextField("percent", value:$widget.zoom, formatter: percentFormatter)
                 
                   .autocapitalization(.none)
                   .disableAutocorrection(true)
@@ -265,7 +280,7 @@ struct WidgetSettingsView: View {
                   Label("Clear", systemImage: "link")
                     .labelStyle(.titleOnly)
                     .frame(maxWidth: labelWidth, alignment: .leading)
-                  TextField("transparent elements", text:$widget.clearClasses ?? "", axis: .vertical)
+                  TextField("transparent elements", text:$widget.clearSelectors ?? "", axis: .vertical)
                    
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
@@ -276,7 +291,7 @@ struct WidgetSettingsView: View {
                     .labelStyle(.titleOnly)
                     .frame(maxWidth: labelWidth, alignment: .leading)
                   TextField("removed elements", 
-                            text: $widget.removeClasses ?? "",
+                            text: $widget.removeSelectors ?? "",
                             axis: .vertical)
                    
                     .autocapitalization(.none)
@@ -316,7 +331,7 @@ struct WidgetSettingsView: View {
             .buttonBorderShape(.circle)
             
             ShareLink(
-              item: URL(string: widget.shareURL)!,
+              item: widget,
               preview: SharePreview(
                 "Widget \(widget.name)",
                 image: Image(systemName: "plus"))

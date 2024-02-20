@@ -4,7 +4,9 @@ import SwiftData
 
 
 
-@Model final class Widget {
+@Model final class Widget: Transferable {
+  
+  
   var id: UUID
   var name: String = ""
   var title: String?
@@ -37,8 +39,10 @@ import SwiftData
   var icon: String = "globe"
   
   // Overrides
-  var clearClasses: String?
-  var removeClasses: String?
+  @Attribute(originalName: "clearClasses")
+  var clearSelectors: String?
+  @Attribute(originalName: "removeClasses")
+  var removeSelectors: String?
   var injectCSS: String?
   var injectJS: String?
   
@@ -58,6 +62,10 @@ import SwiftData
       size.height = CGFloat(heightDouble)
     }
     return size;
+  }
+  
+  static var transferRepresentation: some TransferRepresentation {
+    ProxyRepresentation(exporting: \.safeShareURL)
   }
   
   // MARK: Init
@@ -134,9 +142,9 @@ import SwiftData
               self.viewportWidth = value
             }
           case "remove":
-            self.removeClasses = String(value)
+            self.removeSelectors = String(value)
           case "clear":
-            self.clearClasses = String(value)
+            self.clearSelectors = String(value)
             
           case "js":
             self.injectJS = String(value)
@@ -202,6 +210,12 @@ extension Widget {
     }
     return nil;
   }
+  var thumbnailImage: Image? {
+    if let img = thumbnail {
+      return Image(uiImage: img)
+    }
+    return nil
+  }
   
   @Transient
   var thumbnailFile: URL? {
@@ -213,15 +227,64 @@ extension Widget {
     }
     return nil
   }
+
+  @Transient
+  var sizeString: String {
+    return ("\(width)x\(height)")
+  }
   
   @Transient
-  var shareURL: String {
-    if (originalLocation != nil) {
-      return originalLocation!
+  var safeShareURL:URL {
+    return shareURL ?? URL(string:"about:blank")!
+  }
+  
+  @Transient
+  var shareURL: URL? {
+    
+    var items: [URLQueryItem] = []
+    if (style != .glass) { 
+      items.append(URLQueryItem(name: "style", value: self.style.rawValue)) }
+    if name != nil {
+      items.append(URLQueryItem(name: "name", value: name)) }
+    if backHex != nil { 
+      items.append(URLQueryItem(name: "back", value: backHex)) }
+    if foreHex != nil { 
+      items.append(URLQueryItem(name: "fore", value: foreHex)) }
+    if tintHex != nil { 
+      items.append(URLQueryItem(name: "tint", value: tintHex)) }
+    if zoom != 1.0 {
+      items.append(URLQueryItem(name: "zoom", value: String(describing:zoom))) }
+    if viewportWidth != nil {
+      items.append(URLQueryItem(name: "vw", value: String(describing:viewportWidth))) }
+    if let string = injectJS, string.count > 0 {
+      items.append(URLQueryItem(name: "js", value: string))}
+    if let string = injectCSS, string.count > 0 {
+      items.append(URLQueryItem(name: "css", value: string))}
+    if (userAgent != "mobile") {
+      items.append(URLQueryItem(name: "ua", value: userAgent)) }
+    if let string = removeSelectors, string.count > 0 {
+      items.append(URLQueryItem(name: "remove", value: string))
     }
-    let encodedURL = location?.replacingOccurrences(of: "https://", with: "").addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-    let urlString = "https://widget.vision/\(String(describing: encodedURL))"
-    return urlString
+    if let string = clearSelectors, string.count > 0 {
+      items.append(URLQueryItem(name: "clear", value: string))
+    }
+    items.append(URLQueryItem(name: "size", value: sizeString))
+    
+    
+    
+    var components = URLComponents()
+    components.queryItems = items;
+    
+    guard var suffix = components.string else { return nil }
+    suffix.removeFirst()
+    if (suffix.count > 0) { suffix = "#wv?" + suffix}
+    
+    guard let encodedURL = location?  //.replacingOccurrences(of: "https://", with: "")
+      .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return nil }
+    
+    let urlString = "https://widget.vision/\(String(describing: encodedURL))\(suffix)"
+    
+    return URL(string: urlString)!
   }
   
   @Transient

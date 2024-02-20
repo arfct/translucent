@@ -66,7 +66,7 @@ struct WidgetListItem: View {
         }
       }.padding(.top, 16)
     }
-    .buttonBorderShape(.roundedRectangle(radius: 40))
+    .buttonBorderShape(.roundedRectangle(radius: 30))
     .buttonStyle(.borderless)
     .hoverEffect(.lift)
     .frame(maxWidth: .infinity, alignment:.leading)

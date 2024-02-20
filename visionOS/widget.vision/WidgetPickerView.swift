@@ -126,18 +126,27 @@ struct WidgetPickerView: View {
                 let combinedProx = minProx * maxProx
                 
                 WidgetListItem(widget: widget)
-                  .contentShape(.contextMenuPreview,.rect(cornerRadius: 40).inset(by: 1))
+
+                  .contentShape(.contextMenuPreview,.rect(cornerRadius: 30).inset(by: 1))
                   .contextMenu(ContextMenu(menuItems: {
                     Button() {
                       widget.favorite.toggle()
                     } label: {
                       Label("Favorite", systemImage: widget.favorite ? "star.fill" : "star")
                     }
-                    Button() {
-//                      favoriteWidget(widget)
-                    } label: {
-                      Label("Share", systemImage: "square.and.arrow.up")
+                    
+                    ShareLink(
+                      item: widget,
+                      preview: SharePreview(
+                        "\(widget.name) – Widget",
+                        image: Image("AppIcon")
+                          )
+                    ) {
+                      Text("Share Widget")
+                      Image(systemName: "square.and.arrow.up")
                     }
+                    .buttonBorderShape(.circle)
+                    Divider()
                     Button(role: .destructive) {
                       deleteWidget(widget)
                     } label: {
@@ -173,12 +182,12 @@ struct WidgetPickerView: View {
             
             
           }   // Make the scroll view full-width
-          .frame(minHeight: scrollView.size.height)
-          .padding(.bottom, 40)
+          .frame(minHeight: scrollView.size.height, alignment:.center)
+          .padding(.bottom, 80)
           
         }
         .padding(.vertical, 20)
-        .frame(maxHeight:.infinity, alignment:.center)
+        .frame(maxHeight:.infinity, alignment:.top)
         
         
         .overlay {
@@ -200,8 +209,6 @@ struct WidgetPickerView: View {
       } // MARK: end scroll view
       
       
-
-      
     }
     .toolbar() {
       ToolbarItem(placement: .bottomOrnament) {
@@ -210,7 +217,7 @@ struct WidgetPickerView: View {
             Label("Get more widgets", systemImage: "plus")
           }.labelStyle(.titleAndIcon)
           //        .background(Color(hue: hue, saturation: 0.2, brightness: 0.5))
-            .buttonBorderShape(.roundedRectangle(radius: 40))
+            .buttonBorderShape(.roundedRectangle(radius: 30))
             .buttonStyle(.borderless)
         }
         

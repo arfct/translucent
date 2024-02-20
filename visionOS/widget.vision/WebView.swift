@@ -26,7 +26,7 @@ struct WebView: UIViewRepresentable {
     var css: [String] = []
     
     var clearSelectors = "body"
-    if let selectors = widget.clearClasses {
+    if let selectors = widget.clearSelectors {
       clearSelectors += ", \(selectors)"
     }
     
@@ -35,7 +35,7 @@ struct WebView: UIViewRepresentable {
     css.append("\(selectors) { background-color:transparent !important; background-image:none !important;}\n")
     
     // Selectors that should be hidden
-    if let selectors = widget.removeClasses {
+    if let selectors = widget.removeSelectors {
       css.append("\(selectors) { display:none !important; }")
     }
     
@@ -89,7 +89,7 @@ struct WebView: UIViewRepresentable {
         viewportTag.name = "viewport"
         document.head.appendChild(viewportTag);
       }
-      viewportTag.content = "width=\(viewport), initial-scale=\(zoom), maximum-scale=\(zoom), user-scalable=0"
+      viewportTag.setAttribute('content', "width=\(viewport)")
       """)
     
     
@@ -197,7 +197,6 @@ struct WebView: UIViewRepresentable {
 
     
     let size = CGSize(width:widget.width, height: widget.height)
-    print("\(size), \(context.coordinator.lastSize)")
           
     if (!CGSizeEqualToSize(size, context.coordinator.lastSize)) {
       context.coordinator.lastSize = size
@@ -213,7 +212,7 @@ struct WebView: UIViewRepresentable {
 
   func updateWebView(_ webView: WKWebView, context: Context) {
     webView.evaluateJavaScript(jsSrc(widget: widget)) { object, error in
-      
+      webView.pageZoom = widget.zoom
     }
     if (webView.customUserAgent != widget.userAgentString) {
       webView.customUserAgent = widget.userAgentString
@@ -250,14 +249,14 @@ struct WebView: UIViewRepresentable {
     var updateWorkItem: DispatchWorkItem?
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-      print("💬 Web Message:\n\(message.body)")
+//      print("💬 Web Message:\n\(message.body)")
     }
     
     @MainActor
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) async -> (Any?, String?) {
     
       let body = message.body;
-      print("💬 Web Message:\(body)")
+//      print("💬 Web Message:\(body)")
 
       if let body = message.body as? NSDictionary {
         let action = body.value(forKey: "action") as? String

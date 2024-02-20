@@ -217,7 +217,6 @@ struct WidgetView: View {
       
       if (scenePhase == .active) {
         if (wasBackgrounded) {
-//          wasBackgrounded = false
           DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             dismiss()
             
