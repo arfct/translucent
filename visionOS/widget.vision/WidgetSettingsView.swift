@@ -58,14 +58,12 @@ struct WidgetSettingsView: View {
             
             // MARK: Location
             
-            HStack {
-              HStack {
-                Label("URL", systemImage: "ellipsis").labelStyle(.titleOnly)
-                
-                
-              }.frame(maxWidth: labelWidth, alignment: .leading)
+            HStack(alignment: .center, spacing:spacing) {
+              Label("Clear", systemImage: "link")
+                .labelStyle(.titleOnly)
+                .frame(maxWidth: labelWidth, alignment: .leading)
               
-              TextField("location", text: $locationTempString)
+              TextField("location", text: $locationTempString, axis: .vertical)
               //                .textFieldStyle(.roundedBorder)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
@@ -102,7 +100,7 @@ struct WidgetSettingsView: View {
                 }
                 Divider()
                 Button("Show All Options", action: {
-                  showAllOptions = true
+                  showAllOptions.toggle()
                 })
               } label: {
                 Label("Location", systemImage: "ellipsis")
@@ -120,9 +118,8 @@ struct WidgetSettingsView: View {
             }
             
             HStack(spacing:spacing) {
-                Label("Colors", systemImage: "ellipsis").labelStyle(.titleOnly)
-                
-                  .frame(maxWidth: labelWidth, alignment:.leading)
+              Label("Colors", systemImage: "ellipsis").labelStyle(.titleOnly)
+                .frame(maxWidth: labelWidth, alignment:.leading)
               
               LazyVGrid(columns:columns) {
                 HStack {
@@ -149,8 +146,8 @@ struct WidgetSettingsView: View {
                   }.labelsHidden().scaleEffect(1.2)
                   Text("Tint")
                 }
-              
-              
+                
+                
               }.frame(maxWidth:.infinity)
             }
             
@@ -161,8 +158,12 @@ struct WidgetSettingsView: View {
                 .frame(maxWidth: labelWidth, alignment:.leading)
               
               
-              TextField("default font", text:$widget.fontName)
+              TextField("default font", text:$widget.fontName ?? "")
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                .frame(maxWidth: .infinity)
               
+              TextField("normal", text:$widget.fontWeight ?? "")
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
                 .frame(maxWidth: .infinity)
@@ -190,7 +191,7 @@ struct WidgetSettingsView: View {
                 widget.fontName = fontMenu;
               })
               .onAppear() {
-                fontMenu = widget.fontName
+                fontMenu = widget.fontName ?? ""
               }
               .labelStyle(.iconOnly)
               .buttonStyle(.borderless)
@@ -238,7 +239,7 @@ struct WidgetSettingsView: View {
                   .labelStyle(.titleOnly)
                   .frame(maxWidth: labelWidth, alignment: .leading)
                 
-                TextField("zoom", value:$widget.zoom, formatter: formatter)
+                TextField("percent", value:$widget.zoom, formatter: formatter)
                 
                   .autocapitalization(.none)
                   .disableAutocorrection(true)
@@ -248,32 +249,51 @@ struct WidgetSettingsView: View {
                   .labelStyle(.titleOnly)
                   .frame(maxWidth: labelWidth, alignment: .leading)
                 
-                TextField("viewport", value:$widget.viewportWidth, formatter: NumberFormatter())
+                TextField("width", value:$widget.viewportWidth, formatter: NumberFormatter())
                   .autocapitalization(.none)
                   .disableAutocorrection(true)
                   .frame(maxWidth: .infinity)
               }
               
-              
+            }
               
               // MARK: Overrides
-              //          HStack(spacing:spacing) {
-              //            Label("Hide", systemImage: "link")
-              //              .labelStyle(.titleOnly)
-              //              .frame(maxWidth: leftColumn, alignment: .leading)
-              //            TextField("clear classes", text:$widget.clearClasses ?? Binding.constant("my string"))
-              //              .textFieldStyle(.roundedBorder)
-              //              .autocapitalization(.none)
-              //              .disableAutocorrection(true)
-              //              .frame(maxWidth: .infinity)
-              //            TextField("remove classes", text:$widget.removeClasses)
-              //              .textFieldStyle(.roundedBorder)
-              //              .autocapitalization(.none)
-              //              .disableAutocorrection(true)
-              //              .frame(maxWidth: .infinity)
-              //          }
               
-              //}
+              
+              Section(header: Text("CSS Tweaks")){
+                HStack(alignment: .top, spacing:spacing) {
+                  Label("Clear", systemImage: "link")
+                    .labelStyle(.titleOnly)
+                    .frame(maxWidth: labelWidth, alignment: .leading)
+                  TextField("transparent elements", text:$widget.clearClasses ?? "", axis: .vertical)
+                   
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .frame(maxWidth: .infinity)
+                }
+                HStack(alignment: .top, spacing:spacing) {
+                  Label("Hide", systemImage: "link")
+                    .labelStyle(.titleOnly)
+                    .frame(maxWidth: labelWidth, alignment: .leading)
+                  TextField("removed elements", 
+                            text: $widget.removeClasses ?? "",
+                            axis: .vertical)
+                   
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .frame(maxWidth: .infinity)
+                }
+                HStack(alignment: .top, spacing:spacing) {
+                  Label("Override", systemImage: "link")
+                    .labelStyle(.titleOnly)
+                    .frame(maxWidth: labelWidth, alignment: .leading)
+                  TextField("custom css", text:$widget.injectCSS ?? "", axis: .vertical)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .frame(maxWidth: .infinity)
+                }
+                
+              
             }
           }
         }

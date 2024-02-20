@@ -8,6 +8,7 @@ struct WebView: UIViewRepresentable {
   @Binding var title: String?
   @Binding var location: String?
   @Binding var widget: Widget
+  @Binding var phase: ScenePhase
   
   var webView: WKWebView = WKWebView()
   
@@ -51,11 +52,13 @@ struct WebView: UIViewRepresentable {
     css.append("}")
     
     
-    if (widget.fontName.count > 0 ) {
-      css.append ("""
-        :root { --font-family: '\(widget.fontName)';}
-        * { font-family: var(--font-family) !important; }
-        """)
+    if let fontName = widget.fontName, fontName.count > 0  {
+    
+      css.append (":root { --font-family: '\(fontName)';} * { font-family: var(--font-family) !important; }")
+      
+      if let fontWeight = widget.fontWeight {
+        css.append(":root { --font-weight: \(fontWeight);} * { font-weight: var(--font-weight) !important; }")
+      }
     }
     
     if let injectCSS = widget.injectCSS, injectCSS.count > 0 {
@@ -90,7 +93,12 @@ struct WebView: UIViewRepresentable {
       """)
     
     
-    if (widget.fontName != "" && widget.fontName != "-apple-system") {
+    
+    if let fontName = widget.fontName, fontName != "" && fontName != "-apple-system" {
+      var fontWeight = ""
+      if let weight = widget.fontWeight, weight.count > 0 {
+        fontWeight = ":\(weight)"
+      }
       source.append ("""
         // Font Tag
         var fontTag = document.getElementById('widgetVisionFontTag') 
@@ -100,7 +108,7 @@ struct WebView: UIViewRepresentable {
           fontTag.rel = 'stylesheet';
           document.head.appendChild(fontTag);
         }
-        fontTag.href = 'https://fonts.googleapis.com/css?family=\(widget.fontName.replacingOccurrences(of: " ", with: "+"))&display=swap';
+        fontTag.href = 'https://fonts.googleapis.com/css?family=\(fontName.replacingOccurrences(of: " ", with: "+"))\(fontWeight)&display=swap';
         """)
     }
     
@@ -181,6 +189,13 @@ struct WebView: UIViewRepresentable {
   }
 
   func updateUIView(_ webView: WKWebView, context: Context) {
+    
+    if (phase == .background) {
+      let request = URLRequest(url: URL(string:"about:blank")!)
+      webView.load(request)
+    }
+
+    
     let size = CGSize(width:widget.width, height: widget.height)
     print("\(size), \(context.coordinator.lastSize)")
           
@@ -198,7 +213,8 @@ struct WebView: UIViewRepresentable {
 
   func updateWebView(_ webView: WKWebView, context: Context) {
     webView.evaluateJavaScript(jsSrc(widget: widget)) { object, error in
-      print("Updated overrides\(error)")}
+      
+    }
     if (webView.customUserAgent != widget.userAgentString) {
       webView.customUserAgent = widget.userAgentString
     }
@@ -287,6 +303,7 @@ struct WebView: UIViewRepresentable {
 
 extension WKWebView {
   @objc func saveSnapshot(path: URL) {
+    if self.url?.absoluteString == "about:blank" { return }
     let image = self.snapshotImage
     if let data = image.pngData(){
       print("🖼️ Saved Snapshot, \(String(describing: self.url))")

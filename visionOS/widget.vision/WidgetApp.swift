@@ -28,8 +28,8 @@ struct WidgetApp: App {
       )
       container?.mainContext.autosaveEnabled = true
       
-      try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
-      try AVAudioSession.sharedInstance().setActive(true)
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+      //      try AVAudioSession.sharedInstance().setActive(true)
       
     } catch {
       print("An error occurred: \(error)")
@@ -55,7 +55,6 @@ struct WidgetApp: App {
         WidgetPickerView(app: self)
           .onOpenURL {
             showWindowForURL($0)
-            dismissWindow(id: "main")
           }
           .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
             showWindowForURL($0.webpageURL)
@@ -76,7 +75,6 @@ struct WidgetApp: App {
             return true
           }
       }
-//      
 //      .frame(minWidth: 640, idealWidth: 640, maxWidth: 640,
 //             minHeight: 400, idealHeight: 680, maxHeight: .infinity,
 //             alignment: .center)
@@ -120,7 +118,7 @@ struct WidgetApp: App {
     .modelContainer(container!)
     .windowStyle(.plain)
     .windowResizability(.contentSize)
-    .defaultSize(width: 360, height: 360)
+    .defaultSize(width: 320, height: 320)
     
     
     // MARK: - Settings Window
@@ -153,6 +151,6 @@ struct WidgetApp: App {
     .modelContainer(container!)
     .windowStyle(.automatic)
     .windowResizability(.contentSize)
-    .defaultSize(width: 480, height: 360)
+    .defaultSize(width: 640, height: 640)
   }
 }

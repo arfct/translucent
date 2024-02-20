@@ -7,7 +7,7 @@ struct WidgetListItem: View {
   var widget: Widget
   @State var asDrag = false;
   
-  let iconSize = CGSize(width: 200, height: 141)
+  let iconSize = CGSize(width: 200, height: 150)
   
   var body: some View {
     VStack(alignment: .center) {
@@ -40,12 +40,11 @@ struct WidgetListItem: View {
                 .font(Font.title.weight(.light))
             }
             .frame(minWidth:iconSize.width, maxWidth:.infinity, minHeight:iconSize.height, maxHeight:iconSize.height, alignment: .center)
-            .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 40))
           }
         }
         .background(widget.backColor)
         .background(asDrag ? .white.opacity(0.05) : .clear)
-        .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 40),
+        .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30),
                                displayMode: (true && !asDrag) ? .always : .never)
         .cornerRadius(30)
         .frame(maxWidth:.infinity)
@@ -59,6 +58,12 @@ struct WidgetListItem: View {
           .font(.headline)
           .lineLimit(1)
           .opacity(asDrag ? 0.0 : 1.0)
+        if (widget.favorite) {
+          Image(systemName: "star.fill")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 16, height: 16)
+        }
       }.padding(.top, 16)
     }
     .buttonBorderShape(.roundedRectangle(radius: 40))

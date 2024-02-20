@@ -11,31 +11,43 @@ import SwiftData
   var image: String?
   var location: String?
   var originalLocation: String?
+  
   var style: ViewStyle
   var backHex: String?
   var foreHex: String?
   var tintHex: String?
-  var fontName: String = ""
+  var fontName: String?
+  var fontWeight: String?
+
   var width: CGFloat = 360
   var height: CGFloat = 360
   var minWidth: CGFloat = 320
   var minHeight: CGFloat = 180
   var maxWidth: CGFloat = CGFloat.infinity
   var maxHeight: CGFloat = CGFloat.infinity
+  
   var radius: CGFloat = 30
+
   var zoom: CGFloat = 1.0
   var viewportWidth: Int?
-  var isLoading: Bool = false
+  var userAgent: String = "mobile"
+  
   var lastOpened: Date?
   var options: String = ""
-  var userAgent: String = "mobile"
   var icon: String = "globe"
+  
+  // Overrides
   var clearClasses: String?
   var removeClasses: String?
   var injectCSS: String?
   var injectJS: String?
   
+  var favorite: Bool = false
   
+  @Transient
+  var isLoading: Bool = false
+
+
   func sizeFor(dimensions: String) -> CGSize {
     let dims = dimensions.split(separator: "x")
     var size = CGSize()

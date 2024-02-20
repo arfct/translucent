@@ -13,13 +13,16 @@ extension Animation {
 
 struct WidgetView: View {
   @Environment(\.openWindow) var openWindow
+  @Environment(\.dismissWindow) var dismissWindow
+  @Environment(\.dismiss) var dismiss
   @Environment(\.isFocused) var isFocused
   @Environment(\.modelContext) private var modelContext
+  @Environment(\.scenePhase) private var scenePhase
   
   @State var widget: Widget
   var app: WidgetApp?
 
-
+  @State var id = UUID()
   @State private var flipped: Bool = false
   @State var isLoading: Bool = true
   @State var finishedFirstLoad: Bool = false
@@ -28,6 +31,10 @@ struct WidgetView: View {
   @State var ornamentTimer: Timer?
   @State var clampInitialSize: Bool = true
   @State var foreColor: Color = .white
+  @State var currentPhase: ScenePhase = .active
+  @State var wasBackgrounded = false
+  @State var lastActivation = Date()
+  
   func toggleSettings() {
     withAnimation(.spring) {
       try? modelContext.save()
@@ -43,7 +50,7 @@ struct WidgetView: View {
         ZStack(alignment: .center) {
 
           if (loadedWindow && !flipped) {
-            WebView(title: $widget.title, location: $widget.location, widget: $widget)
+            WebView(title: $widget.title, location: $widget.location, widget: $widget, phase:$currentPhase)
               .onLoadStatusChanged { content, loading, error in
                 self.isLoading = loading
                 if (loading && !finishedFirstLoad) {
@@ -63,18 +70,7 @@ struct WidgetView: View {
                 scheduleHide()
               }))
           }
-          if (!finishedFirstLoad) {
-            ZStack {
-              Image(systemName: widget.icon)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 64, height: 64)
-                .font(Font.title.weight(.light))
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .glassBackgroundEffect()
-            
-          }
+          
           WidgetSettingsView(widget:widget, callback: toggleSettings)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(widget.backColor.opacity(0.2))
@@ -84,13 +80,63 @@ struct WidgetView: View {
             .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
             .disabled(!flipped)
         }
+        .overlay() {
+          if (!finishedFirstLoad) {
+            ZStack {
+              Image(systemName: widget.icon)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 64, height: 64)
+                .font(Font.title.weight(.light))
+            }
+            .background(.black.opacity(0.1))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+//            .glassBackgroundEffect()
+            
+          }
+        }
 
         //        .popover(isPresented: $flipped, attachmentAnchor:.rect(.bounds), arrowEdge:.trailing) {
         //          WidgetSettingsView(widget:widget, callback: toggleSettings)
         //            .frame(width:200, height:400).fixedSize()
         //        }
+
+        .ornament(attachmentAnchor: .scene(.top), contentAlignment:.bottom) {
+//          HStack {
+//            
+//            Button {
+//              openWindow(id: "main")
+//            } label: {
+//              Image(systemName: "grid")
+//                .resizable()
+//                .aspectRatio(contentMode: .fit)
+//                .frame(width: 16, height: 16)
+//            }.buttonBorderShape(.circle)
+//            Button {
+//              
+//            } label: {
+//              Image(systemName: "square.and.arrow.up")
+//                .resizable()
+//                .aspectRatio(contentMode: .fit)
+//                .frame(width: 16, height: 16)
+//            }.buttonBorderShape(.circle)
+//            Button {
+//              toggleSettings()
+//            } label: {
+//              Image(systemName: "info")
+//                .resizable()
+//                .aspectRatio(contentMode: .fit)
+//                .frame(width: 16, height: 16)
+//            }.buttonBorderShape(.circle)
+//          }.padding(10).glassBackgroundEffect()
           
-        .ornament(attachmentAnchor: .scene(flipped ? .topLeading : .topTrailing), contentAlignment:.bottomLeading) {
+//      .offset(z: -10)
+//      .offset(y:-10)
+//      .opacity(showOrnaments && !flipped && !wasBackgrounded ? 1.0 : 0.0)
+
+            }
+    
+        .ornament(attachmentAnchor: .scene(.topTrailing), contentAlignment:.bottomLeading) {
           ZStack {
             Button { } label: {
               if isLoading {
@@ -130,7 +176,7 @@ struct WidgetView: View {
             .buttonStyle(.automatic)
             .labelStyle(.iconOnly)
             .hoverEffect()
-            .opacity(showOrnaments && !flipped ? 1.0 : 0.0)
+            .opacity(showOrnaments && !flipped && !wasBackgrounded ? 1.0 : 0.0)
             .animation(.spring(), value: flipped)
             
           }
@@ -143,7 +189,7 @@ struct WidgetView: View {
         print("↔️ Widget size changed to \(widget.width)×\(widget.height)")
         try? modelContext.save()
        }
-
+      .opacity(wasBackgrounded ? 0.0 : 1.0)
       .onDisappear {
         try? modelContext.save()
       }
@@ -153,7 +199,7 @@ struct WidgetView: View {
     .frame(minWidth: clampInitialSize ? widget.width : widget.minWidth, idealWidth: widget.width, maxWidth: clampInitialSize ? widget.width : widget.maxWidth,
            minHeight: clampInitialSize ? widget.height : widget.minHeight, idealHeight: widget.height, maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
     .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
-    .persistentSystemOverlays(showOrnaments ? .automatic : .hidden)
+    .persistentSystemOverlays(showOrnaments && !wasBackgrounded ? .automatic : .hidden)
   
     .onAppear(){
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -161,6 +207,29 @@ struct WidgetView: View {
         loadedWindow = true;
       }
       scheduleHide()
+    }
+    .onDisappear {
+      print("Widget Phase DISSAPEAR \(id)")
+      
+    }
+    .onChange(of: scenePhase) {
+      print("Widget Phase \(scenePhase) \(id)")
+      
+      if (scenePhase == .active) {
+        if (wasBackgrounded) {
+//          wasBackgrounded = false
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            dismiss()
+            
+          }
+
+          openWindow(id:"main")
+        }
+      }
+      if (scenePhase == .background) {
+        wasBackgrounded = true
+      }
+      currentPhase = scenePhase
     }
     
   }

@@ -10,7 +10,10 @@ struct Activity {
 
 struct WidgetPickerView: View {
   @Environment(\.modelContext) private var modelContext
-  @Query(sort: \Widget.lastOpened, order: .reverse)
+  @Environment(\.scenePhase) private var scenePhase
+  
+  @Query(sort: [SortDescriptor(\Widget.favorite, order: .reverse), SortDescriptor(\Widget.lastOpened, order: .reverse)])
+                
   var widgets: [Widget]
   
   @State private var showAddWidget = false
@@ -23,9 +26,10 @@ struct WidgetPickerView: View {
   @State private var searchText: String = ""
   var app: WidgetApp?
   
+  
   let columns =
     [
-      GridItem(.adaptive(minimum: 200, maximum: 1000), spacing: 20, alignment: .center)
+      GridItem(.adaptive(minimum: 200, maximum: 200), spacing: 20, alignment: .center)
     ]
 
   
@@ -70,6 +74,7 @@ struct WidgetPickerView: View {
     return fraction;
   }
   
+
   let widgetHeight = 200
   
   var body: some View {
@@ -79,13 +84,10 @@ struct WidgetPickerView: View {
         .resizable()
         .foregroundColor(Color(hue: hue, saturation: 0.2, brightness: 1.0))
         .aspectRatio(contentMode: .fit)
-//        .frame(maxWidth: 480)
-//        .padding(.horizontal, 60)
         .opacity(1.0)
         .shadow(color:.black.opacity(0.5), radius: 10, y: 3)
         .offset(z: 40)
-//        .padding(.bottom, 40)
-      // MARK: Toolbar
+        .padding(.bottom, -30)
 
         if (false){
           HStack() {
@@ -116,6 +118,7 @@ struct WidgetPickerView: View {
           
           // MARK: Grid
           LazyVGrid(columns: columns, alignment: .center, spacing: 20) {
+  
             ForEach(widgets) { widget in
               GeometryReader { widgetView in
                 let minProx = proximity(of:widgetView, to:scrollView, distance:200, at: .minYEdge)
@@ -123,13 +126,24 @@ struct WidgetPickerView: View {
                 let combinedProx = minProx * maxProx
                 
                 WidgetListItem(widget: widget)
-                  .contentShape(.contextMenuPreview,.rect(cornerRadius: 40))
+                  .contentShape(.contextMenuPreview,.rect(cornerRadius: 40).inset(by: 1))
                   .contextMenu(ContextMenu(menuItems: {
+                    Button() {
+                      widget.favorite.toggle()
+                    } label: {
+                      Label("Favorite", systemImage: widget.favorite ? "star.fill" : "star")
+                    }
+                    Button() {
+//                      favoriteWidget(widget)
+                    } label: {
+                      Label("Share", systemImage: "square.and.arrow.up")
+                    }
                     Button(role: .destructive) {
                       deleteWidget(widget)
                     } label: {
-                      Label("Remove widget", systemImage: "minus.circle")
+                      Label("Remove Widget", systemImage: "minus.circle")
                     }
+
                   }))
 
                   .scaleEffect(minProx * 0.8 + 0.2, anchor:.bottom)
@@ -151,6 +165,13 @@ struct WidgetPickerView: View {
                   }
               }.frame(width:200, height:200)
             }
+            .offset(x:
+                      widgets.count == 1 ?  200.0 + 20.0 :
+                      widgets.count == 2 ?  100.0 + 10.0 : 0)
+
+            
+            
+            
           }   // Make the scroll view full-width
           .frame(minHeight: scrollView.size.height)
           .padding(.bottom, 40)
@@ -191,9 +212,6 @@ struct WidgetPickerView: View {
           //        .background(Color(hue: hue, saturation: 0.2, brightness: 0.5))
             .buttonBorderShape(.roundedRectangle(radius: 40))
             .buttonStyle(.borderless)
-//            .glassBackgroundEffect()
-            
-//            .padding(.vertical, 20)
         }
         
         
@@ -212,6 +230,9 @@ struct WidgetPickerView: View {
       Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
         updateHue()
       }
+    }
+    .onChange(of: scenePhase) { phase in
+      print("MainWindow Phase \(phase)")
     }
     
     .defaultHoverEffect(.lift)
