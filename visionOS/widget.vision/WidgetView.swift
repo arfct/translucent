@@ -27,7 +27,8 @@ struct WidgetView: View {
   @State var isLoading: Bool = true
   @State var finishedFirstLoad: Bool = false
   @State var loadedWindow: Bool = false
-  @State var showOrnaments: Bool = true
+  @State var showInfo: Bool = false
+  @State var showHandle: Bool = true
   @State var ornamentTimer: Timer?
   @State var clampInitialSize: Bool = true
   @State var foreColor: Color = .white
@@ -66,7 +67,8 @@ struct WidgetView: View {
               .background(widget.backColor)
               .cornerRadius(widget.radius)
               .gesture(TapGesture().onEnded({ gesture in
-                showOrnaments = true
+                showInfo = true
+                showHandle = true
                 scheduleHide()
               }))
           }
@@ -136,7 +138,7 @@ struct WidgetView: View {
 
             }
     
-        .ornament(attachmentAnchor: .scene(.topTrailing), contentAlignment:.bottomLeading) {
+        .ornament(attachmentAnchor: .scene(.top), contentAlignment:.bottom) {
           ZStack {
             Button { } label: {
               if isLoading {
@@ -144,7 +146,7 @@ struct WidgetView: View {
                   .progressViewStyle(CircularProgressViewStyle(tint: .primary))
                   .scaleEffect(1.0, anchor: .center)
               } else {
-                Image(systemName: flipped ? "arrow.backward" : "info")
+                Image(systemName: "info")
                   .resizable()
                   .aspectRatio(contentMode: .fit)
                   .frame(width: 16, height: 16)
@@ -168,17 +170,28 @@ struct WidgetView: View {
               app?.openWindow(id: "widgetSettings", value: widget.modelID)
             })
             .simultaneousGesture(TapGesture().onEnded {
-              toggleSettings()
+              if (geometry.size.width < 640 || geometry.size.height < 480) {
+                app?.openWindow(id: "widgetSettings", value: widget.modelID)
+              } else {
+                toggleSettings()
+              }
             })
             .buttonBorderShape(.circle)
-            .glassBackgroundEffect()
+            .glassBackgroundEffect(displayMode: showInfo ? .always : .never)
+            .background(.clear)
             .transition(.move(edge: .top))
             .buttonStyle(.automatic)
             .labelStyle(.iconOnly)
             .hoverEffect()
-            .opacity(showOrnaments && !flipped && !wasBackgrounded ? 1.0 : 0.0)
+            .offset(y: showInfo || isLoading ? 0 : 40)
+            .padding(.bottom, 10)
+            .opacity((isLoading || showInfo) && !flipped && !wasBackgrounded ? 1.0 : 0.0)
+            .rotation3DEffect(.degrees(showInfo || isLoading ? 0.0 : 45), axis: (1, 0, 0),
+                              anchor: UnitPoint3D(x: 0.5, y: 1.0, z: 0))
             .animation(.spring(), value: flipped)
-            
+            .animation(.spring(), value: showInfo)
+            .animation(.spring(), value: isLoading)
+
           }
         }
       }
@@ -199,7 +212,7 @@ struct WidgetView: View {
     .frame(minWidth: clampInitialSize ? widget.width : widget.minWidth, idealWidth: widget.width, maxWidth: clampInitialSize ? widget.width : widget.maxWidth,
            minHeight: clampInitialSize ? widget.height : widget.minHeight, idealHeight: widget.height, maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
     .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
-    .persistentSystemOverlays(showOrnaments && !wasBackgrounded ? .automatic : .hidden)
+    .persistentSystemOverlays(showHandle && !wasBackgrounded ? .automatic : .hidden)
   
     .onAppear(){
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -235,8 +248,9 @@ struct WidgetView: View {
   
   func scheduleHide() {
     ornamentTimer?.invalidate()
-    ornamentTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false, block: { timer in
-      showOrnaments = false
+    ornamentTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false, block: { timer in
+      showHandle = false
+      showInfo = false
     })
   }
 }

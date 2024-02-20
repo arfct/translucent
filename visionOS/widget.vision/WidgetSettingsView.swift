@@ -324,7 +324,9 @@ struct WidgetSettingsView: View {
           }
           ToolbarItemGroup(placement:.navigationBarLeading) {
             
-            Button { openWindow(id:"main") } label: {
+            Button { 
+              openWindow(id:"main")
+            } label: {
               Label("List", systemImage: "rectangle.grid.2x2")
             }
             .labelStyle(.iconOnly)

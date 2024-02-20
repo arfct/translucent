@@ -225,21 +225,28 @@ struct WidgetPickerView: View {
         
       }
     }.offset(z: -40)
-    //    .background(
-    //
-    //      LinearGradient(gradient: Gradient(colors: [
-    //        Color(hue: hue, saturation: 1.0, brightness: 0.3).opacity(0.5),
-    //        Color(hue: fmod(hue + 1.0/6.0, 1.0), saturation: 0.2, brightness: 0.1).opacity(0.7)
-    //      ]), startPoint: .topLeading, endPoint: .bottomTrailing)
-    //      )
+      .background(
+        RadialGradient(
+          gradient: Gradient(colors: [
+            .black.opacity(0.10),
+            .black.opacity(0.08),
+            .black.opacity(0.04),
+            .black.opacity(0.01),
+            .black.opacity(0.005),
+            .clear]),
+          center: .center,
+          startRadius: 200,
+          endRadius: 320
+        ).offset(z: -100)
+)
     .onAppear() {
       updateHue()
       Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
         updateHue()
       }
     }
-    .onChange(of: scenePhase) { phase in
-      print("MainWindow Phase \(phase)")
+    .onChange(of: scenePhase) {
+      print("MainWindow Phase \(scenePhase)")
     }
     
     .defaultHoverEffect(.lift)
