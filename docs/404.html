@@ -33,16 +33,22 @@
     Opening <a id="forward" href="#"></a><br>in <a href="https://get.widget.vision">widget.vision</a>
     </div>
   <script>
-    let forwardingURL = location.pathname.slice(1);
+    var forwardingURL = decodeURIComponent(location.pathname.slice(1)) + location.search + location.hash;
+    forwardingURL = forwardingURL.replace("https://widget.vision/", "widget-")
+    alert(forwardingURL);
+
     let link = document.getElementById("forward");
     link.innerText = forwardingURL;
     link.href = forwardingURL;
+    
     document.getElementById("deeplink").setAttribute("content", "app-id=widget.vision, app-argument=" + forwardingURL);
+    open(forwardingURL, "_self");
     setTimeout(() => {
       /* window.location.href = "https://get.widget.vision"; */
-      open(forwardingURL.replace("https://", "widget-https://"));
+      
+      
 
-    }, 5000);
+    }, 1000);
   </script>
   <script src="assets/js/script.js"></script>
 </body>
