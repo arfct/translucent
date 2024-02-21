@@ -48,31 +48,38 @@
       // Draw your solar system model here
       // Define the properties of the planets
       const planets = [
-      { name: 'Sun', color: 'yellow', orbitRadius: 0, speed: 0, planetRadius: 109.13},
-      { name: 'Mercury', color: '#b97c57', orbitRadius: 0.387, speed: 0.241, planetRadius: 2.4397 },
-      { name: 'Venus', color: '#f5deb3', orbitRadius: 0.723, speed: 0.615, planetRadius: 6.0518 },
-      { name: 'Earth', color: '#6495ed', orbitRadius: 1, speed: 1.0, planetRadius: 1.0 },
-      { name: 'Mars', color: '#ff6347', orbitRadius: 1.524, speed: 1.881, planetRadius: 0.5326 },
-      { name: 'Jupiter', color: '#8b4513', orbitRadius: 5.203, speed: 11.86, planetRadius: 11.0 },
-      { name: 'Saturn', color: '#ffd700', orbitRadius: 9.537, speed: 29.46, planetRadius: 9.1232 },
-      { name: 'Uranus', color: '#98fb98', orbitRadius: 19.191, speed: 84.01, planetRadius: 3.978 }
+      { name: 'Sun', color: '#ffffffCC', orbitRadius: 0, speed: 0, planetRadius: 1392/8, yearLength: 1 },
+      { name: 'Mercury', color: '#CCCC88', orbitRadius: 0.387, speed: 0.241, planetRadius: 2.44, yearLength: 88 },
+      { name: 'Venus', color: '#e6e6e6', orbitRadius: 0.723, speed: 0.615, planetRadius: 6.052, yearLength: 225 },
+      { name: 'Earth', color: '#2F6AA9', orbitRadius: 1, speed: 1.0, planetRadius: 6.371, yearLength: 365 },
+      { name: 'Mars', color: '#993d00', orbitRadius: 1.524, speed: 1.881, planetRadius: 3.389, yearLength: 687 },
+      { name: 'Jupiter', color: '#b07f35', orbitRadius: 5.203, speed: 11.86, planetRadius: 69.911, yearLength: 4332 },
+      { name: 'Saturn', color: '#dbb88c', orbitRadius: 9.537, speed: 29.46, planetRadius: 58.232, yearLength: 10759 },
+      { name: 'Uranus', color: '#5580aa', orbitRadius: 19.191, speed: 84.01, planetRadius: 25.362, yearLength: 30688 },
+      { name: 'Neptune', color: '#366896', orbitRadius: 30.069, speed: 164.8, planetRadius: 24.622, yearLength: 60182 }
       ];
       
-      
-    
       // Draw the planets
       function drawPlanets() {
         const minRadius = Math.min(canvas.width, canvas.height) / 2;
-      
+        const x = canvas.width / 2;
+        const y = canvas.height / 2;
+
+        const lineWidth = minRadius / 500;
+        ctx.beginPath();
+        ctx.arc(x, y, (minRadius / 6) * Math.sqrt(2.7), 0, 2 * Math.PI);
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = "#FFFFFF33";
+        ctx.stroke();
+        ctx.closePath();
+
+
         // Draw the orbit paths
         planets.forEach((planet, index) => {
           
-
-          const x = canvas.width / 2;
-          const y = canvas.height / 2;
-          const angle = (Date.now() * Math.sqrt(planet.speed)/100000) % (2 * Math.PI); // Calculate the angle based on time and speed, modulo 2 pi
+            const angle = Date.now() / planet.yearLength % (Math.PI*2)
           
-          const orbitRadius = (minRadius / 5) * Math.sqrt(planet.orbitRadius)
+          const orbitRadius = (minRadius / 6) * Math.sqrt(planet.orbitRadius)
           
           ctx.beginPath();
           ctx.arc(x, y, orbitRadius, 0, 2 * Math.PI);
@@ -80,8 +87,9 @@
           // Create a conic gradient from white to black
           const gradient = ctx.createConicGradient((angle), x, y);
           gradient.addColorStop(0.1, '#FFFFFF00');
-          gradient.addColorStop(1, '#FFFFFF66');
-          ctx.lineWidth = 4;
+          gradient.addColorStop(0.98, '#FFFFFF66');
+          gradient.addColorStop(1.0, '#FFFFFF00');
+          ctx.lineWidth = lineWidth * 3;
           ctx.strokeStyle = gradient;
           ctx.stroke();
           ctx.closePath();
@@ -90,7 +98,7 @@
           const planetY = y + Math.sin(angle) * orbitRadius; // Calculate the y position of the planet
           
           ctx.beginPath();
-          ctx.arc(planetX, planetY, 2 * Math.sqrt(planet.planetRadius), 0, 2 * Math.PI);
+          ctx.arc(planetX, planetY, lineWidth *  Math.sqrt(planet.planetRadius), 0, 2 * Math.PI);
           ctx.fillStyle = planet.color;
           ctx.fill();
           ctx.closePath();
@@ -104,7 +112,7 @@
       }
       setInterval(() => {
         requestAnimationFrame(animate);
-      }, 1000 / 14);
+      }, 1000 / 24);
       
       requestAnimationFrame(animate);
     }
