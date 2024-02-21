@@ -9,12 +9,22 @@
           {
             "/": "/",
             "exclude": true,
-            "comment": ""
+            "comment": "Root"
           },
           {
             "/": "/list",
             "exclude": true,
-            "comment": ""
+            "comment": "Widget List"
+          },
+          {
+            "/": "/privacy",
+            "exclude": true,
+            "comment": "Privacy"
+          },
+          {
+            "/": "/support",
+            "exclude": true,
+            "comment": "Support"
           },
           {
             "/": "/*",
