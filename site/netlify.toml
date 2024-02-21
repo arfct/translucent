@@ -1,4 +1,10 @@
-[[edge_functions]]
+[[redirects]]
+  from = "/.well-known/apple-app-site-association"
+  to = "/apple-app-site-association.json"
+  status = 200
+  force = true
+  
+  [[edge_functions]]
   path = "/*/*"
   function = "metadata"
 
@@ -7,3 +13,6 @@
   to = "https://www.widget.vision/:splat"
   status = 301
   force = true
+
+
+  https://widget.vision/.well-known/apple-app-site-association
