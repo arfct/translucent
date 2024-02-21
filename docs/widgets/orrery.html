@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Solar System Orrery</title>
+  <title>Digital Orrery</title>
   <style>
     body {
       margin: 0;
@@ -68,11 +68,10 @@
         const lineWidth = minRadius / 500;
         ctx.beginPath();
         ctx.arc(x, y, (minRadius / 6) * Math.sqrt(2.7), 0, 2 * Math.PI);
-        ctx.lineWidth = lineWidth;
+        ctx.lineWidth = lineWidth * 3;
         ctx.strokeStyle = "#FFFFFF33";
         ctx.stroke();
         ctx.closePath();
-
 
         // Draw the orbit paths
         planets.forEach((planet, index) => {
@@ -87,7 +86,8 @@
           // Create a conic gradient from white to black
           const gradient = ctx.createConicGradient((angle), x, y);
           gradient.addColorStop(0.1, '#FFFFFF00');
-          gradient.addColorStop(0.98, '#FFFFFF66');
+          gradient.addColorStop(0.95, '#FFFFFF66');
+          // gradient.addColorStop(0.99, planet.color);
           gradient.addColorStop(1.0, '#FFFFFF00');
           ctx.lineWidth = lineWidth * 3;
           ctx.strokeStyle = gradient;
