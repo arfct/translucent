@@ -22,6 +22,15 @@
   <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+    var speedMultiplier = 1.0;
+    var frameRate = 24;
+
+    function setSpeedMultiplier(value) {
+      speedMultiplier = value;
+      frameRate = Math.max(4, Math.min(96, 24 * Math.sqrt(Math.abs(speedMultiplier))));
+    }
+
+    var time = 0;
 
     function updateSize() {
       const ratio = window.devicePixelRatio || 2;
@@ -33,6 +42,50 @@
     // Get the canvas element
     
     window.addEventListener('resize', updateSize);
+
+
+    canvas.addEventListener('pointerdown', (e) => {
+      const centerX = canvas.width / 2 / window.devicePixelRatio;
+      const centerY = canvas.height / 2 / window.devicePixelRatio;
+      const startX = e.clientX;
+      const startY = e.clientY;
+      let lastX = startX;
+      let lastY = startY;
+      let lastTheta = undefined;
+
+      canvas.addEventListener('pointermove', handleDrag);
+      handleDrag(e);
+
+      function handleDrag(e) {
+        const deltaX = e.clientX - lastX;
+        const deltaY = e.clientY - lastY;
+        lastX = e.clientX;
+        lastY = e.clientY;
+
+        const dragX = e.clientX - centerX;
+        const dragY = e.clientY - centerY;
+        const radius = Math.sqrt(dragX * dragX + dragY * dragY);
+        const theta = Math.atan2(dragY, dragX);
+        
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        const angle = Math.atan2(deltaY, deltaX);
+        
+        if (lastTheta) {
+          let thetaDiff = theta - lastTheta;
+
+          if (thetaDiff > Math.PI) { thetaDiff -= Math.PI * 2;
+          } else if (thetaDiff < -Math.PI) { thetaDiff += Math.PI * 2; }
+          setSpeedMultiplier(speedMultiplier + thetaDiff);
+          console.log("speedMultiplier", speedMultiplier, frameRate);
+          }
+        lastTheta = theta;
+      } 
+ 
+      canvas.addEventListener('pointerup', () => {
+        canvas.removeEventListener('pointermove', handleDrag);
+      });
+    });
+    
 
     
     updateSize() 
@@ -76,7 +129,7 @@
         // Draw the orbit paths
         planets.forEach((planet, index) => {
           
-            const angle = Date.now() / planet.yearLength % (Math.PI*2)
+          const angle = time / planet.yearLength % (Math.PI*2) - Math.PI/2
           
           const orbitRadius = (minRadius / 6) * Math.sqrt(planet.orbitRadius)
           
@@ -105,14 +158,22 @@
         });
       }
       
+      let lastTime = Date.now()
       // Animation loop
-      function animate() {
+      function animate(repeat = true) {
+        let now = Date.now();
+        time += speedMultiplier * (now - lastTime);
+        lastTime = now
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawPlanets();
+        
+        if (repeat) setTimeout(() => {
+          requestAnimationFrame(animate);
+        }, 1000 / frameRate);
       }
-      setInterval(() => {
-        requestAnimationFrame(animate);
-      }, 1000 / 24);
+      // setInterval(() => {
+      //   requestAnimationFrame(animate);
+      // }, 1000 / 24);
       
       requestAnimationFrame(animate);
     }
