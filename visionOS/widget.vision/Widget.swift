@@ -71,13 +71,12 @@ import SwiftData
   // MARK: Init
   
   convenience init(url: URL) {
+    
     print("🌐 Opening URL: \(url.absoluteString)")
     var location = url.absoluteString
     var parameters: String?
-    if let regex = try? Regex(#"(?:%23|#)wv\?(.*)"#) {
-      
+    if let regex = try? Regex(#"(?:\?)format=widget\&(.*)"#) {
       if let match = location.firstMatch(of: regex) {
-        
         parameters = String(match[1].substring!)
         location = location.replacing(regex, with: "")
       }
@@ -85,7 +84,8 @@ import SwiftData
     
     location = location.replacingOccurrences(of: "widget-http", with: "http")
     location = location.replacingOccurrences(of: "https://widget.vision/http", with: "http")
-    
+    print("Loc \(location) \(parameters)")
+
     self.init( name:url.host() ?? "NAME", location: location, options:parameters)
   }
   
@@ -145,7 +145,10 @@ import SwiftData
             self.removeSelectors = String(value)
           case "clear":
             self.clearSelectors = String(value)
-            
+          case "radius":
+            if let value = Double(value) {
+              self.radius = Double(value)
+            }
           case "js":
             self.injectJS = String(value)
           case "css":
@@ -220,9 +223,9 @@ extension Widget {
   @Transient
   var thumbnailFile: URL? {
     if var path = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-      path.append(path: "thumbnails")
-      try? FileManager.default.createDirectory(at: path, withIntermediateDirectories: true)
-      let filename = path.appendingPathComponent(self.id.uuidString + ".png")
+      let filename = path
+        .appendingPathComponent("thumbnails", isDirectory: true)
+        .appendingPathComponent(self.id.uuidString + ".png")
       return filename
     }
     return nil
@@ -242,9 +245,9 @@ extension Widget {
   var shareURL: URL? {
     
     var items: [URLQueryItem] = []
-    if (style != .glass) { 
-      items.append(URLQueryItem(name: "style", value: self.style.rawValue)) }
-    if name != nil {
+    if (style == .transparent) {
+      items.append(URLQueryItem(name: "style", value: "transparent")) }
+    if name.count > 0  {
       items.append(URLQueryItem(name: "name", value: name)) }
     if backHex != nil { 
       items.append(URLQueryItem(name: "back", value: backHex)) }
@@ -270,17 +273,15 @@ extension Widget {
     }
     items.append(URLQueryItem(name: "size", value: sizeString))
     
-    
-    
     var components = URLComponents()
     components.queryItems = items;
     
     guard var suffix = components.string else { return nil }
     suffix.removeFirst()
-    if (suffix.count > 0) { suffix = "#wv?" + suffix}
+    if (suffix.count > 0) { suffix = "?format=widget&" + suffix}
     
     guard let encodedURL = location?  //.replacingOccurrences(of: "https://", with: "")
-      .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return nil }
+      .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else { return nil }
     
     let urlString = "https://widget.vision/\(String(describing: encodedURL))\(suffix)"
     

@@ -9,7 +9,16 @@
   <link rel="stylesheet" href="assets/css/style.css">
   <style>
     body {
+      
+      background: linear-gradient(
+        to bottom right,
+        hsl(var(--hue), 33%, 25%),
+        hsl(var(--hue), 15%, 10%),
+        #000
+      );
+
       background-color:black;
+      
       color:white;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     min-height:100vh;
@@ -23,32 +32,55 @@
     #message {
       border:1px solid #444;
       border-radius:30px;
-      padding:20px;
+      padding:40px;
+      display:flex;
+      flex-direction: column;
+      width:320px;
+      text-align:center;
+      font-size:200%;
+    }
+    
+    button {
+      border:none;
+      background:white;
+      border-radius:10000px;
+      color:black;
+      padding: 10px 20px;
+      margin:20px auto;
     }
   </style>
 </head>
 <body>
 
   <div id="message" class="tiltableElement">
-    Opening <a id="forward" href="#"></a><br>in <a href="https://get.widget.vision">widget.vision</a>
+    <div>Opening <a id="forward" href="#"></a></div>
+    <div>in <a href="https://get.widget.vision">widget.vision</a></div>
+    <br>
+    <button id="openButton">Open</button>
     </div>
   <script>
+
+  // URL Format
+  // https://widget.vision/[https://url.plain]#fragment
+  // rewritten to 
+  // https://widget.vision/[https://url.encoded]?wv-queryparameters
+  // opened as:
+  // widget-https://[url.encoded]?wv-queryparameters
+
     var forwardingURL = decodeURIComponent(location.pathname.slice(1)) + location.search + location.hash;
-    forwardingURL = forwardingURL.replace("https://widget.vision/", "widget-")
-    alert(forwardingURL);
+    var widgetURL = "widget-" + forwardingURL;
 
     let link = document.getElementById("forward");
-    link.innerText = forwardingURL;
+    link.innerText = new URL(forwardingURL).host;
     link.href = forwardingURL;
     
     document.getElementById("deeplink").setAttribute("content", "app-id=widget.vision, app-argument=" + forwardingURL);
-    open(forwardingURL, "_self");
-    setTimeout(() => {
-      /* window.location.href = "https://get.widget.vision"; */
-      
-      
-
-    }, 1000);
+    open(widgetURL);
+    let openWidget = () => {
+      window.location.href = widgetURL; 
+    }
+    setTimeout(openWidget, 1000);
+    openButton.onclick = openWidget
   </script>
   <script src="assets/js/script.js"></script>
 </body>

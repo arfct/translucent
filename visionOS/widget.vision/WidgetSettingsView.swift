@@ -68,7 +68,7 @@ struct WidgetSettingsView: View {
                 .labelStyle(.titleOnly)
                 .frame(maxWidth: labelWidth, alignment: .leading)
               
-              TextField("location", text: $locationTempString, axis: .vertical)
+              TextField("location", text: $locationTempString)
               //                .textFieldStyle(.roundedBorder)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)

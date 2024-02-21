@@ -76,7 +76,7 @@ struct WidgetView: View {
           WidgetSettingsView(widget:widget, callback: toggleSettings)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(widget.backColor.opacity(0.2))
-            .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius))
+            .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
             .offset(z: flipped ? 1 : 0)
             .opacity(flipped ? 1.0 : 0.0)
             .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
@@ -170,7 +170,7 @@ struct WidgetView: View {
               app?.openWindow(id: "widgetSettings", value: widget.modelID)
             })
             .simultaneousGesture(TapGesture().onEnded {
-              if (geometry.size.width < 640 || geometry.size.height < 480) {
+              if (geometry.size.width < 400 || geometry.size.height < 400) {
                 app?.openWindow(id: "widgetSettings", value: widget.modelID)
               } else {
                 toggleSettings()

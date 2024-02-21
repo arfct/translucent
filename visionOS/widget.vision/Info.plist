@@ -29,6 +29,8 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>widget-https</string>
+				<string>widget-http</string>
+				<string>widget</string>
 			</array>
 		</dict>
 	</array>

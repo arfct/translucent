@@ -31,6 +31,13 @@ struct WidgetApp: App {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
       //      try AVAudioSession.sharedInstance().setActive(true)
       
+      if var path = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+        
+        try? FileManager.default.createDirectory(at: path
+          .appendingPathComponent("thumbnails", isDirectory: true), withIntermediateDirectories: true)
+      }
+
+      
     } catch {
       print("An error occurred: \(error)")
       exit(0)
@@ -75,9 +82,6 @@ struct WidgetApp: App {
             return true
           }
       }
-//      .frame(minWidth: 640, idealWidth: 640, maxWidth: 640,
-//             minHeight: 400, idealHeight: 680, maxHeight: .infinity,
-//             alignment: .center)
       .frame(idealWidth: 640, idealHeight: 680,
              alignment: .center)
       .fixedSize(horizontal: true, vertical:true)
