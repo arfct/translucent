@@ -1,10 +1,10 @@
 import SwiftUI
 
-struct WidgetListItem: View {
+struct WidgetPickerItem: View {
   
   @Environment(\.openWindow) private var openWindow
   @Environment(\.dismissWindow) private var dismissWindow
-  var widget: Widget
+  @ObservedObject var widget: Widget
   @State var asDrag = false;
   
   let iconSize = CGSize(width: 200, height: 150)
@@ -17,19 +17,21 @@ struct WidgetListItem: View {
         
         
         ZStack() {
-          if let image = widget.thumbnail {
+          if let path = widget.thumbnailFile, let image = widget.thumbnailUIImage {
             if (image.size.width / image.size.height > (iconSize.width / iconSize.height)) {
               Image(uiImage: image)
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth:iconSize.width, maxHeight:iconSize.height, alignment: .center)
                 .fixedSize()
+
             } else {
               Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
                 .frame(maxWidth:iconSize.width, maxHeight:iconSize.height, alignment: .top)
                 .fixedSize()
+
             }
           } else {
             VStack {
@@ -75,5 +77,5 @@ struct WidgetListItem: View {
 
 
 #Preview("Preview", windowStyle: .automatic, traits: .sizeThatFitsLayout) {
-  WidgetListItem(widget: .preview)
+  WidgetPickerItem(widget: .preview)
 }

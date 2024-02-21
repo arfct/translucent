@@ -1,6 +1,14 @@
 import SwiftUI
 import WebKit
 
+
+@objc class Wrapper: NSObject {
+  var widget: Widget
+  init(_ widget: Widget) {
+    self.widget = widget
+  }
+}
+
 struct WebView: UIViewRepresentable {
   @Environment(\.openWindow) var openWindow
   @Binding var title: String?
@@ -222,14 +230,14 @@ struct WebView: UIViewRepresentable {
     print("Dismantling \(webView) \(coordinator)")
     webView.stopLoading()
     webView.navigationDelegate = nil
-    webView.saveSnapshot(path: widget.thumbnailFile!);
+    webView.saveSnapshot(Wrapper(widget));
     webView.removeFromSuperview()
     
   }
   
   func updateSnapshot(_ webView: WKWebView) {
     NSObject.cancelPreviousPerformRequests(withTarget: webView)
-    webView.perform(#selector(WKWebView.saveSnapshot(path:)), with:widget.thumbnailFile, afterDelay: 1.0)
+    webView.perform(#selector(WKWebView.saveSnapshot(_:)), with:Wrapper(widget), afterDelay: 1.0)
   }
   
   func sizeThatFits(
@@ -299,12 +307,17 @@ struct WebView: UIViewRepresentable {
 }
 
 extension WKWebView {
-  @objc func saveSnapshot(path: URL) {
+  @objc func saveSnapshot(_ wrapper: Wrapper) {
     if self.url?.absoluteString == "about:blank" { return }
+    guard let path = wrapper.widget.thumbnailFile else { return }
     let image = self.snapshotImage
+    
+    if (image.isBlank()) { return }
+   
     if let data = image.pngData(){
       print("🖼️ Saved Snapshot, \(String(describing: self.url))")
       try? data.write(to: path)
+      wrapper.widget.thumbnailChanged()
     } else {
       print("❌ Failed Snapshot, \(String(describing: self.url))")
     }

@@ -13,7 +13,7 @@ struct WidgetPickerView: View {
   @Environment(\.scenePhase) private var scenePhase
   
   @Query(sort: [SortDescriptor(\Widget.favorite, order: .reverse), SortDescriptor(\Widget.lastOpened, order: .reverse)])
-                
+  
   var widgets: [Widget]
   
   @State private var showAddWidget = false
@@ -28,10 +28,10 @@ struct WidgetPickerView: View {
   
   
   let columns =
-    [
-      GridItem(.adaptive(minimum: 200, maximum: 200), spacing: 20, alignment: .center)
-    ]
-
+  [
+    GridItem(.adaptive(minimum: 200, maximum: 200), spacing: 20, alignment: .center)
+  ]
+  
   
   
   func getMoreWidgets() {
@@ -46,7 +46,7 @@ struct WidgetPickerView: View {
   func proximity(of innerView: GeometryProxy, to outerView: GeometryProxy, distance: CGFloat = 20.0, at edge: CGRectEdge = .maxYEdge) -> CGFloat{
     let innerFrame = innerView.frame(in: .global)
     let outerFrame = outerView.frame(in: .global)
-
+    
     var start = 0.0
     var end = 1.0
     var value = 0.0
@@ -69,12 +69,12 @@ struct WidgetPickerView: View {
       end = outerFrame.maxY - distance
       value = innerFrame.minY
     }
-
+    
     let fraction = max(0, min(1, (value - start) / (end - start)))
     return fraction;
   }
   
-
+  
   let widgetHeight = 200
   
   var body: some View {
@@ -88,45 +88,42 @@ struct WidgetPickerView: View {
         .shadow(color:.black.opacity(0.5), radius: 10, y: 3)
         .offset(z: 40)
         .padding(.bottom, -20)
-
-        if (false){
-          HStack() {
-            TextField("Search", text: $searchText)
-              .padding()
-              .frame(maxWidth:320)
-            PasteButton(payloadType: URL.self) { urls in
-              if let url = urls.first {
-                DispatchQueue.main.async {
-                  app?.showWindowForURL(url)
-                }
+      
+      if (false){
+        HStack() {
+          TextField("Search", text: $searchText)
+            .padding()
+            .frame(maxWidth:320)
+          PasteButton(payloadType: URL.self) { urls in
+            if let url = urls.first {
+              DispatchQueue.main.async {
+                app?.showWindowForURL(url)
               }
             }
-            .buttonBorderShape(.circle)
-            .buttonStyle(.borderless)
-            .labelStyle(.titleOnly)
-            .tint(.secondary)
-          }.padding(.horizontal, 20)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 100))
-          Spacer(minLength: 20)
-        }
-      
-      
+          }
+          .buttonBorderShape(.circle)
+          .buttonStyle(.borderless)
+          .labelStyle(.titleOnly)
+          .tint(.secondary)
+        }.padding(.horizontal, 20)
+          .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 100))
+        Spacer(minLength: 20)
+      }
       
       GeometryReader { scrollView in
         ScrollView() {
-
           
           // MARK: Grid
           LazyVGrid(columns: columns, alignment: .center, spacing: 20) {
-  
+            
             ForEach(widgets) { widget in
               GeometryReader { widgetView in
                 let minProx = proximity(of:widgetView, to:scrollView, distance:200, at: .minYEdge)
                 let maxProx = proximity(of:widgetView, to:scrollView, distance:200, at: .maxYEdge)
                 let combinedProx = minProx * maxProx
                 
-                WidgetListItem(widget: widget)
-
+                WidgetPickerItem(widget: widget)
+                
                   .contentShape(.contextMenuPreview,.rect(cornerRadius: 30).inset(by: 1))
                   .contextMenu(ContextMenu(menuItems: {
                     Button() {
@@ -140,7 +137,7 @@ struct WidgetPickerView: View {
                       preview: SharePreview(
                         "\(widget.name) – Widget",
                         image: Image("AppIcon")
-                          )
+                      )
                     ) {
                       Text("Share Widget")
                       Image(systemName: "square.and.arrow.up")
@@ -152,9 +149,9 @@ struct WidgetPickerView: View {
                     } label: {
                       Label("Remove Widget", systemImage: "minus.circle")
                     }
-
+                    
                   }))
-
+                
                   .scaleEffect(minProx * 0.8 + 0.2, anchor:.bottom)
                   .scaleEffect(maxProx * 0.8 + 0.2, anchor:.top)
                   .offset(z:combinedProx * 20)
@@ -170,14 +167,14 @@ struct WidgetPickerView: View {
                     itemProvider.registerObject(userActivity, visibility: .all)
                     return itemProvider
                   } preview: {
-                    WidgetListItem(widget: widget, asDrag:true)
+                    WidgetPickerItem(widget: widget, asDrag:true)
                   }
               }.frame(width:200, height:200)
             }
             .offset(x:
                       widgets.count == 1 ?  200.0 + 20.0 :
                       widgets.count == 2 ?  100.0 + 10.0 : 0)
-
+            
             
             
             
@@ -187,6 +184,7 @@ struct WidgetPickerView: View {
           
         }
         .padding(.vertical, 20)
+        .padding(.horizontal, 20)
         .frame(maxHeight:.infinity, alignment:.top)
         
         
@@ -238,18 +236,18 @@ struct WidgetPickerView: View {
           startRadius: 200,
           endRadius: 320
         ).offset(z: -100)
-)
-    .onAppear() {
-      updateHue()
-      Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+      )
+      .onAppear() {
         updateHue()
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+          updateHue()
+        }
       }
-    }
-    .onChange(of: scenePhase) {
-      print("MainWindow Phase \(scenePhase)")
-    }
+      .onChange(of: scenePhase) {
+        print("MainWindow Phase \(scenePhase)")
+      }
     
-    .defaultHoverEffect(.lift)
+      .defaultHoverEffect(.lift)
   }
   
   

@@ -4,8 +4,7 @@ import SwiftData
 
 
 
-@Model final class Widget: Transferable {
-  
+@Model final class Widget: Transferable, ObservableObject {
   
   var id: UUID
   var name: String = ""
@@ -210,15 +209,21 @@ extension Widget {
     return  mid;
   }
   
+  func thumbnailChanged() {
+    objectWillChange.send()
+  }
+  
   @Transient
-  var thumbnail: UIImage? {
+  var thumbnailUIImage: UIImage? {
     if let file = thumbnailFile, let image = UIImage(contentsOfFile: file.path) {
       return image;
     }
     return nil;
   }
+  
+  @Transient
   var thumbnailImage: Image? {
-    if let img = thumbnail {
+    if let img = thumbnailUIImage {
       return Image(uiImage: img)
     }
     return nil
