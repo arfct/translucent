@@ -75,7 +75,8 @@ a.tile.cover .thumbnail {
   background-size:cover;
 }
 a.tile.hidden {
-  opacity: 0.2;
+  opacity: 0.0;
+  pointer-events: none;
 }
 a.tile .thumbnail {
   transition: transform 0.2s;

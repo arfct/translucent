@@ -1,6 +1,6 @@
 ---
 name: Spotify Player
-order: 2
+order: 9
 icon: music.note.list
 href: https://open.spotify.com
 size: 400x600
