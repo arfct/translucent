@@ -24,14 +24,14 @@
     const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
     var speedMultiplier = 1.0;
     var frameRate = 24;
-
+    
     function setSpeedMultiplier(value) {
-      speedMultiplier = value;
+      speedMultiplier = Math.min(Math.max(value, -200), 200);
       frameRate = Math.max(4, Math.min(96, 24 * Math.sqrt(Math.abs(speedMultiplier))));
     }
-
+    
     var time = 0;
-
+    
     function updateSize() {
       const ratio = window.devicePixelRatio || 2;
       canvas.width = window.innerWidth * ratio;
@@ -42,8 +42,9 @@
     // Get the canvas element
     
     window.addEventListener('resize', updateSize);
-
-
+    
+    let lastTheta = undefined;
+    let lastRadius = undefined;
     canvas.addEventListener('pointerdown', (e) => {
       const centerX = canvas.width / 2 / window.devicePixelRatio;
       const centerY = canvas.height / 2 / window.devicePixelRatio;
@@ -51,20 +52,19 @@
       const startY = e.clientY;
       let lastX = startX;
       let lastY = startY;
-      let lastTheta = undefined;
-
+      
       canvas.addEventListener('pointermove', handleDrag);
       handleDrag(e);
-
+      
       function handleDrag(e) {
         const deltaX = e.clientX - lastX;
         const deltaY = e.clientY - lastY;
         lastX = e.clientX;
         lastY = e.clientY;
-
+        
         const dragX = e.clientX - centerX;
         const dragY = e.clientY - centerY;
-        const radius = Math.sqrt(dragX * dragX + dragY * dragY);
+        const radius = Math.sqrt(dragX * dragX + dragY * dragY)*2;
         const theta = Math.atan2(dragY, dragX);
         
         const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -72,21 +72,24 @@
         
         if (lastTheta) {
           let thetaDiff = theta - lastTheta;
-
+          
           if (thetaDiff > Math.PI) { thetaDiff -= Math.PI * 2;
           } else if (thetaDiff < -Math.PI) { thetaDiff += Math.PI * 2; }
-          setSpeedMultiplier(speedMultiplier + thetaDiff);
+          setSpeedMultiplier(speedMultiplier + thetaDiff * 10);
           console.log("speedMultiplier", speedMultiplier, frameRate);
-          }
+        }
+        lastRadius = radius;
         lastTheta = theta;
       } 
- 
+      
       canvas.addEventListener('pointerup', () => {
         canvas.removeEventListener('pointermove', handleDrag);
+        lastTheta = undefined;
+        lastRadius = undefined;
       });
     });
     
-
+    
     
     updateSize() 
     
@@ -112,20 +115,39 @@
       { name: 'Neptune', color: '#366896', orbitRadius: 30.069, speed: 164.8, planetRadius: 24.622, yearLength: 60182 }
       ];
       
+      
       // Draw the planets
       function drawPlanets() {
         const minRadius = Math.min(canvas.width, canvas.height) / 2;
         const x = canvas.width / 2;
         const y = canvas.height / 2;
-
+        
         const lineWidth = minRadius / 500;
+        
+        const planetX = x + Math.cos(lastTheta) * lastRadius; // Calculate the x position of the planet
+        const planetY = y + Math.sin(lastTheta) * lastRadius; // Calculate the y position of the planet
+        
+        ctx.beginPath();
+        ctx.arc(planetX, planetY, lineWidth *  50, 0, 2 * Math.PI);
+        ctx.fillStyle = "#FFFFFF33";
+        ctx.fill();
+        ctx.closePath();
+        ctx.beginPath();
+        
+        ctx.arc(x, y, lastRadius, 0, 2 * Math.PI);
+        ctx.lineWidth = lineWidth * 3;
+        ctx.strokeStyle = "#FFFFFF33";
+        ctx.stroke();
+        ctx.closePath();
+        
+        // Draw the asteroids
         ctx.beginPath();
         ctx.arc(x, y, (minRadius / 6) * Math.sqrt(2.7), 0, 2 * Math.PI);
         ctx.lineWidth = lineWidth * 3;
         ctx.strokeStyle = "#FFFFFF33";
         ctx.stroke();
         ctx.closePath();
-
+        
         // Draw the orbit paths
         planets.forEach((planet, index) => {
           
@@ -172,14 +194,14 @@
         }, 1000 / frameRate);
       }
       // setInterval(() => {
-      //   requestAnimationFrame(animate);
-      // }, 1000 / 24);
+        //   requestAnimationFrame(animate);
+        // }, 1000 / 24);
+        
+        requestAnimationFrame(animate);
+      }
       
-      requestAnimationFrame(animate);
-    }
-    
-    // Start the animation
-    animate();
-  </script>
-</body>
-</html>
+      // Start the animation
+      animate();
+    </script>
+  </body>
+  </html>
