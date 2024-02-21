@@ -1,0 +1,9 @@
+[[edge_functions]]
+  path = "/*/*"
+  function = "metadata"
+
+[[redirects]]
+  from = "/*"
+  to = "https://www.redirect.app/:splat"
+  status = 301
+  force = true

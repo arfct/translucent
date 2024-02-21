@@ -59,7 +59,7 @@ We may update our Privacy Policy from time to time. Thus, you are advised to rev
 
 <b>Contact Us</b>
 
-If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at https://widget.vision/support.
+If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at https://www.widget.vision/support.
 
 
 </div>

@@ -85,9 +85,11 @@ import SwiftData
     if let decodedLocation = location.removingPercentEncoding {
       location = decodedLocation
     }
-    location = location.replacingOccurrences(of: "widget-http", with: "http")
-    location = location.replacingOccurrences(of: "https://widget.vision/http", with: "http")
-   
+    location = location
+      .replacingOccurrences(of: "widget-http", with: "http")
+      .replacingOccurrences(of: "https://widget.vision/http", with: "http")
+      .replacingOccurrences(of: "https://www.widget.vision/http", with: "http")
+    
     self.init( name:url.host() ?? "NAME", location: location, options:parameters)
   }
   

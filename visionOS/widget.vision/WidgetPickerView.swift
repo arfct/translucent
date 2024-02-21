@@ -35,7 +35,7 @@ struct WidgetPickerView: View {
   
   
   func getMoreWidgets() {
-    openURL(URL(string: "https://widget.vision/list")!)
+    openURL(URL(string: "https://www.widget.vision/list")!)
     dismissWindow(id: "main")
     
   }

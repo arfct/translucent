@@ -6,10 +6,10 @@
 Web based widgets for visionOS
 
 ### Site + TestFlight:
-https://widget.vision
+https://www.widget.vision
 
 ### Catalog Page
-https://widget.vision/more
+https://www.widget.vision/list
 
 ### Usage: 
 

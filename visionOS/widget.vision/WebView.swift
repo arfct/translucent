@@ -1,8 +1,6 @@
 import SwiftUI
 import WebKit
 
-// https://www.swiftyplace.com/blog/loading-a-web-view-in-swiftui-with-wkwebview
-
 struct WebView: UIViewRepresentable {
   @Environment(\.openWindow) var openWindow
   @Binding var title: String?
