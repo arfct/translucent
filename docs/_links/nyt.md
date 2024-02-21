@@ -7,6 +7,6 @@ size: 440x440
 minsize: 440x300
 maxsize: 440x800
 vw: 586
-zoom: 0.50
+zoom: 0.67
 bg: ffffff88
 ---
