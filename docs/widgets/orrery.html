@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Solar System Orrery</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" style="width:100vw; height:100vh"></canvas>
+  
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+
+    function updateSize() {
+      const ratio = window.devicePixelRatio || 2;
+      canvas.width = window.innerWidth * ratio;
+      canvas.height = window.innerHeight * ratio;
+      // console.log("canvas.width", canvas.width, "canvas.height", canvas.height)
+      animate();
+    }
+    // Get the canvas element
+    
+    window.addEventListener('resize', updateSize);
+
+    
+    updateSize() 
+    
+    // Set the background color to transparent
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Animation loop
+    function animate() {
+      // Clear the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw your solar system model here
+      // Define the properties of the planets
+      const planets = [
+      { name: 'Sun', color: 'yellow', orbitRadius: 0, speed: 0, planetRadius: 109.13},
+      { name: 'Mercury', color: '#b97c57', orbitRadius: 0.387, speed: 0.241, planetRadius: 2.4397 },
+      { name: 'Venus', color: '#f5deb3', orbitRadius: 0.723, speed: 0.615, planetRadius: 6.0518 },
+      { name: 'Earth', color: '#6495ed', orbitRadius: 1, speed: 1.0, planetRadius: 1.0 },
+      { name: 'Mars', color: '#ff6347', orbitRadius: 1.524, speed: 1.881, planetRadius: 0.5326 },
+      { name: 'Jupiter', color: '#8b4513', orbitRadius: 5.203, speed: 11.86, planetRadius: 11.0 },
+      { name: 'Saturn', color: '#ffd700', orbitRadius: 9.537, speed: 29.46, planetRadius: 9.1232 },
+      { name: 'Uranus', color: '#98fb98', orbitRadius: 19.191, speed: 84.01, planetRadius: 3.978 }
+      ];
+      
+      
+    
+      // Draw the planets
+      function drawPlanets() {
+        const minRadius = Math.min(canvas.width, canvas.height) / 2;
+      
+        // Draw the orbit paths
+        planets.forEach((planet, index) => {
+          
+
+          const x = canvas.width / 2;
+          const y = canvas.height / 2;
+          const angle = (Date.now() * Math.sqrt(planet.speed)/100000) % (2 * Math.PI); // Calculate the angle based on time and speed, modulo 2 pi
+          
+          const orbitRadius = (minRadius / 5) * Math.sqrt(planet.orbitRadius)
+          
+          ctx.beginPath();
+          ctx.arc(x, y, orbitRadius, 0, 2 * Math.PI);
+          
+          // Create a conic gradient from white to black
+          const gradient = ctx.createConicGradient((angle), x, y);
+          gradient.addColorStop(0.1, '#FFFFFF00');
+          gradient.addColorStop(1, '#FFFFFF66');
+          ctx.lineWidth = 4;
+          ctx.strokeStyle = gradient;
+          ctx.stroke();
+          ctx.closePath();
+          
+          const planetX = x + Math.cos(angle) * orbitRadius; // Calculate the x position of the planet
+          const planetY = y + Math.sin(angle) * orbitRadius; // Calculate the y position of the planet
+          
+          ctx.beginPath();
+          ctx.arc(planetX, planetY, 2 * Math.sqrt(planet.planetRadius), 0, 2 * Math.PI);
+          ctx.fillStyle = planet.color;
+          ctx.fill();
+          ctx.closePath();
+        });
+      }
+      
+      // Animation loop
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawPlanets();
+      }
+      setInterval(() => {
+        requestAnimationFrame(animate);
+      }, 1000 / 14);
+      
+      requestAnimationFrame(animate);
+    }
+    
+    // Start the animation
+    animate();
+  </script>
+</body>
+</html>

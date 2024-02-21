@@ -1,0 +1,10 @@
+---
+name: Digital Orrery
+icon: globe
+order: 3
+href: https://widget.vision/widgets/orrery
+size: 480x480
+class: wide
+---
+
+
