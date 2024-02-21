@@ -4,6 +4,7 @@ icon: clock
 order: 9
 href: https://widget.vision/widgets/clock
 size: 320x198
+style: transparent
 class: wide
 ---
 
