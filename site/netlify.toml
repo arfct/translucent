@@ -4,6 +4,6 @@
 
 [[redirects]]
   from = "/*"
-  to = "https://www.redirect.app/:splat"
+  to = "https://www.widget.vision/:splat"
   status = 301
   force = true
