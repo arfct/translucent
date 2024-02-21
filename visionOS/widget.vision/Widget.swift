@@ -84,8 +84,7 @@ import SwiftData
     
     location = location.replacingOccurrences(of: "widget-http", with: "http")
     location = location.replacingOccurrences(of: "https://widget.vision/http", with: "http")
-    print("Loc \(location) \(parameters)")
-
+   
     self.init( name:url.host() ?? "NAME", location: location, options:parameters)
   }
   
@@ -257,8 +256,8 @@ extension Widget {
       items.append(URLQueryItem(name: "tint", value: tintHex)) }
     if zoom != 1.0 {
       items.append(URLQueryItem(name: "zoom", value: String(describing:zoom))) }
-    if viewportWidth != nil {
-      items.append(URLQueryItem(name: "vw", value: String(describing:viewportWidth))) }
+    if let value = viewportWidth {
+      items.append(URLQueryItem(name: "vw", value: String(describing:value))) }
     if let string = injectJS, string.count > 0 {
       items.append(URLQueryItem(name: "js", value: string))}
     if let string = injectCSS, string.count > 0 {
