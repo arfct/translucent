@@ -82,6 +82,9 @@ import SwiftData
       }
     }
     
+    if let decodedLocation = location.removingPercentEncoding {
+      location = decodedLocation
+    }
     location = location.replacingOccurrences(of: "widget-http", with: "http")
     location = location.replacingOccurrences(of: "https://widget.vision/http", with: "http")
    
