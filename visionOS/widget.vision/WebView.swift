@@ -16,7 +16,6 @@ struct WebView: UIViewRepresentable {
   @Binding var widget: Widget
   @Binding var phase: ScenePhase
   
-  var webView: WKWebView = WKWebView()
   
   var loadStatusChanged: ((WebView, Bool, Error?) -> Void)? = nil
   func onLoadStatusChanged(perform: ((WebView, Bool, Error?) -> Void)?) -> some View {
@@ -25,7 +24,10 @@ struct WebView: UIViewRepresentable {
     return copy
   }
   
-  func makeCoordinator() -> Coordinator { Coordinator(self) }
+  func makeCoordinator() -> WebViewCoordinator { WebViewCoordinator(self) }
+  
+
+  
   
   func cssSrc(widget:Widget) -> String {
     
@@ -141,6 +143,7 @@ struct WebView: UIViewRepresentable {
   }
   
   func makeUIView(context: Context) -> WKWebView {
+    let webView = context.coordinator.webView
     webView.navigationDelegate = context.coordinator
     webView.isOpaque = false
     webView.backgroundColor = UIColor.clear
@@ -184,11 +187,8 @@ struct WebView: UIViewRepresentable {
 
     let script = WKUserScript(source:js, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     config.userContentController.addUserScript(script)
-    
-    if let url = URL(string:location!) {
-      let request = URLRequest(url: url)
-      webView.load(request)
-    }
+
+    context.coordinator.loadURL(string: location)
     
     updateSnapshot(webView)
     return webView
@@ -197,8 +197,11 @@ struct WebView: UIViewRepresentable {
   func updateUIView(_ webView: WKWebView, context: Context) {
     
     if (phase == .background) {
-      let request = URLRequest(url: URL(string:"about:blank")!)
-      webView.load(request)
+      context.coordinator.loadURL(string: "about:blank")
+    }
+    
+    if (context.coordinator.activeLocation != location) {
+      context.coordinator.loadURL(string: location)
     }
 
     
@@ -217,8 +220,8 @@ struct WebView: UIViewRepresentable {
   }
 
   func updateWebView(_ webView: WKWebView, context: Context) {
+    webView.pageZoom = widget.zoom
     webView.evaluateJavaScript(jsSrc(widget: widget)) { object, error in
-      webView.pageZoom = widget.zoom
     }
     if (webView.customUserAgent != widget.userAgentString) {
       webView.customUserAgent = widget.userAgentString
@@ -226,7 +229,7 @@ struct WebView: UIViewRepresentable {
     
   }
   
-  func dismantleUIView(_ webView: WKWebView,coordinator: Coordinator ) {
+  func dismantleUIView(_ webView: WKWebView,coordinator: WebViewCoordinator ) {
     print("Dismantling \(webView) \(coordinator)")
     webView.stopLoading()
     webView.navigationDelegate = nil
@@ -247,12 +250,27 @@ struct WebView: UIViewRepresentable {
     return CGSizeMake(360, 640)
   }
   
-  class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler, WKScriptMessageHandlerWithReply {
+  class WebViewCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler, WKScriptMessageHandlerWithReply {
 
     @Environment(\.openWindow) var openWindow
+    
+    let webView: WKWebView = WKWebView()
     let parent: WebView
     var lastSize: CGSize = .zero
     var updateWorkItem: DispatchWorkItem?
+    var activeLocation: String?;
+    
+    func loadURL(string: String?) {
+      if let urlString = string,
+         let url = URL(string:urlString) {
+        activeLocation = urlString
+        webView.load(URLRequest(url: url))
+      }
+    }
+    
+    func loadURL(_ url: URL) {
+      webView.load(URLRequest(url: url))
+    }
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
 //      print("💬 Web Message:\n\(message.body)")

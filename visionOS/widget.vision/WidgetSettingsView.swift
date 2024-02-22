@@ -36,6 +36,12 @@ struct WidgetSettingsView: View {
     }
     return nil
   }
+  func commitLocation() {
+    if let url = clean(url:locationTempString) {
+      widget.location = url
+      locationTempString = url
+    }
+  }
   
   let spacing = 20.0
   let labelWidth = 72.0
@@ -79,20 +85,20 @@ struct WidgetSettingsView: View {
                   foreColor = widget.foreColor ?? .white
                   tintColor = widget.tintColor ?? .blue
                 }
+              
                 .onSubmit {
-                  if let url = clean(url:locationTempString) {
-                    widget.location = url
-                    locationTempString = url
-                    callback();
-                  }
+                  commitLocation()
                 }
               
                 .focused($isTextFieldFocused)
                 .onChange(of: isTextFieldFocused) {
+                  print("focus changed \(isTextFieldFocused)")
                   if isTextFieldFocused {
                     DispatchQueue.main.async {
                       UIApplication.shared.sendAction(#selector(UIResponder.selectAll(_:)), to: nil, from: nil, for: nil)
                     }
+                  } else {
+                    commitLocation()
                   }
                 }
               
@@ -204,22 +210,56 @@ struct WidgetSettingsView: View {
             
             
             
-            if (!showAllOptions) {
-              Section(header: Text("Appearance")) {
-                
-                Button {
-                  showAllOptions.toggle()
-                } label: {
-                  Label("Show All Options", systemImage: "ellipsis")
-                }
-                .labelStyle(.titleOnly)
-              }
-            }
+            
             
           }
           
-          
-          if (showAllOptions) {
+          if (!showAllOptions) {
+            Section() {
+              
+              Button {
+                showAllOptions.toggle()
+              } label: {
+                Label("Show All Options", systemImage: "ellipsis")
+              }
+              .labelStyle(.titleOnly)
+            }
+          } else {
+            
+            
+            Section(header: Text("CSS Tweaks")){
+              HStack(alignment: .top, spacing:spacing) {
+                Label("Clear", systemImage: "link")
+                  .labelStyle(.titleOnly)
+                  .frame(maxWidth: labelWidth, alignment: .leading)
+                TextField("transparent elements", text:$widget.clearSelectors ?? "", axis: .vertical)
+                
+                  .autocapitalization(.none)
+                  .disableAutocorrection(true)
+                  .frame(maxWidth: .infinity)
+              }
+              HStack(alignment: .top, spacing:spacing) {
+                Label("Hide", systemImage: "link")
+                  .labelStyle(.titleOnly)
+                  .frame(maxWidth: labelWidth, alignment: .leading)
+                TextField("removed elements",
+                          text: $widget.removeSelectors ?? "",
+                          axis: .vertical)
+                
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                .frame(maxWidth: .infinity)
+              }
+              HStack(alignment: .top, spacing:spacing) {
+                Label("Override", systemImage: "link")
+                  .labelStyle(.titleOnly)
+                  .frame(maxWidth: labelWidth, alignment: .leading)
+                TextField("custom css", text:$widget.injectCSS ?? "", axis: .vertical)
+                  .autocapitalization(.none)
+                  .disableAutocorrection(true)
+                  .frame(maxWidth: .infinity)
+              }
+            }
             
             Section(header: Text("Advanced")) {
               
@@ -271,45 +311,12 @@ struct WidgetSettingsView: View {
               }
               
             }
-              
-              // MARK: Overrides
-              
-              
-              Section(header: Text("CSS Tweaks")){
-                HStack(alignment: .top, spacing:spacing) {
-                  Label("Clear", systemImage: "link")
-                    .labelStyle(.titleOnly)
-                    .frame(maxWidth: labelWidth, alignment: .leading)
-                  TextField("transparent elements", text:$widget.clearSelectors ?? "", axis: .vertical)
-                   
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .frame(maxWidth: .infinity)
-                }
-                HStack(alignment: .top, spacing:spacing) {
-                  Label("Hide", systemImage: "link")
-                    .labelStyle(.titleOnly)
-                    .frame(maxWidth: labelWidth, alignment: .leading)
-                  TextField("removed elements", 
-                            text: $widget.removeSelectors ?? "",
-                            axis: .vertical)
-                   
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .frame(maxWidth: .infinity)
-                }
-                HStack(alignment: .top, spacing:spacing) {
-                  Label("Override", systemImage: "link")
-                    .labelStyle(.titleOnly)
-                    .frame(maxWidth: labelWidth, alignment: .leading)
-                  TextField("custom css", text:$widget.injectCSS ?? "", axis: .vertical)
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .frame(maxWidth: .infinity)
-                }
-                
-              
-            }
+            
+            // MARK: Overrides
+            
+            
+
+            
           }
         }
         .frame(maxWidth: 640, maxHeight: .infinity, alignment: .center)
@@ -324,7 +331,7 @@ struct WidgetSettingsView: View {
           }
           ToolbarItemGroup(placement:.navigationBarLeading) {
             
-            Button { 
+            Button {
               openWindow(id:"main")
             } label: {
               Label("List", systemImage: "rectangle.grid.2x2")
