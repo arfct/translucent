@@ -53,7 +53,7 @@ struct WidgetSettingsView: View {
     GeometryReader { g in
       NavigationStack {
         Form {
-          Section(header: Text("Content")){
+          Section(){
             
             // MARK: Name
             HStack(spacing:spacing) {
@@ -109,59 +109,32 @@ struct WidgetSettingsView: View {
                   Text("Mobile").tag("mobile")
                   Text("Desktop").tag("desktop")
                 }
-                Divider()
-                Button("Show All Options", action: {
-                  showAllOptions.toggle()
-                })
               } label: {
                 Label("Location", systemImage: "ellipsis")
               }.labelStyle(.iconOnly)
                 .buttonStyle(.borderless)
             }
             
-          }
-          
-          Section(header: Text("Appearance")) {
-            Picker("Style", selection: $widget.style) {
-              ForEach(ViewStyle.allCases, id: \.self) { value in
-                Text(value.displayName)
-              }
-            }
+            //          }
+            //          Section() {
             
-            HStack(spacing:spacing) {
-              Label("Colors", systemImage: "ellipsis").labelStyle(.titleOnly)
+            
+            HStack(spacing:spacing - 18) {
+              Label("Style", systemImage: "ellipsis").labelStyle(.titleOnly)
                 .frame(maxWidth: labelWidth, alignment:.leading)
               
-              LazyVGrid(columns:columns) {
-                HStack {
-                  ColorPicker(selection: $backColor) {
-                    Image(systemName: "square.fill")
-                  }.frame(maxWidth:56).onChange(of: backColor) {
-                    if let hex = backColor.toHex() { widget.backHex = hex }
-                  }.labelsHidden().scaleEffect(1.2)
-                  Text("Back")
+              Picker("", selection: $widget.style) {
+                ForEach(ViewStyle.allCases, id: \.self) { value in
+                  Text(value.displayName)
                 }
-                HStack {
-                  ColorPicker(selection: $foreColor, supportsOpacity: true) {
-                    Image(systemName: "textformat.size.smaller")
-                  }.frame(maxWidth:56).onChange(of: foreColor) {
-                    if let hex = foreColor.toHex() { widget.foreHex = hex }
-                  }.labelsHidden().scaleEffect(1.2)
-                  Text("Text")
-                }
-                HStack {
-                  ColorPicker(selection: $tintColor, supportsOpacity: true) {
-                    Image(systemName: "a.square")
-                  }.frame(maxWidth:56).onChange(of: tintColor) {
-                    if let hex = tintColor.toHex() { widget.tintHex = hex }
-                  }.labelsHidden().scaleEffect(1.2)
-                  Text("Tint")
-                }
-                
-                
-              }.frame(maxWidth:.infinity)
+              }.pickerStyle(.menu)
+              
+                .buttonStyle(.borderless)
+                .frame(alignment: .leading)
+                .labelsHidden()
+              
+              
             }
-            
             
             // MARK: Font
             HStack(spacing:spacing) {
@@ -208,23 +181,63 @@ struct WidgetSettingsView: View {
               .buttonStyle(.borderless)
             }
             
-            
-            
-            
-            
-          }
-          
-          if (!showAllOptions) {
-            Section() {
+            HStack(spacing:spacing - 16) {
+              Label("Colors", systemImage: "ellipsis").labelStyle(.titleOnly)
+                .frame(maxWidth: labelWidth, alignment:.leading)
               
-              Button {
-                showAllOptions.toggle()
-              } label: {
-                Label("Show All Options", systemImage: "ellipsis")
-              }
-              .labelStyle(.titleOnly)
+              LazyVGrid(columns:columns) {
+                HStack {
+                  ColorPicker(selection: $backColor) {
+                    Image(systemName: "square.fill")
+                  }.frame(maxWidth:56).onChange(of: backColor) {
+                    if let hex = backColor.toHex() { widget.backHex = hex }
+                  }.labelsHidden().scaleEffect(1.0)
+                  Text("Back")
+                }
+                HStack {
+                  ColorPicker(selection: $foreColor, supportsOpacity: true) {
+                    Image(systemName: "textformat.size.smaller")
+                  }.frame(maxWidth:56).onChange(of: foreColor) {
+                    if let hex = foreColor.toHex() { widget.foreHex = hex }
+                  }.labelsHidden().scaleEffect(1.0)
+                  Text("Text")
+                }
+                HStack {
+                  ColorPicker(selection: $tintColor, supportsOpacity: true) {
+                    Image(systemName: "a.square")
+                  }.frame(maxWidth:56).onChange(of: tintColor) {
+                    if let hex = tintColor.toHex() { widget.tintHex = hex }
+                  }.labelsHidden().scaleEffect(1.0)
+                  Text("Tint")
+                }
+                
+                
+              }.frame(maxWidth:.infinity)
             }
-          } else {
+            
+            
+            
+            
+            
+          } footer: {
+            if (!showAllOptions) {
+              HStack() {
+                Spacer()
+                Button {
+                  showAllOptions.toggle()
+                } label: {
+                  Label("Show All Options", systemImage: "chevron.down")
+                }
+                .labelStyle(.iconOnly)
+                .buttonBorderShape(.circle)
+                .buttonStyle(.borderless)
+                .frame(alignment:.center)
+                Spacer()
+              }
+            }
+          }.listRowBackground(Color.clear)
+          
+          if (showAllOptions) {
             
             
             Section(header: Text("CSS Tweaks")){
@@ -309,36 +322,35 @@ struct WidgetSettingsView: View {
                   .disableAutocorrection(true)
                   .frame(maxWidth: .infinity)
               }
-              
             }
-            
-            // MARK: Overrides
-            
-            
-
-            
           }
         }
         .frame(maxWidth: 640, maxHeight: .infinity, alignment: .center)
-        
         .toolbar {
           
-          ToolbarItemGroup(placement: .navigationBarTrailing) {
-            Button { self.callback() } label: {
-              Label("Done", systemImage: "chevron.left")
-            }
-            .labelStyle(.titleOnly)
-          }
-          ToolbarItemGroup(placement:.navigationBarLeading) {
+//          ToolbarItem(placement: .secondaryAction) {
+//            TextField(widget.title ?? "", text: $widget.name)
+//              .autocapitalization(.none)
+//              .disableAutocorrection(true)
+//              .keyboardType(.URL)
+//              .padding(8)
+//            
+//            
+//          }
+          
+          ToolbarItemGroup(placement:.navigation) {
             
             Button {
               openWindow(id:"main")
             } label: {
-              Label("List", systemImage: "rectangle.grid.2x2")
+              Label("List", systemImage: "rectangle.grid.2x2.fill")
             }
             .labelStyle(.iconOnly)
             .buttonBorderShape(.circle)
             
+          }
+          
+          ToolbarItemGroup(placement: .primaryAction) {
             ShareLink(
               item: widget,
               preview: SharePreview(
@@ -348,7 +360,14 @@ struct WidgetSettingsView: View {
               Image(systemName: "square.and.arrow.up")
             }
             .buttonBorderShape(.circle)
-            
+            .background(.clear)
+            .buttonStyle(.borderless)
+          }
+            ToolbarItemGroup(placement: .primaryAction) {
+            Button { self.callback() } label: {
+              Label("Done", systemImage: "chevron.left")
+            }
+            .labelStyle(.titleOnly)
           }
         }
       }        .padding(min(g.size.width/32, 0)) // Collapse small size padding
