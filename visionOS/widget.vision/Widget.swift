@@ -30,7 +30,7 @@ import SwiftData
   var radius: CGFloat = 30
 
   var zoom: CGFloat = 1.0
-  var viewportWidth: Int?
+  var viewport: String?
   var userAgent: String = "mobile"
   
   var lastOpened: Date?
@@ -141,9 +141,7 @@ import SwiftData
               self.userAgent = String(value)
             }
           case "vw":
-            if let value = Int(value) {
-              self.viewportWidth = value
-            }
+            self.viewport = String(value)
           case "remove":
             self.removeSelectors = String(value)
           case "clear":
@@ -266,8 +264,8 @@ extension Widget {
       items.append(URLQueryItem(name: "tint", value: tintHex)) }
     if zoom != 1.0 {
       items.append(URLQueryItem(name: "zoom", value: String(describing:zoom))) }
-    if let value = viewportWidth {
-      items.append(URLQueryItem(name: "vw", value: String(describing:value))) }
+    if let value = viewport {
+      items.append(URLQueryItem(name: "vw", value: value)) }
     if let string = injectJS, string.count > 0 {
       items.append(URLQueryItem(name: "js", value: string))}
     if let string = injectCSS, string.count > 0 {

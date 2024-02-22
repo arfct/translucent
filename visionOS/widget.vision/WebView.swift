@@ -84,8 +84,8 @@ struct WebView: UIViewRepresentable {
     
     let zoom = widget.zoom
     var viewport = "device-width"
-    if let width = widget.viewportWidth {
-      viewport = String(width)
+    if let width = widget.viewport {
+      viewport = width
     }
     
     source.append(

@@ -304,7 +304,7 @@ struct WidgetSettingsView: View {
                   .labelStyle(.titleOnly)
                   .frame(maxWidth: labelWidth, alignment: .leading)
                 
-                TextField("width", value:$widget.viewportWidth, formatter: NumberFormatter())
+                TextField("width", text:$widget.viewport ?? "device-width")
                   .autocapitalization(.none)
                   .disableAutocorrection(true)
                   .frame(maxWidth: .infinity)
