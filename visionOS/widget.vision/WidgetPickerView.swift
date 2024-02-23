@@ -20,6 +20,7 @@ struct WidgetPickerView: View {
   @State private var selection: Widget?
   @State private var path: [Widget] = []
   @State private var hue: CGFloat = 0.6
+  @State private var dragging = false
   @Environment(\.openURL) var openURL
   @Environment(\.openWindow) private var openWindow
   @Environment(\.dismissWindow) private var dismissWindow
@@ -125,32 +126,32 @@ struct WidgetPickerView: View {
                 WidgetPickerItem(widget: widget)
                 
                   .contentShape(.contextMenuPreview,.rect(cornerRadius: 30).inset(by: 1))
-                  .contextMenu(ContextMenu(menuItems: {
-                    Button() {
-                      widget.favorite.toggle()
-                    } label: {
-                      Label("Favorite", systemImage: widget.favorite ? "star.fill" : "star")
-                    }
-                    
-                    ShareLink(
-                      item: widget,
-                      preview: SharePreview(
-                        "\(widget.name) – Widget",
-                        image: Image("AppIcon")
-                      )
-                    ) {
-                      Text("Share Widget")
-                      Image(systemName: "square.and.arrow.up")
-                    }
-                    .buttonBorderShape(.circle)
-                    Divider()
-                    Button(role: .destructive) {
-                      deleteWidget(widget)
-                    } label: {
-                      Label("Remove Widget", systemImage: "minus.circle")
-                    }
-                    
-                  }))
+                //                  .contextMenu(ContextMenu(menuItems: {
+                //                    Button() {
+                //                      widget.favorite.toggle()
+                //                    } label: {
+                //                      Label("Favorite", systemImage: widget.favorite ? "star.fill" : "star")
+                //                    }
+                //
+                //                    ShareLink(
+                //                      item: widget,
+                //                      preview: SharePreview(
+                //                        "\(widget.name) – Widget",
+                //                        image: Image("AppIcon")
+                //                      )
+                //                    ) {
+                //                      Text("Share Widget")
+                //                      Image(systemName: "square.and.arrow.up")
+                //                    }
+                //                    .buttonBorderShape(.circle)
+                //                    Divider()
+                //                    Button(role: .destructive) {
+                //                      deleteWidget(widget)
+                //                    } label: {
+                //                      Label("Remove Widget", systemImage: "minus.circle")
+                //                    }
+                //
+                //                  }))
                 
                   .scaleEffect(minProx * 0.8 + 0.2, anchor:.bottom)
                   .scaleEffect(maxProx * 0.8 + 0.2, anchor:.top)
@@ -160,6 +161,7 @@ struct WidgetPickerView: View {
                   .rotation3DEffect(.degrees(20.0 * (1.0 - minProx)), axis: (x: 1, y: 0, z: 0), anchor:.trailing)
                   .rotation3DEffect(.degrees(-20.0 * (1.0 - maxProx)), axis: (x: 1, y: 0, z: 0), anchor:.leading)
                   .onDrag {
+                    dragging = true
                     let userActivity = NSUserActivity(activityType: Activity.openWidget)
                     userActivity.targetContentIdentifier = Activity.openWidget
                     try? userActivity.setTypedPayload(["modelId": widget.modelID])
@@ -212,11 +214,19 @@ struct WidgetPickerView: View {
       ToolbarItem(placement: .bottomOrnament) {
         if (!widgets.isEmpty) {
           Button { getMoreWidgets() } label: {
-            Label("Get more widgets", systemImage: "plus")
+            Label(dragging ? "Delete widget" : "Get more widgets", systemImage: dragging ? "remove" : "plus")
           }.labelStyle(.titleAndIcon)
-          //        .background(Color(hue: hue, saturation: 0.2, brightness: 0.5))
             .buttonBorderShape(.roundedRectangle(radius: 30))
             .buttonStyle(.borderless)
+            .dropDestination(for: Data.self) { items, location in
+              print("items \(items.first) \(type(of:items.first)) \(location)")
+//              let modelID = try? JSONDecoder().decode(PersistentIdentifier.self, from: items.first) {
+////                  let id = modelID
+//                }
+
+              return true
+            }
+
         }
         
         

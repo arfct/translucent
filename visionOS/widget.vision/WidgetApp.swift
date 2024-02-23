@@ -57,7 +57,7 @@ struct WidgetApp: App {
     
     // MARK: - Main Window
     
-    WindowGroup("Main", id: "main") {
+    WindowGroup("Main", id: "main") { value in
       GeometryReader { mainWindow in
         WidgetPickerView(app: self)
           .onOpenURL {
@@ -86,7 +86,7 @@ struct WidgetApp: App {
              alignment: .center)
       .fixedSize(horizontal: true, vertical:true)
       
-    }
+    } defaultValue: { "main" }
     .modelContainer(container!)
     .windowResizability(.contentSize)
     .defaultSize(width: 680, height: 680)

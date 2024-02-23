@@ -50,6 +50,10 @@ import SwiftData
   @Transient
   var isLoading: Bool = false
 
+  func delete() {
+    try? modelContext?.delete(self)
+    try? modelContext?.save()
+  }
 
   func sizeFor(dimensions: String) -> CGSize {
     let dims = dimensions.split(separator: "x")

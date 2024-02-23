@@ -91,7 +91,6 @@ struct WidgetView: View {
                 .frame(width: 64, height: 64)
                 .font(Font.title.weight(.light))
             }
-            .background(.black.opacity(0.1))
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 //            .glassBackgroundEffect()
             
@@ -212,7 +211,7 @@ struct WidgetView: View {
     .frame(minWidth: clampInitialSize ? widget.width : widget.minWidth, idealWidth: widget.width, maxWidth: clampInitialSize ? widget.width : widget.maxWidth,
            minHeight: clampInitialSize ? widget.height : widget.minHeight, idealHeight: widget.height, maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
     .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
-    .persistentSystemOverlays(showHandle && !wasBackgrounded ? .automatic : .hidden)
+    .persistentSystemOverlays(showHandle && !wasBackgrounded && !flipped ? .automatic : .hidden)
   
     .onAppear(){
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
