@@ -338,19 +338,22 @@ private extension Color {
 enum ViewStyle: String, Equatable, CaseIterable, Codable {
   case glass = "Glass"
   case transparent  = "Transparent"
+  //case toolbar  = "Toolbar"
   
   var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
   
   var displayName: String {
     switch self {
-    case .transparent: return "Clear"
-    case .glass: return "Frosted"
+    case .transparent: return "Transparent"
+    case .glass: return "Frosted Glass"
+    //case .toolbar: return "Mini Browser"
     }
   }
   var iconName: String {
     switch self {
     case .transparent: return "square.dotted"
     case .glass: return "square.fill"
+    //case .toolbar: return "macwindow"
     }
   }
 }
