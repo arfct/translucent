@@ -3,9 +3,11 @@ layout: default
 ---
 
 <div class="content">
-  <div class="ventilation" style="height:160px"></div>
-  
-  {% include logo.html %}
+
+  <div class="header">
+    <img class="icon" src="assets/img/favicon.large.png">
+    {% include logo.html %}
+  </div>
 
   {% assign posts = site.links | sort: "order",  "last" %}
   {%- if posts.size > 0 -%}

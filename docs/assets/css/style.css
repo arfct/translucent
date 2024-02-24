@@ -92,6 +92,8 @@ a.tile .thumbnail {
   display:flex;
 }
 
+
+
 div.icon {
   flex-grow: 1;
   width: 100%;
@@ -159,11 +161,11 @@ body {
 }
 
 .tiles {
-  padding-top: 25px;
+  padding-top: 10vmin;
   display: grid;
   grid-template-columns: repeat(auto-fill, var(--iconWidth));
-column-gap:26px;
-  row-gap:70px;
+  column-gap:26px;
+  row-gap:56px;
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -178,22 +180,45 @@ column-gap:26px;
   height: 1px;
 }
 
-svg.logo {
-  max-width: 400px;
-  display: block;
-  opacity: 0.2;
-  margin: auto;
-  margin-bottom: 4vmin;
-  margin-top: 4vmin;
+div.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap:20px;
+
+  max-width: 720px;
+  margin: auto ;
+  padding: 2vmin 20px ;
+  margin-top:2vmin;
+  box-sizing:border-box;
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
 }
-svg.logo path {
+    
+img.icon {
+  max-width:48px;
+  display:block;
+  
+  z-index: 1;
+  position:relative
+}
+
+svg {
+  max-width: 240px;
+  display: block;
+  opacity: 0.4;
+}
+svg path {
   fill: hsl(var(--hue), 50%, 70%);
 }
 
 .explainer {
   position: relative;
-  grid-column: 3 / 6;
-  grid-row: 2 / 4;
+  grid-column: 4 / 6;
+  grid-row: 1 / 4;
   color: white;
   width: auto;
   height:auto;
@@ -201,10 +226,10 @@ svg.logo path {
   box-sizing: border-box;
   background: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 100%);
   align-self:flex-start;
-  border-radius: 30px;
+  border-radius: var(--radius, 24px);
   color: #ffffffcc;
   flex-grow: 1;
-  font-size: 120%;
+  font-size: 100%;
   font-weight:200;
   padding-left:2em;
   padding-top:1em;
@@ -237,4 +262,5 @@ a {
   width: 776px;
   height: var(--iconWidth);
   margin: auto;
+  display:none;
 }
