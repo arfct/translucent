@@ -256,11 +256,14 @@ struct WidgetPickerView: View {
             Label(draggedWidget == nil ?
                   "Get More Widgets" : "Drag to Delete",
                   systemImage: draggedWidget == nil ? "plus" : "trash")
+            .padding(draggedWidget == nil ? 10 : 20)
           }.labelStyle(.titleAndIcon)
+          
+          
             .buttonBorderShape(.roundedRectangle(radius: 30))
             .buttonStyle(.borderless)
             .frame(minWidth:260)
-            
+          
         }
 //        .onDrop(
 //          of: ["public.text"],
@@ -271,11 +274,10 @@ struct WidgetPickerView: View {
           draggedWidget = nil
           return true
         }
-        
-        .padding(20)
-        .background(draggedWidget != nil ? .black : .black.opacity(0.0))
+        .padding(10)
+
+        .background(draggedWidget != nil ? .white.opacity(0.7) : .black.opacity(0.0))
         .glassBackgroundEffect()
-        .padding(.bottom, 20)
         .animation(.spring(), value: draggedWidget)
         .animation(.spring(), value: isDragDestination)
         .animation(.spring(), value: widgets)
