@@ -120,28 +120,8 @@ struct WidgetPickerView: View {
         .opacity(1.0)
         .shadow(color:.black.opacity(0.5), radius: 10, y: 3)
         .offset(z: 40)
+        .padding(.horizontal, 20)
         .padding(.bottom, -80)
-      
-      if (false){
-        HStack() {
-          TextField("Search", text: $searchText)
-            .padding()
-            .frame(maxWidth:320)
-          PasteButton(payloadType: URL.self) { urls in
-            if let url = urls.first {
-              DispatchQueue.main.async {
-                app?.showWindowForURL(url)
-              }
-            }
-          }
-          .buttonBorderShape(.circle)
-          .buttonStyle(.borderless)
-          .labelStyle(.titleOnly)
-          .tint(.secondary)
-        }.padding(.horizontal, 20)
-          .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 100))
-        Spacer(minLength: 20)
-      }
       
       GeometryReader { scrollView in
         ScrollView() {
@@ -201,7 +181,7 @@ struct WidgetPickerView: View {
           }   // Make the scroll view full-width
           .frame(minHeight: scrollView.size.height, alignment:.center)
         }
-        .padding(.vertical, 0)
+        .padding(.top, 80)
         .padding(.horizontal, 20)
         .frame(maxHeight:.infinity, alignment:.top)
 
