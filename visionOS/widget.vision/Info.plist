@@ -42,6 +42,8 @@
 	<false/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Provides widgets ability to use your location while active</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Provides widgets ability to use the selfie camera</string>
 	<key>UIApplicationSceneManifest</key>
