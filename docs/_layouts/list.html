@@ -33,14 +33,14 @@ layout: default
     {%- if widget.clear %}&clear={{ widget.clear | url_encode}}{% endif -%}
     {%- if widget.vw %}&vw={{ widget.vw }}{% endif -%}
     {%- if widget.ua %}&ua={{ widget.ua }}{% endif -%}
-    {%- if widget.css %}&css={{ widget.css }}{% endif -%}
+    {%- if widget.css %}&css={{ widget.css | url_encode}}{% endif -%}
     "
 
     >
     <div class="thumbnail" style="
     background-image:url({{widget.url | replace: 'html', 'png' }});
     background-color:#{{ widget.bg | replace: '#', '' }};
-    border-radius: {{ widget.radius }}px;
+    
     
     "
     >
