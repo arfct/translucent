@@ -145,7 +145,6 @@ struct WidgetPickerView: View {
                   .rotation3DEffect(.degrees(-20.0 * (1.0 - maxProx)), axis: (x: 1, y: 0, z: 0), anchor:.leading)
                   .transition(.move(edge: .trailing))
                   .onDrag {
-                    print(widget)
                     draggedWidget = widget
                     DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
                       draggedWidget = nil
@@ -203,6 +202,7 @@ struct WidgetPickerView: View {
             .padding()
             .padding(.bottom, -20)
             .frame(maxWidth:320)
+            .offset(z: 20)
             .glassBackgroundEffect()
           }
         }

@@ -268,6 +268,9 @@ extension Widget {
       items.append(URLQueryItem(name: "tint", value: tintHex)) }
     if zoom != 1.0 {
       items.append(URLQueryItem(name: "zoom", value: String(describing:zoom))) }
+    
+    if radius != 30 {
+      items.append(URLQueryItem(name: "radius", value: String(describing:radius))) }
     if let value = viewport {
       items.append(URLQueryItem(name: "vw", value: value)) }
     if let string = injectJS, string.count > 0 {
