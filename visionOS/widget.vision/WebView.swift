@@ -145,6 +145,7 @@ struct WebView: UIViewRepresentable {
   func makeUIView(context: Context) -> WKWebView {
     let webView = context.coordinator.webView
     webView.navigationDelegate = context.coordinator
+    webView.uiDelegate = context.coordinator
     webView.isOpaque = false
     webView.backgroundColor = UIColor.clear
     webView.scrollView.backgroundColor = UIColor.clear
@@ -250,8 +251,7 @@ struct WebView: UIViewRepresentable {
     return CGSizeMake(360, 640)
   }
   
-  class WebViewCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler, WKScriptMessageHandlerWithReply {
-
+  class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler, WKScriptMessageHandlerWithReply {
     @Environment(\.openWindow) var openWindow
     
     let webView: WKWebView = WKWebView()
@@ -259,6 +259,10 @@ struct WebView: UIViewRepresentable {
     var lastSize: CGSize = .zero
     var updateWorkItem: DispatchWorkItem?
     var activeLocation: String?;
+    
+    init(_ parent: WebView) {
+      self.parent = parent
+    }
     
     func loadURL(string: String?) {
       if let urlString = string,
@@ -296,9 +300,17 @@ struct WebView: UIViewRepresentable {
     }
     
     
-    init(_ parent: WebView) {
-      self.parent = parent
-    }
+
+    func webView(
+         _ webView: WKWebView,
+         requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+         initiatedByFrame frame: WKFrameInfo,
+         type: WKMediaCaptureType,
+         decisionHandler: @escaping (WKPermissionDecision) -> Void
+     ) {
+   
+         decisionHandler(.grant)
+     }
     
     // TODO: Not working yet
     func queueUpdate(callback: @escaping (() -> Void)) {
