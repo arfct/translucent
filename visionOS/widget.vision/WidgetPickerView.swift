@@ -52,7 +52,7 @@ struct WidgetPickerView: View {
   
   let columns =
   [
-    GridItem(.adaptive(minimum: 200, maximum: 200), spacing: 20, alignment: .center)
+    GridItem(.adaptive(minimum: 160, maximum: 160), spacing:24, alignment: .center)
   ]
   
   let colors = [
@@ -108,7 +108,7 @@ struct WidgetPickerView: View {
   }
   
   
-  let widgetHeight = 200
+  let widgetWidth = 160.0
   
   var body: some View {
     VStack {
@@ -118,21 +118,20 @@ struct WidgetPickerView: View {
         .foregroundColor(Color(hue: hue, saturation: 0.2, brightness: 1.0))
         .aspectRatio(contentMode: .fit)
         .opacity(1.0)
-        .shadow(color:.black.opacity(0.5), radius: 10, y: 3)
+        .shadow(color:.black.opacity(0.5), radius: 6, y: 1)
         .offset(z: 40)
         .padding(.horizontal, 20)
-        .padding(.bottom, -80)
       
       GeometryReader { scrollView in
         ScrollView() {
           
           // MARK: Grid
-          LazyVGrid(columns: columns, alignment: .center, spacing: 20) {
+          LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
             
             ForEach(widgets) { widget in
               GeometryReader { widgetView in
-                let minProx = proximity(of:widgetView, to:scrollView, distance:200, at: .minYEdge)
-                let maxProx = proximity(of:widgetView, to:scrollView, distance:200, at: .maxYEdge)
+                let minProx = proximity(of:widgetView, to:scrollView, distance:widgetWidth, at: .minYEdge)
+                let maxProx = proximity(of:widgetView, to:scrollView, distance:widgetWidth, at: .maxYEdge)
                 let combinedProx = minProx * maxProx
                 
                 WidgetPickerItem(widget: widget)
@@ -161,7 +160,7 @@ struct WidgetPickerView: View {
                   } preview: {
                     WidgetPickerItem(widget: widget, asDrag:true)
                   }
-              }.frame(width:200, height:200)
+              }.frame(width:widgetWidth, height:widgetWidth)
             }
 
    
@@ -170,8 +169,9 @@ struct WidgetPickerView: View {
                 VStack {
                   RoundedRectangle(cornerRadius: 30)
                     .fill(colors[index].opacity(0.3))
-                    .glassBackgroundEffect()
-                    .frame(width:200, height:150)
+                  
+                  .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
+                    .frame(width:widgetWidth, height:120)
                 }.padding(.bottom, 50)
                 
               }
@@ -179,28 +179,34 @@ struct WidgetPickerView: View {
             
             
           }   // Make the scroll view full-width
-          .frame(minHeight: scrollView.size.height, alignment:.center)
+          .frame(minHeight: scrollView.size.height, alignment:.top)
+          .padding(.top, 20)
         }
-        .padding(.top, 80)
-        .padding(.horizontal, 20)
+        .padding(.top, -20)
+        .padding(.horizontal, 16)
+        
         .frame(maxHeight:.infinity, alignment:.top)
 
-        .overlay {
+        .overlay(alignment: .bottom) {
           if widgets.isEmpty {
             ContentUnavailableView {
-              Label("No Widgets", systemImage: "rectangle.3.offgrid.fill")
+              Label("Get Some Widgets", systemImage: "rectangle.3.offgrid.fill")
             } description: {
-              Text("Open a widget from the web to add it")
+              Text("Open a widget from the web to add it here.")
               Button {
                 getMoreWidgets()
               } label: {
                 Label("Add widget", systemImage: "plus")
               }
               
-            }.glassBackgroundEffect()
+            }
+            .padding()
+            .padding(.bottom, -20)
+            .frame(maxWidth:320)
+            .glassBackgroundEffect()
           }
         }
-        .frame(maxHeight:.infinity, alignment:.center)
+        
         
       } // MARK: end scroll view
       
@@ -212,15 +218,15 @@ struct WidgetPickerView: View {
     .background(
       RadialGradient(
         gradient: Gradient(colors: [
-          .black.opacity(0.10),
+          .black.opacity(0.12),
           .black.opacity(0.08),
           .black.opacity(0.04),
           .black.opacity(0.01),
           .black.opacity(0.005),
           .clear]),
         center: .center,
-        startRadius: 200,
-        endRadius: 320
+        startRadius: 230,
+        endRadius: 560.0 / 2
       ).offset(z: -100)
     )
     .ornament(attachmentAnchor: .scene(.bottom), contentAlignment:.bottom) {
@@ -234,30 +240,25 @@ struct WidgetPickerView: View {
             }
           } label: {
             Label(draggedWidget == nil ?
-                  "Get More Widgets" : "Drag to Delete",
-                  systemImage: draggedWidget == nil ? "plus" : "trash")
-            .padding(draggedWidget == nil ? 10 : 20)
+                  "Get Widgets" : "Delete Widget",
+                  systemImage: draggedWidget == nil ? "plus" : "square.and.arrow.down")
+            .padding(10)
           }.labelStyle(.titleAndIcon)
           
           
             .buttonBorderShape(.roundedRectangle(radius: 30))
             .buttonStyle(.borderless)
-            .frame(minWidth:260)
           
         }
-//        .onDrop(
-//          of: ["public.text"],
-//          delegate: WidgetPickerDropDelegate(picker:nil)
-//        )
         .dropDestination(for: String.self) { items, location in
           draggedWidget?.delete()
           draggedWidget = nil
           return true
         }
         .padding(10)
-
-        .background(draggedWidget != nil ? .white.opacity(0.7) : .black.opacity(0.0))
+        .background(draggedWidget != nil ? .white.opacity(0.5) : .black.opacity(0.0))
         .glassBackgroundEffect()
+        .padding(.bottom, 8)
         .animation(.spring(), value: draggedWidget)
         .animation(.spring(), value: isDragDestination)
         .animation(.spring(), value: widgets)

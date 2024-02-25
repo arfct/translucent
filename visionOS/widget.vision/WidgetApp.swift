@@ -82,14 +82,14 @@ struct WidgetApp: App {
             return true
           }
       }
-      .frame(idealWidth: 680, idealHeight: 860,
+      .frame(idealWidth: 560, idealHeight: 720,
              alignment: .center)
       .fixedSize(horizontal: true, vertical:true)
       
     } defaultValue: { "main" }
     .modelContainer(container!)
     .windowResizability(.contentSize)
-    .defaultSize(width: 680, height: 860)
+    .defaultSize(width: 560, height: 720)
     .windowStyle(.plain)
 
     // MARK: - Widget Windows

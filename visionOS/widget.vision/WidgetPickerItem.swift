@@ -7,7 +7,7 @@ struct WidgetPickerItem: View {
   @ObservedObject var widget: Widget
   @State var asDrag = false;
   
-  let iconSize = CGSize(width: 200, height: 150)
+  let iconSize = CGSize(width: 160, height: 120)
   
   var body: some View {
     VStack(alignment: .center) {
@@ -66,7 +66,7 @@ struct WidgetPickerItem: View {
             .aspectRatio(contentMode: .fit)
             .frame(width: 16, height: 16)
         }
-      }.padding(.top, 16)
+      }.padding(.top, 4)
     }
     .buttonBorderShape(.roundedRectangle(radius: 30))
     .buttonStyle(.borderless)
