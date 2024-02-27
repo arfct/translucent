@@ -36,10 +36,10 @@ struct PreviewView: View {
               Text(error.localizedDescription)
             case let .success(model):
               model
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
             default:
-              Text("\(phase)")
+              Text("Status Unknown")
             }
           }
           .scaleEffect(manipulationState.transform.scale.width)
