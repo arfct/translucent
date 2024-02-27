@@ -5,6 +5,7 @@ import SwiftData
 struct Activity {
   static let openWidget = "vision.widget.open"
   static let openSettings = "vision.widget.settings"
+  static let openPreview = "vision.widget.preview"
 }
 
 
@@ -76,6 +77,30 @@ struct WidgetPickerView: View {
     hue = fmod(floor(Date().timeIntervalSince1970), 360) / 360.0
   }
   
+  func position(of innerView: GeometryProxy, to outerView: GeometryProxy, distance: CGFloat = 20.0, at edge: CGRectEdge = .maxYEdge) -> CGFloat{
+    let innerFrame = innerView.frame(in: .global)
+    let outerFrame = outerView.frame(in: .global)
+    
+    var start = 0.0
+    var end = 1.0
+    var value = 0.0
+    
+    switch edge {
+    case .minXEdge, .maxXEdge:
+      start = outerFrame.minX
+      end = outerFrame.maxX
+      value = innerFrame.midX
+    case .minYEdge, .maxYEdge:
+      start = outerFrame.maxY
+      end = outerFrame.minY
+      value = innerFrame.midY
+    }
+    
+    let fraction = max(0, min(1, (value - start) / (end - start)))
+    
+    return fraction;
+  }
+  
   func proximity(of innerView: GeometryProxy, to outerView: GeometryProxy, distance: CGFloat = 20.0, at edge: CGRectEdge = .maxYEdge) -> CGFloat{
     let innerFrame = innerView.frame(in: .global)
     let outerFrame = outerView.frame(in: .global)
@@ -119,8 +144,10 @@ struct WidgetPickerView: View {
         .aspectRatio(contentMode: .fit)
         .opacity(1.0)
         .shadow(color:.black.opacity(0.5), radius: 6, y: 1)
-        .offset(z: 40)
+        .offset(z: 30)
         .padding(.horizontal, 20)
+        .padding(.bottom, 20)
+        .frame(width: 400)
       
       GeometryReader { scrollView in
         ScrollView() {
@@ -130,6 +157,13 @@ struct WidgetPickerView: View {
             
             ForEach(widgets) { widget in
               GeometryReader { widgetView in
+               
+                let index = widgets.firstIndex(of: widget)
+                let xoffset = position(of:widgetView, to:scrollView, distance:widgetWidth, at: .maxXEdge)
+                let yoffset = position(of:widgetView, to:scrollView, distance:widgetWidth, at: .maxYEdge)
+                let anchor = UnitPoint3D(x: xoffset > 0.5 ? 0 : 1,
+                                         y: xoffset > 0.5 ? 0 : 1,
+                                         z: 0)
                 let minProx = proximity(of:widgetView, to:scrollView, distance:widgetWidth, at: .minYEdge)
                 let maxProx = proximity(of:widgetView, to:scrollView, distance:widgetWidth, at: .maxYEdge)
                 let combinedProx = minProx * maxProx
@@ -138,9 +172,15 @@ struct WidgetPickerView: View {
                   .contentShape(.contextMenuPreview,.rect(cornerRadius: 30).inset(by: 1))
                   .scaleEffect(minProx * 0.8 + 0.2, anchor:.bottom)
                   .scaleEffect(maxProx * 0.8 + 0.2, anchor:.top)
-                  .offset(z:combinedProx * 20)
+                  .offset(z:combinedProx * 20 + abs(xoffset - 0.5) * 8)
                   .blur(radius: (1 - combinedProx) * 10)
                   .opacity(combinedProx)
+                
+                  .rotation3DEffect(.degrees(-30.0 * (xoffset - 0.5)), axis: (x: 0, y: 1, z: 0), anchor:anchor)
+
+//                    .rotation3DEffect(.degrees(-90.0 * (yoffset - 0.5)), axis: (x: 1, y: 0, z: 0), anchor:anchor)
+
+                
                   .rotation3DEffect(.degrees(20.0 * (1.0 - minProx)), axis: (x: 1, y: 0, z: 0), anchor:.trailing)
                   .rotation3DEffect(.degrees(-20.0 * (1.0 - maxProx)), axis: (x: 1, y: 0, z: 0), anchor:.leading)
                   .transition(.move(edge: .trailing))
@@ -180,11 +220,14 @@ struct WidgetPickerView: View {
           }   // Make the scroll view full-width
           .frame(minHeight: scrollView.size.height, alignment:.top)
           .padding(.top, 20)
+          .padding(.bottom, 100)
         }
         .padding(.top, -20)
         .padding(.horizontal, 16)
         
         .frame(maxHeight:.infinity, alignment:.top)
+        
+        .padding(.bottom, 40)
 
         .overlay(alignment: .bottom) {
           if widgets.isEmpty {
@@ -202,8 +245,8 @@ struct WidgetPickerView: View {
             .padding()
             .padding(.bottom, -20)
             .frame(maxWidth:320)
-            .offset(z: 20)
             .glassBackgroundEffect()
+            .offset(z: 20)
           }
         }
         

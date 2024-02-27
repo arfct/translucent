@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2C23F8492B6D5B8C0099BA6D /* WidgetSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C23F8482B6D5B8C0099BA6D /* WidgetSettingsView.swift */; };
+		2C51DA282B8DD566008ACA1A /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C51DA272B8DD566008ACA1A /* PreviewView.swift */; };
 		2C832E0A2B7C0C800032FB06 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C832E092B7C0C800032FB06 /* ShareViewController.swift */; };
 		2C832E0E2B7C0C800032FB06 /* share.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2C832E072B7C0C800032FB06 /* share.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		2C8E78982B769C9F004DA40B /* Widget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E78972B769C9F004DA40B /* Widget.swift */; };
@@ -47,6 +48,7 @@
 
 /* Begin PBXFileReference section */
 		2C23F8482B6D5B8C0099BA6D /* WidgetSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSettingsView.swift; sourceTree = "<group>"; };
+		2C51DA272B8DD566008ACA1A /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		2C832E072B7C0C800032FB06 /* share.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = share.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C832E092B7C0C800032FB06 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		2C832E0B2B7C0C800032FB06 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				2C8E789D2B76A0B2004DA40B /* WidgetPickerItem.swift */,
 				2C8E78972B769C9F004DA40B /* Widget.swift */,
 				2C9EE6A82B66844500D36BA6 /* WidgetView.swift */,
+				2C51DA272B8DD566008ACA1A /* PreviewView.swift */,
 				2C23F8482B6D5B8C0099BA6D /* WidgetSettingsView.swift */,
 				2C9EE6B52B6684C100D36BA6 /* WebView.swift */,
 				2CF253592B7847F900E57BF2 /* Utils.swift */,
@@ -247,6 +250,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C51DA282B8DD566008ACA1A /* PreviewView.swift in Sources */,
 				2C8E789E2B76A0B2004DA40B /* WidgetPickerItem.swift in Sources */,
 				2C9EE6B62B6684C100D36BA6 /* WebView.swift in Sources */,
 				2C8E78982B769C9F004DA40B /* Widget.swift in Sources */,

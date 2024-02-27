@@ -36,7 +36,7 @@ struct WidgetApp: App {
         try? FileManager.default.createDirectory(at: path
           .appendingPathComponent("thumbnails", isDirectory: true), withIntermediateDirectories: true)
       }
-
+      
       
     } catch {
       print("An error occurred: \(error)")
@@ -82,14 +82,14 @@ struct WidgetApp: App {
             return true
           }
       }
-      .frame(idealWidth: 560, idealHeight: 720,
+      .frame(idealWidth: 560, idealHeight: 680,
              alignment: .center)
       .fixedSize(horizontal: true, vertical:true)
       
     } defaultValue: { "main" }
     .modelContainer(container!)
     .windowResizability(.contentSize)
-    .defaultSize(width: 560, height: 720)
+    .defaultSize(width: 560, height: 680)
     .windowStyle(.plain)
 
     // MARK: - Widget Windows
@@ -126,7 +126,7 @@ struct WidgetApp: App {
     
     
     // MARK: - Settings Window
-    // TODO: These don't work for some reason?
+    // TODO: These don't work with dragging for some reason?
     
     WindowGroup("Settings", id: "widgetSettings", for: Foundation.Data.self) { $data in
       ZStack {
@@ -156,5 +156,26 @@ struct WidgetApp: App {
     .windowStyle(.automatic)
     .windowResizability(.contentSize)
     .defaultSize(width: 640, height: 640)
+    
+  
+    // MARK: Preview Window
+    WindowGroup("Preview", id: "preview", for: URL.self) { $url in
+      ZStack {
+        PreviewView(url:url)
+
+      }
+      .onContinueUserActivity(Activity.openPreview, perform: { activity in
+        if let info = activity.userInfo,
+          let modelData = info["url"] as? URL {
+          url = modelData
+        }
+      })
+    }
+    .handlesExternalEvents(matching: [Activity.openPreview])
+    .windowStyle(.volumetric)
+    
+    
+    
+    // MARK: /Body
   }
 }

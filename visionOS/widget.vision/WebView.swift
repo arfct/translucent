@@ -1,6 +1,6 @@
 import SwiftUI
 import WebKit
-
+import QuickLook
 
 @objc class Wrapper: NSObject {
   var widget: Widget
@@ -26,7 +26,7 @@ struct WebView: UIViewRepresentable {
   
   func makeCoordinator() -> WebViewCoordinator { WebViewCoordinator(self) }
   
-
+  
   
   
   func cssSrc(widget:Widget) -> String {
@@ -61,7 +61,7 @@ struct WebView: UIViewRepresentable {
     
     
     if let fontName = widget.fontName, fontName.count > 0  {
-    
+      
       css.append (":root { --font-family: '\(fontName)';} * { font-family: var(--font-family) !important; }")
       
       if let fontWeight = widget.fontWeight {
@@ -109,7 +109,7 @@ struct WebView: UIViewRepresentable {
       }
       source.append ("""
         // Font Tag
-        var fontTag = document.getElementById('widgetVisionFontTag') 
+        var fontTag = document.getElementById('widgetVisionFontTag')
         if (!fontTag) {
           fontTag = document.createElement('link');
           fontTag.id = "widgetVisionFontTag";
@@ -121,7 +121,7 @@ struct WebView: UIViewRepresentable {
     }
     
     let css = cssSrc(widget: widget)
-  
+    
     source.append("""
     
     var cssTag = document.getElementById('widgetVisionCSSTag')
@@ -130,14 +130,14 @@ struct WebView: UIViewRepresentable {
       cssTag.id = "widgetVisionCSSTag"
       document.head.appendChild(cssTag);
     }
-
+    
     cssTag.innerHTML = `\n\(css)\n`
     
     """)
-
-//    if let injectJS = widget.injectJS, injectJS.count > 0 {
-//      source.append("\n\(injectJS)\n")
-//    }
+    
+    //    if let injectJS = widget.injectJS, injectJS.count > 0 {
+    //      source.append("\n\(injectJS)\n")
+    //    }
     
     return source.joined(separator:"\n")
   }
@@ -155,7 +155,7 @@ struct WebView: UIViewRepresentable {
     webView.customUserAgent = widget.userAgentString
     
     UIDevice.current.isBatteryMonitoringEnabled = true
-
+    
     let config = webView.configuration
     
     // Post messages with widget.postMessage('Clicked Page!');
@@ -172,11 +172,11 @@ struct WebView: UIViewRepresentable {
         }
       })
             console.log("window.widget", window.widget)
-
+      
       """,
       injectionTime: .atDocumentStart,
       forMainFrameOnly: false))
-  
+    
     
     
     var js =  jsSrc(widget: widget)
@@ -185,16 +185,16 @@ struct WebView: UIViewRepresentable {
       """
     
     print("💉 Injecting Source:\n\n\(js)")
-
+    
     let script = WKUserScript(source:js, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     config.userContentController.addUserScript(script)
-
+    
     context.coordinator.loadURL(string: location)
     
     updateSnapshot(webView)
     return webView
   }
-
+  
   func updateUIView(_ webView: WKWebView, context: Context) {
     
     if (phase == .background) {
@@ -204,10 +204,10 @@ struct WebView: UIViewRepresentable {
     if (context.coordinator.activeLocation != location) {
       context.coordinator.loadURL(string: location)
     }
-
+    
     
     let size = CGSize(width:widget.width, height: widget.height)
-          
+    
     if (!CGSizeEqualToSize(size, context.coordinator.lastSize)) {
       context.coordinator.lastSize = size
       context.coordinator.queueUpdate() {
@@ -219,7 +219,7 @@ struct WebView: UIViewRepresentable {
     
     updateSnapshot(webView)
   }
-
+  
   func updateWebView(_ webView: WKWebView, context: Context) {
     webView.pageZoom = widget.zoom
     webView.evaluateJavaScript(jsSrc(widget: widget)) { object, error in
@@ -251,14 +251,17 @@ struct WebView: UIViewRepresentable {
     return CGSizeMake(360, 640)
   }
   
-  class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler, WKScriptMessageHandlerWithReply {
+  class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler, WKScriptMessageHandlerWithReply, WKDownloadDelegate, QLPreviewControllerDataSource {
+    
+    
     @Environment(\.openWindow) var openWindow
     
     let webView: WKWebView = WKWebView()
     let parent: WebView
     var lastSize: CGSize = .zero
     var updateWorkItem: DispatchWorkItem?
-    var activeLocation: String?;
+    var activeLocation: String?
+    var currentDownload: URL?
     
     init(_ parent: WebView) {
       self.parent = parent
@@ -277,15 +280,14 @@ struct WebView: UIViewRepresentable {
     }
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-//      print("💬 Web Message:\n\(message.body)")
+      //      print("💬 Web Message:\n\(message.body)")
     }
     
     @MainActor
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) async -> (Any?, String?) {
-    
+      
       let body = message.body;
-//      print("💬 Web Message:\(body)")
-
+      
       if let body = message.body as? NSDictionary {
         let action = body.value(forKey: "action") as? String
         let args = body.value(forKey: "args") as? NSDictionary
@@ -299,19 +301,68 @@ struct WebView: UIViewRepresentable {
       return (nil, nil)
     }
     
-    
-
     func webView(
-         _ webView: WKWebView,
-         requestMediaCapturePermissionFor origin: WKSecurityOrigin,
-         initiatedByFrame frame: WKFrameInfo,
-         type: WKMediaCaptureType,
-         decisionHandler: @escaping (WKPermissionDecision) -> Void
-     ) {
-   
-         decisionHandler(.grant)
-     }
+      _ webView: WKWebView,
+      requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+      initiatedByFrame frame: WKFrameInfo,
+      type: WKMediaCaptureType,
+      decisionHandler: @escaping (WKPermissionDecision) -> Void
+    ) {
+      
+      decisionHandler(.grant)
+    }
     
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
+      if navigationAction.request.url?.pathExtension == "usdz" {
+        openWindow(id: "preview", value: navigationAction.request.url!);
+        return decisionHandler(.cancel, preferences)
+      }
+      if navigationAction.shouldPerformDownload {
+        decisionHandler(.download, preferences)
+      } else {
+        decisionHandler(.allow, preferences)
+      }
+    }
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+      if navigationResponse.canShowMIMEType {
+        decisionHandler(.allow)
+      } else {
+        decisionHandler(.download)
+      }
+    }
+    
+    func download(_ download: WKDownload, decideDestinationUsing
+                  response: URLResponse, suggestedFilename: String,
+                  completionHandler: @escaping (URL?) -> Void) {
+      if var path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+        let name = "\(arc4random())\(suggestedFilename)"
+        currentDownload = path.appendingPathComponent(name, isDirectory: false)
+        completionHandler(currentDownload)
+      }
+    }
+    
+    func webView(_ webView: WKWebView, navigationAction: WKNavigationAction, didBecome download: WKDownload) {
+      download.delegate = self
+    }
+    
+    func downloadDidFinish(_ download: WKDownload) {
+      openWindow(id: "preview", value: currentDownload!);
+    }
+    
+    public func download(_ download: WKDownload, didFailWithError error: Error, resumeData: Data?) {
+      // OPTIONAL: In case on Error
+      print("Download error: \(error)")
+    }
+    
+    func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
+      return 1
+    }
+    
+    func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> any QLPreviewItem {
+      return NSURL(string: currentDownload!.absoluteString)! as QLPreviewItem
+    }
     // TODO: Not working yet
     func queueUpdate(callback: @escaping (() -> Void)) {
       updateWorkItem?.cancel()
@@ -333,7 +384,7 @@ struct WebView: UIViewRepresentable {
     
   }
   
-
+  
 }
 
 extension WKWebView {
@@ -343,7 +394,7 @@ extension WKWebView {
     let image = self.snapshotImage
     
     if (image.isBlank()) { return }
-   
+    
     if let data = image.pngData(){
       print("🖼️ Saved Snapshot, \(String(describing: self.url))")
       try? data.write(to: path)
