@@ -2,9 +2,10 @@
 name: Persona Mirror
 icon: person.circle
 href: https://lil.software/widgets/selfie.html
-size: 480x360
+size: 360x480
 radius: 180
-order: 19
+order: 3
+description: Mirror of your Persona's selfie view
 css: >
   body{user-select:none;touch-action:none;}
 ---

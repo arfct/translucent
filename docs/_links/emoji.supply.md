@@ -1,6 +1,6 @@
 ---
 name: Emoji Kitchen
-order: 6
+order: 2
 icon: face.smiling
 href: https://emoji.supply/kitchen
 clear: >

@@ -17,7 +17,7 @@ layout: default
     {%- for widget in posts -%}
     
     <a class="tile{% if widget.class %} {{ widget.class }}{% endif %} {{ widget.style }}" 
-    href="https://widget.vision/{{widget.href | replace: 'https://', '' | url_encode}}?widget=vision
+    href="https://widget.vision/{{widget.href | replace: 'https://', '' | url_encode}}?format=widget
     {%- if widget.name %}&name={{ widget.name | url_encode }}{% endif -%}
     {%- if widget.icon %}&icon={{ widget.icon }}{% endif -%}
     {%- if widget.style %}&style={{ widget.style }}{% endif -%}
@@ -56,14 +56,15 @@ layout: default
   </a>
   {%- endfor -%}
   
-  
+
   <div class="explainer">
     {{ content }}
   </div>
   
   
 </div>
-
+<a class="experiment" onclick="document.body.classList.toggle('experimental')">∏</a>
+  
 {% if site.paginate %}
 <div class="pager">
   <ul class="pagination">

@@ -1,8 +1,9 @@
 ---
 name: Calculator (alpha)
 icon: av.remote
-order: 5
+class: experimental
 size: 420x640
+description: Simple, themable calculator
 href: https://www.widget.vision/widgets/calculator
 ---
         

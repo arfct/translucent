@@ -1,10 +1,10 @@
 ---
 name: Beautiful Things
-order: 20
 icon: ipod
-micon: local_laundry_service
 href: https://beautifulthings.xyz
 size: 400x600
+class: experimental
+description: Beautiful things for spatial computing
 clear: >
   #main > div
 css:  >

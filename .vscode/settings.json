@@ -1,5 +1,12 @@
 {
   "livePreview.defaultPreviewPath": "widgets/calculator.html",
   "livePreview.debugOnExternalPreview": false,
-  "livePreview.serverRoot": "docs/"
+  "livePreview.serverRoot": "docs/",
+  "deno.enable": true,
+  "deno.enablePaths": [
+    "site/netlify/edge-functions"
+  ],
+  "deno.unstable": true,
+  "deno.importMap": ".netlify/edge-functions-import-map.json",
+  "deno.path": "/Users/nj/Library/Preferences/netlify/deno-cli/deno"
 }
