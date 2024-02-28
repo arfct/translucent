@@ -267,8 +267,15 @@ struct WebView: UIViewRepresentable {
     }
     
     func loadURL(string: String?) {
-      if let urlString = string,
-         let url = URL(string:urlString) {
+      if var urlString = string,
+         var url = URL(string:urlString) {
+        if url.scheme == "file", let widgets = Bundle.main.url(forResource: "widgets", withExtension:nil) {
+          url = URL(filePath: String(url.path(percentEncoded: false).dropFirst()), relativeTo: widgets)
+
+        }
+
+        
+        
         activeLocation = urlString
         webView.load(URLRequest(url: url))
       }

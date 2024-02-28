@@ -169,12 +169,12 @@ struct WidgetPickerView: View {
                   if index >= widgets.count {
                     VStack {
                       RoundedRectangle(cornerRadius: 30)
-                        .fill(colors[index].opacity(0.3))
+                        .fill(colors[index].opacity(0.6))
                         .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
                         .frame(width:widgetSize.width, height:120)
                         .padding(.bottom, 50)
                     }
-
+                    
                   } else {
                     let widget = widgets[index]
                     
@@ -195,19 +195,19 @@ struct WidgetPickerView: View {
                       } preview: {
                         WidgetPickerItem(widget: widget, asDrag:true)
                       }
-                  
+                    
                   }
                 }
-                  // Style
-                    .scaleEffect(minProx * 0.8 + 0.2, anchor:.bottom)
-                    .scaleEffect(maxProx * 0.8 + 0.2, anchor:.top)
-                    .offset(z:combinedProx * 20 + abs(xoffset - 0.5) * 8)
-                    .blur(radius: (1 - combinedProx) * 10)
-                    .opacity(combinedProx)
-                    .rotation3DEffect(.degrees(-30.0 * (xoffset - 0.5)), axis: (x: 0, y: 1, z: 0), anchor:anchor)
-                    .rotation3DEffect(.degrees(20.0 * (1.0 - minProx)), axis: (x: 1, y: 0, z: 0), anchor:.trailing)
-                    .rotation3DEffect(.degrees(-20.0 * (1.0 - maxProx)), axis: (x: 1, y: 0, z: 0), anchor:.leading)
-                    .transition(.move(edge: .trailing))
+                // Style
+                .scaleEffect(minProx * 0.8 + 0.2, anchor:.bottom)
+                .scaleEffect(maxProx * 0.8 + 0.2, anchor:.top)
+                .offset(z:combinedProx * 20 + abs(xoffset - 0.5) * 8)
+                .blur(radius: (1 - combinedProx) * 10)
+                .opacity(combinedProx)
+                .rotation3DEffect(.degrees(-30.0 * (xoffset - 0.5)), axis: (x: 0, y: 1, z: 0), anchor:anchor)
+                .rotation3DEffect(.degrees(20.0 * (1.0 - minProx)), axis: (x: 1, y: 0, z: 0), anchor:.trailing)
+                .rotation3DEffect(.degrees(-20.0 * (1.0 - maxProx)), axis: (x: 1, y: 0, z: 0), anchor:.leading)
+                .transition(.move(edge: .trailing))
               } // GeometryReader
               .frame(width:widgetSize.width, height:widgetSize.width)
             } // ForEach
@@ -219,33 +219,34 @@ struct WidgetPickerView: View {
           
           
         }
-          
-          .padding(.top, -20)
-          .padding(.horizontal, 16)
-          .frame(maxHeight:.infinity, alignment:.top)
-          .padding(.bottom, 40)
-          .overlay(alignment: .bottom) {
-            if widgets.isEmpty {
-              ContentUnavailableView {
-                Label("Get Some Widgets", systemImage: "rectangle.3.offgrid.fill")
-              } description: {
-                Text("Open a widget from the web to add it here.")
-                Button {
-                  getMoreWidgets()
-                } label: {
-                  Label("Add widget", systemImage: "plus")
-                }
+        
+        .padding(.top, -20)
+        .padding(.horizontal, 16)
+        .frame(maxHeight:.infinity, alignment:.top)
+        .padding(.bottom, 40)
+        .overlay(alignment: .bottom) {
+          if widgets.isEmpty {
+            ContentUnavailableView {
+              Label("Get Some Widgets", systemImage: "rectangle.3.offgrid.fill")
+            } description: {
+              Text("Open a widget from the web to add it here.")
+              Button {
+                getMoreWidgets()
+              } label: {
+                Label("Add widget", systemImage: "plus")
               }
-              .padding()
-              .padding(.bottom, -20)
-              .frame(maxWidth:320)
-              .glassBackgroundEffect()
-              .offset(z: 20)
             }
-            
-          } // overlay
+            .padding()
+            .padding(.bottom, -20)
+            .frame(maxWidth:320)
+            .glassBackgroundEffect()
+            .padding(.bottom, 40)
+            .offset(z: 50)
+          }
           
-         // ScrollView
+        } // overlay
+        
+        // ScrollView
         
       } // ScrollView GeometryReader
       .offset(z: -40)
@@ -301,28 +302,28 @@ struct WidgetPickerView: View {
       }
       
     }
-      .onAppear() {
+    .onAppear() {
+      updateHue()
+      Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
         updateHue()
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-          updateHue()
-        }
       }
-      .onChange(of: scenePhase) {
-        print("MainWindow Phase \(scenePhase)")
-      }
-      
-      .defaultHoverEffect(.lift)
+    }
+    .onChange(of: scenePhase) {
+      print("MainWindow Phase \(scenePhase)")
     }
     
-    
-    private func deleteWidget(_ widget: Widget) {
-      if widget.persistentModelID == selection?.persistentModelID {
-        selection = nil
-      }
-      modelContext.delete(widget)
-    }
+    .defaultHoverEffect(.lift)
   }
   
-  #Preview {
-    WidgetPickerView(app:nil)
+  
+  private func deleteWidget(_ widget: Widget) {
+    if widget.persistentModelID == selection?.persistentModelID {
+      selection = nil
+    }
+    modelContext.delete(widget)
   }
+}
+
+#Preview {
+  WidgetPickerView(app:nil)
+}

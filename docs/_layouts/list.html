@@ -17,7 +17,7 @@ layout: default
     {%- for widget in posts -%}
     
     <a class="tile{% if widget.class %} {{ widget.class }}{% endif %} {{ widget.style }}" 
-    href="https://widget.vision/{{widget.href | url_encode}}?format=widget
+    href="https://widget.vision/{{widget.href | replace: 'https://', '' | url_encode}}?widget=vision
     {%- if widget.name %}&name={{ widget.name | url_encode }}{% endif -%}
     {%- if widget.icon %}&icon={{ widget.icon }}{% endif -%}
     {%- if widget.style %}&style={{ widget.style }}{% endif -%}

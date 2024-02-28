@@ -27,7 +27,7 @@ struct WidgetSettingsView: View {
   }()
   
   func clean(url: String) -> String? {
-    if (url.hasPrefix("http")) {
+    if (url.hasPrefix("http") || url.hasPrefix("file://")) {
       return url
     } else {
       if (url.contains(".") && !url.contains(" ")) {
@@ -186,14 +186,7 @@ struct WidgetSettingsView: View {
                 .frame(maxWidth: labelWidth, alignment:.leading)
               
               LazyVGrid(columns:columns) {
-                HStack {
-                  ColorPicker(selection: $backColor) {
-                    Image(systemName: "square.fill")
-                  }.frame(maxWidth:56).onChange(of: backColor) {
-                    if let hex = backColor.toHex() { widget.backHex = hex }
-                  }.labelsHidden().scaleEffect(1.0)
-                  Text("Back")
-                }
+                
                 HStack {
                   ColorPicker(selection: $foreColor, supportsOpacity: true) {
                     Image(systemName: "textformat.size.smaller")
@@ -210,7 +203,14 @@ struct WidgetSettingsView: View {
                   }.labelsHidden().scaleEffect(1.0)
                   Text("Tint")
                 }
-                
+                HStack {
+                  ColorPicker(selection: $backColor) {
+                    Image(systemName: "square.fill")
+                  }.frame(maxWidth:56).onChange(of: backColor) {
+                    if let hex = backColor.toHex() { widget.backHex = hex }
+                  }.labelsHidden().scaleEffect(1.0)
+                  Text("Back")
+                }
                 
               }.frame(maxWidth:.infinity)
             }

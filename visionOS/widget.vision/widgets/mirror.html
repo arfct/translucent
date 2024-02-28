@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body,
+    html,
+    video {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+    video {
+      object-fit: cover;
+      background-size: cover;
+    }
+  </style>
+</head>
+<body>
+  <video autoplay id="video"></video>
+  <script>
+    const video = document.getElementById("video");
+    
+    if (navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices
+      .getUserMedia({ video: { facingMode: "user" } })
+      .then(function (stream) {
+        video.srcObject = stream;
+      })
+      .catch(function (error) {
+        console.log("Something went wrong!");
+      });
+    }
+  </script>
+</body>
+</html>

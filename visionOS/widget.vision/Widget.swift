@@ -90,9 +90,11 @@ import SwiftData
     }
     location = location
       .replacingOccurrences(of: "widget-http", with: "http")
+      .replacingOccurrences(of: "widget://", with: "https://")
       .replacingOccurrences(of: "https://widget.vision/http", with: "http")
       .replacingOccurrences(of: "https://www.widget.vision/http", with: "http")
-    
+      .replacingOccurrences(of: "https://widget.vision/", with: "https://")
+  
     self.init( name:url.host() ?? "NAME", location: location, options:parameters)
   }
   
@@ -107,9 +109,6 @@ import SwiftData
     if let height = height {self.height = height }
     
     if let options = options {
-      if options.contains("transparent") {
-        self.style = .transparent;
-      }
       options.split(separator: "&").forEach({ param in
         let kv = param.split(separator:"=")
         if let key = kv.first?.removingPercentEncoding, let value = kv.last?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding {
@@ -294,7 +293,7 @@ extension Widget {
     suffix.removeFirst()
     if (suffix.count > 0) { suffix = "?format=widget&" + suffix}
     
-    guard let encodedURL = location?  //.replacingOccurrences(of: "https://", with: "")
+    guard let encodedURL = location?.replacingOccurrences(of: "https://", with: "")
       .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else { return nil }
     
     let urlString = "https://widget.vision/\(String(describing: encodedURL))\(suffix)"
