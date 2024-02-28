@@ -133,7 +133,7 @@ struct WidgetPickerView: View {
   }
   
   
-  let widgetWidth = 160.0
+  let widgetSize: CGSize = CGSize(width: 150, height: 120)
   
   var body: some View {
     VStack {
@@ -154,183 +154,175 @@ struct WidgetPickerView: View {
           
           // MARK: Grid
           LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
-            
-            ForEach(widgets) { widget in
+            ForEach((0...max(8, widgets.count - 1)), id: \.self) { index in
               GeometryReader { widgetView in
-               
-                let index = widgets.firstIndex(of: widget)
-                let xoffset = position(of:widgetView, to:scrollView, distance:widgetWidth, at: .maxXEdge)
-                let yoffset = position(of:widgetView, to:scrollView, distance:widgetWidth, at: .maxYEdge)
+                let xoffset = position(of:widgetView, to:scrollView, distance:widgetSize.width, at: .maxXEdge)
+                //                  let yoffset = position(of:widgetView, to:scrollView, distance:widgetSize.width, at: .maxYEdge)
                 let anchor = UnitPoint3D(x: xoffset > 0.5 ? 0 : 1,
                                          y: xoffset > 0.5 ? 0 : 1,
                                          z: 0)
-                let minProx = proximity(of:widgetView, to:scrollView, distance:widgetWidth, at: .minYEdge)
-                let maxProx = proximity(of:widgetView, to:scrollView, distance:widgetWidth, at: .maxYEdge)
+                let minProx = proximity(of:widgetView, to:scrollView, distance:widgetSize.width, at: .minYEdge)
+                let maxProx = proximity(of:widgetView, to:scrollView, distance:widgetSize.width, at: .maxYEdge)
                 let combinedProx = minProx * maxProx
                 
-                WidgetPickerItem(widget: widget)
-                  .contentShape(.contextMenuPreview,.rect(cornerRadius: 30).inset(by: 1))
-                  .scaleEffect(minProx * 0.8 + 0.2, anchor:.bottom)
-                  .scaleEffect(maxProx * 0.8 + 0.2, anchor:.top)
-                  .offset(z:combinedProx * 20 + abs(xoffset - 0.5) * 8)
-                  .blur(radius: (1 - combinedProx) * 10)
-                  .opacity(combinedProx)
-                
-                  .rotation3DEffect(.degrees(-30.0 * (xoffset - 0.5)), axis: (x: 0, y: 1, z: 0), anchor:anchor)
-
-//                    .rotation3DEffect(.degrees(-90.0 * (yoffset - 0.5)), axis: (x: 1, y: 0, z: 0), anchor:anchor)
-
-                
-                  .rotation3DEffect(.degrees(20.0 * (1.0 - minProx)), axis: (x: 1, y: 0, z: 0), anchor:.trailing)
-                  .rotation3DEffect(.degrees(-20.0 * (1.0 - maxProx)), axis: (x: 1, y: 0, z: 0), anchor:.leading)
-                  .transition(.move(edge: .trailing))
-                  .onDrag {
-                    draggedWidget = widget
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
-                      draggedWidget = nil
+                ZStack {
+                  if index >= widgets.count {
+                    VStack {
+                      RoundedRectangle(cornerRadius: 30)
+                        .fill(colors[index].opacity(0.3))
+                        .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
+                        .frame(width:widgetSize.width, height:120)
+                        .padding(.bottom, 50)
                     }
-                    let modelID = widget.modelID
-                    let userActivity = NSUserActivity(activityType: Activity.openWidget)
-                    userActivity.targetContentIdentifier = Activity.openWidget
-                    try? userActivity.setTypedPayload(["modelId": modelID])
-                    let itemProvider = NSItemProvider(object: "" as NSString)
-                    itemProvider.registerObject(userActivity, visibility: .all)
-                    return itemProvider
-                  } preview: {
-                    WidgetPickerItem(widget: widget, asDrag:true)
-                  }
-              }.frame(width:widgetWidth, height:widgetWidth)
-            }
 
-   
-            if (widgets.count < 9) {
-              ForEach((widgets.count...8), id: \.self) { index in
-                VStack {
-                  RoundedRectangle(cornerRadius: 30)
-                    .fill(colors[index].opacity(0.3))
+                  } else {
+                    let widget = widgets[index]
+                    
+                    WidgetPickerItem(widget: widget)
+                      .contentShape(.contextMenuPreview,.rect(cornerRadius: 30).inset(by: 1))
+                      .onDrag {
+                        draggedWidget = widget
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
+                          draggedWidget = nil
+                        }
+                        let modelID = widget.modelID
+                        let userActivity = NSUserActivity(activityType: Activity.openWidget)
+                        userActivity.targetContentIdentifier = Activity.openWidget
+                        try? userActivity.setTypedPayload(["modelId": modelID])
+                        let itemProvider = NSItemProvider(object: "" as NSString)
+                        itemProvider.registerObject(userActivity, visibility: .all)
+                        return itemProvider
+                      } preview: {
+                        WidgetPickerItem(widget: widget, asDrag:true)
+                      }
                   
-                  .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
-                    .frame(width:widgetWidth, height:120)
-                }.padding(.bottom, 50)
-                
-              }
-            }
+                  }
+                }
+                  // Style
+                    .scaleEffect(minProx * 0.8 + 0.2, anchor:.bottom)
+                    .scaleEffect(maxProx * 0.8 + 0.2, anchor:.top)
+                    .offset(z:combinedProx * 20 + abs(xoffset - 0.5) * 8)
+                    .blur(radius: (1 - combinedProx) * 10)
+                    .opacity(combinedProx)
+                    .rotation3DEffect(.degrees(-30.0 * (xoffset - 0.5)), axis: (x: 0, y: 1, z: 0), anchor:anchor)
+                    .rotation3DEffect(.degrees(20.0 * (1.0 - minProx)), axis: (x: 1, y: 0, z: 0), anchor:.trailing)
+                    .rotation3DEffect(.degrees(-20.0 * (1.0 - maxProx)), axis: (x: 1, y: 0, z: 0), anchor:.leading)
+                    .transition(.move(edge: .trailing))
+              } // GeometryReader
+              .frame(width:widgetSize.width, height:widgetSize.width)
+            } // ForEach
             
-            
-          }   // Make the scroll view full-width
+          } // LazyVGrid
           .frame(minHeight: scrollView.size.height, alignment:.top)
           .padding(.top, 20)
           .padding(.bottom, 100)
+          
+          
         }
-        .padding(.top, -20)
-        .padding(.horizontal, 16)
-        
-        .frame(maxHeight:.infinity, alignment:.top)
-        
-        .padding(.bottom, 40)
-
-        .overlay(alignment: .bottom) {
-          if widgets.isEmpty {
-            ContentUnavailableView {
-              Label("Get Some Widgets", systemImage: "rectangle.3.offgrid.fill")
-            } description: {
-              Text("Open a widget from the web to add it here.")
-              Button {
-                getMoreWidgets()
-              } label: {
-                Label("Add widget", systemImage: "plus")
+          
+          .padding(.top, -20)
+          .padding(.horizontal, 16)
+          .frame(maxHeight:.infinity, alignment:.top)
+          .padding(.bottom, 40)
+          .overlay(alignment: .bottom) {
+            if widgets.isEmpty {
+              ContentUnavailableView {
+                Label("Get Some Widgets", systemImage: "rectangle.3.offgrid.fill")
+              } description: {
+                Text("Open a widget from the web to add it here.")
+                Button {
+                  getMoreWidgets()
+                } label: {
+                  Label("Add widget", systemImage: "plus")
+                }
               }
-              
+              .padding()
+              .padding(.bottom, -20)
+              .frame(maxWidth:320)
+              .glassBackgroundEffect()
+              .offset(z: 20)
             }
-            .padding()
-            .padding(.bottom, -20)
-            .frame(maxWidth:320)
-            .glassBackgroundEffect()
-            .offset(z: 20)
+            
+          } // overlay
+          
+         // ScrollView
+        
+      } // ScrollView GeometryReader
+      .offset(z: -40)
+      
+      .background(
+        RadialGradient(
+          gradient: Gradient(colors: [
+            .black.opacity(0.12),
+            .black.opacity(0.08),
+            .black.opacity(0.04),
+            .black.opacity(0.01),
+            .black.opacity(0.005),
+            .clear]),
+          center: .center,
+          startRadius: 230,
+          endRadius: 560.0 / 2
+        ).offset(z: -100)
+      )
+      .ornament(attachmentAnchor: .scene(.bottom), contentAlignment:.bottom) {
+        if (!widgets.isEmpty) {
+          ZStack {
+            Button(role: draggedWidget == nil ? .cancel : .destructive) {
+              if let draggedWidget = draggedWidget {
+                deleteWidget(draggedWidget)
+              } else {
+                getMoreWidgets()
+              }
+            } label: {
+              Label(draggedWidget == nil ?
+                    "Get Widgets" : "Delete Widget",
+                    systemImage: draggedWidget == nil ? "plus" : "square.and.arrow.down")
+              .padding(10)
+            }.labelStyle(.titleAndIcon)
+            
+            
+              .buttonBorderShape(.roundedRectangle(radius: 30))
+              .buttonStyle(.borderless)
+            
           }
+          .dropDestination(for: String.self) { items, location in
+            draggedWidget?.delete()
+            draggedWidget = nil
+            return true
+          }
+          .padding(10)
+          .background(draggedWidget != nil ? .white.opacity(0.5) : .black.opacity(0.0))
+          .glassBackgroundEffect()
+          .padding(.bottom, 8)
+          .animation(.spring(), value: draggedWidget)
+          .animation(.spring(), value: isDragDestination)
+          .animation(.spring(), value: widgets)
         }
-        
-        
-      } // MARK: end scroll view
-      
-      
-    }
-    
-    .offset(z: -40)
-    
-    .background(
-      RadialGradient(
-        gradient: Gradient(colors: [
-          .black.opacity(0.12),
-          .black.opacity(0.08),
-          .black.opacity(0.04),
-          .black.opacity(0.01),
-          .black.opacity(0.005),
-          .clear]),
-        center: .center,
-        startRadius: 230,
-        endRadius: 560.0 / 2
-      ).offset(z: -100)
-    )
-    .ornament(attachmentAnchor: .scene(.bottom), contentAlignment:.bottom) {
-      if (!widgets.isEmpty) {
-        ZStack {
-          Button(role: draggedWidget == nil ? .cancel : .destructive) { 
-            if let draggedWidget = draggedWidget {
-              deleteWidget(draggedWidget)
-            } else {
-              getMoreWidgets()
-            }
-          } label: {
-            Label(draggedWidget == nil ?
-                  "Get Widgets" : "Delete Widget",
-                  systemImage: draggedWidget == nil ? "plus" : "square.and.arrow.down")
-            .padding(10)
-          }.labelStyle(.titleAndIcon)
-          
-          
-            .buttonBorderShape(.roundedRectangle(radius: 30))
-            .buttonStyle(.borderless)
-          
-        }
-        .dropDestination(for: String.self) { items, location in
-          draggedWidget?.delete()
-          draggedWidget = nil
-          return true
-        }
-        .padding(10)
-        .background(draggedWidget != nil ? .white.opacity(0.5) : .black.opacity(0.0))
-        .glassBackgroundEffect()
-        .padding(.bottom, 8)
-        .animation(.spring(), value: draggedWidget)
-        .animation(.spring(), value: isDragDestination)
-        .animation(.spring(), value: widgets)
       }
+      
     }
-    
-    
-    .onAppear() {
-      updateHue()
-      Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+      .onAppear() {
         updateHue()
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+          updateHue()
+        }
       }
-    }
-    .onChange(of: scenePhase) {
-      print("MainWindow Phase \(scenePhase)")
+      .onChange(of: scenePhase) {
+        print("MainWindow Phase \(scenePhase)")
+      }
+      
+      .defaultHoverEffect(.lift)
     }
     
-    .defaultHoverEffect(.lift)
-  }
-  
-  
-  private func deleteWidget(_ widget: Widget) {
-    if widget.persistentModelID == selection?.persistentModelID {
-      selection = nil
+    
+    private func deleteWidget(_ widget: Widget) {
+      if widget.persistentModelID == selection?.persistentModelID {
+        selection = nil
+      }
+      modelContext.delete(widget)
     }
-    modelContext.delete(widget)
   }
-}
-
-#Preview {
-  WidgetPickerView(app:nil)
-}
+  
+  #Preview {
+    WidgetPickerView(app:nil)
+  }
