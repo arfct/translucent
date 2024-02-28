@@ -68,11 +68,16 @@
   // widget-https://[url.encoded]?wv-queryparameters
 
     var forwardingURL = decodeURIComponent(location.pathname.slice(1)) + location.search + location.hash;
+    
+    if (!forwardingURL.startsWith("http") && !forwardingURL.startsWith("file://")) {
+      forwardingURL = "https://" + forwardingURL;
+    }
+    
     var widgetURL = "widget-" + forwardingURL;
-
+    console.log("Forwarding to " + widgetURL);
+    
     let link = document.getElementById("forward");
-    link.innerText = new URL(forwardingURL).host;
-    link.href = forwardingURL;
+
     
     document.getElementById("deeplink").setAttribute("content", "app-id=widget.vision, app-argument=" + forwardingURL);
     open(widgetURL);
@@ -81,6 +86,9 @@
     }
     setTimeout(openWidget, 1000);
     openButton.onclick = openWidget
+
+    link.innerText = new URL(forwardingURL).host;
+    link.href = forwardingURL;
   </script>
   <script src="assets/js/script.js"></script>
 </body>
