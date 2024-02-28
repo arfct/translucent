@@ -109,7 +109,7 @@ export default async (request, context) => {
 </body>`);
 
     if (widgetURL) {
-      content.push(`<script>setTimeout(() => {location.href="${widgetURL}; history.go(-1); },1000)"</script>`);
+      content.push(`<script>setTimeout(() => {location.href="${widgetURL}"; history.go(-1); }, 1)</script>`);
     }
     return new Response(content.join("\n"), {
       headers: { "content-type": "text/html" },
