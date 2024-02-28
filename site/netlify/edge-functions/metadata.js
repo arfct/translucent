@@ -64,6 +64,7 @@ export default async (request, context) => {
       console.log(info);
     }
     
+    path = decodeURIComponent(path)
     if (!path.startsWith("http")) {
       path = "https://" + path;
     }
