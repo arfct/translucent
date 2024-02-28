@@ -55,7 +55,7 @@ export default async (request, context) => {
     let uaMatch = uaArray.some(a => ua?.indexOf(a) != -1);
     if (uaMatch) { return new Response('', { status: 401 }); }
     
-    //https://widget.vision/www.widget.vision/widgets/orrery%3Fwidget=vision&name=Digital+Orrery&icon=circle.circle&style=transparent&size=480x480?format=widget&name=widget.vision&back=1001DC98&radius=9999.0&size=360.0x360.0
+    //https://widget.vision/www.widget.vision/widgets/orrery%3Fformat=widget&name=Digital+Orrery&icon=circle.circle&style=transparent&size=480x480?format=widget&name=widget.vision&back=1001DC98&radius=9999.0&size=360.0x360.0
     let info = {}
     if (request.url.indexOf('?format=widget') > 0) {
       let wvQuery = request.url.substring(request.url.indexOf('?format=widget'));
