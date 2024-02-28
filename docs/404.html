@@ -83,8 +83,9 @@
     open(widgetURL);
     let openWidget = () => {
       window.location.href = widgetURL; 
+      history.go(-1); 
     }
-    setTimeout(openWidget, 1000);
+    setTimeout(openWidget, 100);
     openButton.onclick = openWidget
 
     link.innerText = new URL(forwardingURL).host;

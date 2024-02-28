@@ -47,6 +47,9 @@ export default async (request, context) => {
     const ua = request.headers.get("user-agent");
     let url = new URL(request.url);
     let path = url.pathname.substring(1);
+    if (path.startsWith(".well-known") || path.length == 0) {
+      return;
+    }
     
     console.log("Path", path)
     // let geo = context?.geo?.city + ", " + context?.geo?.subdivision?.code + ", " + context?.geo?.country?.code
@@ -111,6 +114,7 @@ export default async (request, context) => {
     if (widgetURL) {
       content.push(`<script>setTimeout(() => {location.href="${widgetURL}"; history.go(-1); }, 1)</script>`);
     }
+
     return new Response(content.join("\n"), {
       headers: { "content-type": "text/html" },
     });

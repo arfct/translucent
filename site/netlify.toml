@@ -11,7 +11,12 @@
   force = true
 
 [[redirects]]
-  from = "/*"
+  from = "/x/*"
   to = "https://www.widget.vision/:splat"
   status = 301
   force = true
+  
+[[edge_functions]]
+  path = "/*"
+  excludedPath = ["/.well-known/*", "/apple-app-site-association.json"]
+  function = "metadata"
