@@ -82,7 +82,6 @@ struct WebView: UIViewRepresentable {
     
     source.append("document.head = document.getElementsByTagName('head')[0];")
     
-    let zoom = widget.zoom
     var viewport = "device-width"
     if let width = widget.viewport {
       viewport = width
@@ -286,8 +285,6 @@ struct WebView: UIViewRepresentable {
     @MainActor
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) async -> (Any?, String?) {
       
-      let body = message.body;
-      
       if let body = message.body as? NSDictionary {
         let action = body.value(forKey: "action") as? String
         let args = body.value(forKey: "args") as? NSDictionary
@@ -336,7 +333,7 @@ struct WebView: UIViewRepresentable {
     func download(_ download: WKDownload, decideDestinationUsing
                   response: URLResponse, suggestedFilename: String,
                   completionHandler: @escaping (URL?) -> Void) {
-      if var path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+      if let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
         let name = "\(arc4random())\(suggestedFilename)"
         currentDownload = path.appendingPathComponent(name, isDirectory: false)
         completionHandler(currentDownload)

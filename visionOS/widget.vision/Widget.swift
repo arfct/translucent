@@ -51,7 +51,7 @@ import SwiftData
   var isLoading: Bool = false
 
   func delete() {
-    try? modelContext?.delete(self)
+    modelContext?.delete(self)
     try? modelContext?.save()
   }
 
@@ -233,7 +233,7 @@ extension Widget {
   
   @Transient
   var thumbnailFile: URL? {
-    if var path = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+    if let path = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
       let filename = path
         .appendingPathComponent("thumbnails", isDirectory: true)
         .appendingPathComponent(self.id.uuidString + ".png")

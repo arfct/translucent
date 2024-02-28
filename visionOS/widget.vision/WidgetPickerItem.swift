@@ -17,7 +17,7 @@ struct WidgetPickerItem: View {
         
         
         ZStack() {
-          if let path = widget.thumbnailFile, let image = widget.thumbnailUIImage {
+          if let image = widget.thumbnailUIImage {
             if (image.size.width / image.size.height > (iconSize.width / iconSize.height)) {
               Image(uiImage: image)
                 .resizable()

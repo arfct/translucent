@@ -31,7 +31,7 @@ struct WidgetApp: App {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
       //      try AVAudioSession.sharedInstance().setActive(true)
       
-      if var path = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+      if let path = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
         
         try? FileManager.default.createDirectory(at: path
           .appendingPathComponent("thumbnails", isDirectory: true), withIntermediateDirectories: true)
@@ -85,6 +85,7 @@ struct WidgetApp: App {
       .frame(idealWidth: 560, idealHeight: 680,
              alignment: .center)
       .fixedSize(horizontal: true, vertical:true)
+      .preferredSurroundingsEffect(.systemDark)
       
     } defaultValue: { "main" }
     .modelContainer(container!)
