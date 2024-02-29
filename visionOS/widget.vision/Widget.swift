@@ -33,6 +33,10 @@ import SwiftData
   var viewport: String?
   var userAgent: String = "mobile"
   
+  // var resizeability // -> none, uniform, freeform, (fitwidth)
+  // var surroundingEffect: systemDark // -> .preferredSurroundingsEffect(.systemDark)
+
+  
   var lastOpened: Date?
   var options: String = ""
   var icon: String = "globe"

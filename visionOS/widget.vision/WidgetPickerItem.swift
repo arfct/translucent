@@ -60,13 +60,7 @@ struct WidgetPickerItem: View {
           .font(.headline)
           .lineLimit(1)
           .opacity(asDrag ? 0.0 : 1.0)
-        if (widget.favorite) {
-          Image(systemName: "star.fill")
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 16, height: 16)
-        }
-      }.padding(.top, 4)
+      }
     }
     .buttonBorderShape(.roundedRectangle(radius: 30))
     .buttonStyle(.borderless)

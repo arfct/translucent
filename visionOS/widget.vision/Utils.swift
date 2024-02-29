@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+import RealityKit
 
 extension Color {
   func toHex() -> String? {
@@ -131,4 +131,64 @@ extension UIImage {
     
     return true
   }
+}
+
+extension UIApplication {
+    
+    var keyWindow: UIWindow? {
+        // Get connected scenes
+        return self.connectedScenes
+            // Keep only active scenes, onscreen and visible to the user
+            .filter { $0.activationState == .foregroundActive }
+            // Keep only the first `UIWindowScene`
+            .first(where: { $0 is UIWindowScene })
+            // Get its associated windows
+            .flatMap({ $0 as? UIWindowScene })?.windows
+            // Finally, keep only the key window
+            .first(where: \.isKeyWindow)
+    }
+    
+}
+
+extension ModelEntity {
+    func size() -> SIMD3<Float> {
+        guard let mesh = self.model?.mesh else {
+            return .zero
+        }
+
+      let width = (mesh.bounds.max.x - mesh.bounds.min.x) * self.scale.x
+      let height = (mesh.bounds.max.y - mesh.bounds.min.y) * self.scale.y
+      let depth = (mesh.bounds.max.z - mesh.bounds.min.z) * self.scale.z
+        return [width, height, depth]
+    }
+}
+
+
+extension Entity {
+    
+    /// Executes a closure for each of the entity's child and descendant
+    /// entities, as well as for the entity itself.
+    ///
+    /// Set `stop` to true in the closure to abort further processing of the child entity subtree.
+    func enumerateHierarchy(_ body: (Entity, UnsafeMutablePointer<Bool>) -> Void) {
+        var stop = false
+
+        func enumerate(_ body: (Entity, UnsafeMutablePointer<Bool>) -> Void) {
+            guard !stop else {
+                return
+            }
+
+            body(self, &stop)
+            
+            for child in children {
+                guard !stop else {
+                    break
+                }
+                child.enumerateHierarchy(body)
+            }
+        }
+        
+        enumerate(body)
+    }
+    
 }

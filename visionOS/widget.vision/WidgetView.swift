@@ -3,6 +3,7 @@ import SwiftData
 import RealityKit
 import RealityKitContent
 import Combine
+import QuickLook
 
 extension Animation {
   static func ripple() -> Animation {
@@ -35,6 +36,8 @@ struct WidgetView: View {
   @State var currentPhase: ScenePhase = .active
   @State var wasBackgrounded = false
   @State var lastActivation = Date()
+  @State var downloadAttachment: URL?
+  @State var downloads: [URL] = []
   
   func toggleSettings() {
     withAnimation(.spring) {
@@ -45,19 +48,24 @@ struct WidgetView: View {
 
   
   var body: some View {
+
     GeometryReader { geometry in
       VStack(alignment: .center) {
         
         ZStack(alignment: .center) {
 
           if (loadedWindow && !flipped) {
-            WebView(title: $widget.title, location: $widget.location, widget: $widget, phase:$currentPhase)
+            WebView(title: $widget.title, location: $widget.location, widget: $widget, phase:$currentPhase, attachment:$downloadAttachment)
               .onLoadStatusChanged { content, loading, error in
                 self.isLoading = loading
                 if (loading && !finishedFirstLoad) {
                   finishedFirstLoad = true;
                 }
                 if let error = error { print("Loading error: \(error)") }
+              }
+              .onDownloadCompleted { content, download, error in
+                downloads.append(download)
+                downloadAttachment = download;
               }
               .frame(maxWidth: .infinity, maxHeight: .infinity)
               .disabled(flipped)
@@ -205,6 +213,7 @@ struct WidgetView: View {
       .onDisappear {
         try? modelContext.save()
       }
+      
     }
     
     // Clamp the size initially to set the base size, but then allow it to change later.
@@ -225,15 +234,11 @@ struct WidgetView: View {
       
     }
     .onChange(of: scenePhase) {
-      print("Widget Phase \(scenePhase) \(id)")
-      
       if (scenePhase == .active) {
         if (wasBackgrounded) {
           DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             dismiss()
-            
           }
-
           openWindow(id:"main")
         }
       }
@@ -242,6 +247,41 @@ struct WidgetView: View {
       }
       currentPhase = scenePhase
     }
+    .quickLookPreview($downloadAttachment, in: downloads)
+//    .sheet(isPresented:Binding<Bool>(get: { self.downloadAttachment != nil }, set: { _ in })) {
+//      if let url = downloadAttachment {
+//          Model3D(url: url) { model in
+//            VStack(alignment: .center) {
+//              Text("Drag me.").font(.extraLargeTitle2)
+//
+//              Spacer()
+//              model
+//                .resizable()
+//                .aspectRatio(contentMode: .fit)
+//                .frame(maxDepth:300)
+//                .frame(maxWidth:300, maxHeight: 300)
+//                .padding(80)
+//            }.padding(20)
+//              .onDrag {
+//                if let provider = NSItemProvider(contentsOf:url) {
+//                  provider.suggestedName = url.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "_", with: " ")
+//                  
+//                  DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+//                    downloadAttachment = nil
+//                  }
+//                  return provider
+//                }
+//                return NSItemProvider()
+//              }
+//            
+//          } placeholder: {
+//            ProgressView()
+//          }
+//          .onTapGesture {
+//            downloadAttachment = nil
+//          }
+//      }
+//    }
     
   }
   

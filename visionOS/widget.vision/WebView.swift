@@ -15,19 +15,24 @@ struct WebView: UIViewRepresentable {
   @Binding var location: String?
   @Binding var widget: Widget
   @Binding var phase: ScenePhase
+  @Binding var attachment: URL?
   
   
   var loadStatusChanged: ((WebView, Bool, Error?) -> Void)? = nil
-  func onLoadStatusChanged(perform: ((WebView, Bool, Error?) -> Void)?) -> some View {
+  func onLoadStatusChanged(perform: ((WebView, Bool, Error?) -> Void)?) -> WebView {
     var copy = self
     copy.loadStatusChanged = perform
     return copy
   }
   
+  var downloadCompleted: ((WebView, URL, Error?) -> Void)? = nil
+  func onDownloadCompleted(perform: ((WebView, URL, Error?) -> Void)?) -> some View {
+    var copy = self
+    copy.downloadCompleted = perform
+    return copy
+  }
+  
   func makeCoordinator() -> WebViewCoordinator { WebViewCoordinator(self) }
-  
-  
-  
   
   func cssSrc(widget:Widget) -> String {
     
@@ -300,6 +305,9 @@ struct WebView: UIViewRepresentable {
           print("battery level: \(UIDevice.current.batteryLevel)")
           return (["level": String(UIDevice.current.batteryLevel),
                    "state": String(UIDevice.current.batteryState.rawValue)] as? NSDictionary, nil)
+        } else if (action == "resize") {
+        // https://developer.apple.com/documentation/uikit/uiwindowscene/geometrypreferences/vision?changes=latest_minor
+          
         }
       }
       return (nil, nil)
@@ -319,8 +327,8 @@ struct WebView: UIViewRepresentable {
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
       if navigationAction.request.url?.pathExtension == "usdz" {
-        openWindow(id: "preview", value: navigationAction.request.url!);
-        return decisionHandler(.cancel, preferences)
+//        openWindow(id: "preview", value: navigationAction.request.url!);
+        return decisionHandler(.download, preferences)
       }
       if navigationAction.shouldPerformDownload {
         decisionHandler(.download, preferences)
@@ -341,8 +349,9 @@ struct WebView: UIViewRepresentable {
                   response: URLResponse, suggestedFilename: String,
                   completionHandler: @escaping (URL?) -> Void) {
       if let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-        let name = "\(arc4random())\(suggestedFilename)"
+        let name = "\(suggestedFilename)"
         currentDownload = path.appendingPathComponent(name, isDirectory: false)
+        try? FileManager.default.removeItem(at: currentDownload!)
         completionHandler(currentDownload)
       }
     }
@@ -352,7 +361,9 @@ struct WebView: UIViewRepresentable {
     }
     
     func downloadDidFinish(_ download: WKDownload) {
-      openWindow(id: "preview", value: currentDownload!);
+      parent.downloadCompleted?(parent, currentDownload!, nil)
+//      parent.attachment = currentDownload
+//      openWindow(id: "preview", value: currentDownload!);
     }
     
     public func download(_ download: WKDownload, didFailWithError error: Error, resumeData: Data?) {

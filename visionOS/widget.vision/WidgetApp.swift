@@ -14,7 +14,6 @@ import AVFAudio
 struct WidgetApp: App {
   @Environment(\.openWindow) var openWindow
   @Environment(\.dismissWindow) var dismissWindow
-  @Environment(\.scenePhase) private var scenePhase
   @AppStorage("windowWidth") var windowWidth = 540.0
   @AppStorage("windowHeight") var windowHeight = 680.0
   
@@ -85,7 +84,7 @@ struct WidgetApp: App {
       .frame(idealWidth: 560, idealHeight: 680,
              alignment: .center)
       .fixedSize(horizontal: true, vertical:true)
-      .preferredSurroundingsEffect(.systemDark)
+//      .preferredSurroundingsEffect(.systemDark)
       
     } defaultValue: { "main" }
     .modelContainer(container!)

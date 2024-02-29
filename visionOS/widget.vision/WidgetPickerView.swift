@@ -32,7 +32,6 @@ struct WidgetPickerDropDelegate: DropDelegate {
 
 struct WidgetPickerView: View {
   @Environment(\.modelContext) private var modelContext
-  @Environment(\.scenePhase) private var scenePhase
   
   @Query(sort: [SortDescriptor(\Widget.favorite, order: .reverse), SortDescriptor(\Widget.lastOpened, order: .reverse)])
   
@@ -43,6 +42,7 @@ struct WidgetPickerView: View {
   @State private var path: [Widget] = []
   @State private var hue: CGFloat = 0.6
   @State private var draggedWidget: Widget?
+  @State private var isVisible: Bool = false
   @State var isDragDestination: Bool = false
   @Environment(\.openURL) var openURL
   @Environment(\.openWindow) private var openWindow
@@ -133,7 +133,7 @@ struct WidgetPickerView: View {
   }
   
   
-  let widgetSize: CGSize = CGSize(width: 150, height: 120)
+  let widgetSize: CGSize = CGSize(width: 160, height: 120)
   
   var body: some View {
     VStack {
@@ -171,7 +171,7 @@ struct WidgetPickerView: View {
                       RoundedRectangle(cornerRadius: 30)
                         .fill(colors[index].opacity(0.6))
                         .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
-                        .frame(width:widgetSize.width, height:120)
+                        .frame(width:widgetSize.width, height:widgetSize.height)
                         .padding(.bottom, 50)
                     }
                     
@@ -179,7 +179,6 @@ struct WidgetPickerView: View {
                     let widget = widgets[index]
                     
                     WidgetPickerItem(widget: widget)
-                      .contentShape(.contextMenuPreview,.rect(cornerRadius: 30).inset(by: 1))
                       .onDrag {
                         draggedWidget = widget
                         DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
@@ -199,15 +198,18 @@ struct WidgetPickerView: View {
                   }
                 }
                 // Style
+
                 .scaleEffect(minProx * 0.8 + 0.2, anchor:.bottom)
                 .scaleEffect(maxProx * 0.8 + 0.2, anchor:.top)
                 .offset(z:combinedProx * 20 + abs(xoffset - 0.5) * 8)
                 .blur(radius: (1 - combinedProx) * 10)
-                .opacity(combinedProx)
+                .opacity(combinedProx * (isVisible ? 1.0 : 0.0))
+                .offset(z: isVisible ? 0 : 400)
                 .rotation3DEffect(.degrees(-30.0 * (xoffset - 0.5)), axis: (x: 0, y: 1, z: 0), anchor:anchor)
                 .rotation3DEffect(.degrees(20.0 * (1.0 - minProx)), axis: (x: 1, y: 0, z: 0), anchor:.trailing)
                 .rotation3DEffect(.degrees(-20.0 * (1.0 - maxProx)), axis: (x: 1, y: 0, z: 0), anchor:.leading)
                 .transition(.move(edge: .trailing))
+
               } // GeometryReader
               .frame(width:widgetSize.width, height:widgetSize.width)
             } // ForEach
@@ -302,16 +304,24 @@ struct WidgetPickerView: View {
       }
       
     }
+//    .task {
+//      print("Task")
+//    }
     .onAppear() {
+//      print("Appear")
       updateHue()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        withAnimation(.spring) {
+          isVisible = true
+        }
+      }
+      
+    
       Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
         updateHue()
       }
     }
-    .onChange(of: scenePhase) {
-      print("MainWindow Phase \(scenePhase)")
-    }
-    
+    .windowGeometryPreferences(resizingRestrictions: .none)
     .defaultHoverEffect(.lift)
   }
   
