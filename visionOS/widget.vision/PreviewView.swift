@@ -34,11 +34,11 @@ struct PreviewView: View {
     if let url = url {
       if url.pathExtension == "usdz" {
         ZStack {
-//          VStack {} // Ground plane
-//            .frame(maxWidth:.infinity, maxHeight: .infinity)
-//            .glassBackgroundEffect().cornerRadius(1000)
-//            .rotation3DEffect(.degrees(90), axis: (1, 0, 0), anchor: .init(x: 0.5, y: 0, z: 0))
-//            .offset(y:volume.size.height)
+          VStack {} // Ground plane
+            .frame(maxWidth:.infinity, maxHeight: .infinity)
+            .glassBackgroundEffect().cornerRadius(1000)
+            .rotation3DEffect(.degrees(90), axis: (1, 0, 0), anchor: .init(x: 0.5, y: 0, z: 0))
+            .offset(y:volume.size.height)
           
           RealityView { content in
             var volumeSize = volume.size
@@ -64,8 +64,8 @@ struct PreviewView: View {
                 entity.position.y -= mesh.bounds.min.y * entity.scale.y
                 
                 
-                entity.position.z += 0.4
-                entity.position.z -= mesh.bounds.min.z * entity.scale.z
+//                entity.position.z += 0.4
+//                entity.position.z -= mesh.bounds.min.z * entity.scale.z
                 print("volume \(entity.size()) \(mesh.bounds.min.z * entity.scale.z) \(entity.anchor)")
                 content.add(entity)
               }
