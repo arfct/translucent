@@ -241,7 +241,9 @@ struct WidgetView: View {
       currentPhase = scenePhase
     }
 //    .quickLookPreview($downloadAttachment, in: downloads)
-    .sheet(isPresented:Binding<Bool>(get: { self.downloadAttachment != nil }, set: { _ in })) {
+    .sheet(isPresented:Binding<Bool>(
+      get: { self.downloadAttachment != nil },
+      set: { _ in })) {
       if let url = downloadAttachment {
           Model3D(url: url) { model in
             VStack(alignment: .center) {
