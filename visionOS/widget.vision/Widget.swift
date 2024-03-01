@@ -115,7 +115,7 @@ import SwiftData
     }
   }
   
-  init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: String = "Glass", width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
+  init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: String = "glass", width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
     self.id = id
     self.name = name
     if let image = image { self.image = image }
@@ -131,7 +131,7 @@ import SwiftData
         if let key = kv.first?.removingPercentEncoding, let value = kv.last?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding {
           switch key {
           case "style":
-            if (value == "transparent") { self.style = "Transparent"}
+            if (value == "transparent") { self.style = "transparent"}
           case "name":
             self.name = String(value)
           case "bg", "back":
