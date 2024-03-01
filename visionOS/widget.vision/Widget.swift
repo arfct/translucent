@@ -13,7 +13,7 @@ import SwiftData
   var location: String?
   var originalLocation: String?
   
-  var style: String = "Glass"
+  var style: String = "glass"
   var backHex: String?
   var foreHex: String?
   var tintHex: String?
@@ -314,7 +314,7 @@ extension Widget {
   }
   
   static var preview: Widget {
-    Widget(name: "Test", location: "https://example.com", style: "Glass", options: "bg=0000&fg=ffff&tg=8aff&sz=360x360&zoom=1.0&icon=graduationcap")
+    Widget(name: "Test", location: "https://example.com", style: "glass", options: "bg=0000&fg=ffff&tg=8aff&sz=360x360&zoom=1.0&icon=graduationcap")
   }
   @Transient
   var userAgentString: String {
@@ -341,28 +341,5 @@ private extension Color {
     let green = Double.random(in: 0..<1, using: &generator)
     let blue = Double.random(in: 0..<1, using: &generator)
     return Color(red: red, green: green, blue: blue)
-  }
-}
-
-enum ViewStyle: String, Equatable, CaseIterable, Codable {
-  case glass = "Glass"
-  case transparent  = "Transparent"
-  //case toolbar  = "Toolbar"
-  
-  var localizedName: LocalizedStringKey { LocalizedStringKey(rawValue) }
-  
-  var displayName: String {
-    switch self {
-    case .transparent: return "Transparent"
-    case .glass: return "Frosted Glass"
-    //case .toolbar: return "Mini Browser"
-    }
-  }
-  var iconName: String {
-    switch self {
-    case .transparent: return "square.dotted"
-    case .glass: return "square.fill"
-    //case .toolbar: return "macwindow"
-    }
   }
 }

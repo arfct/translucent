@@ -123,10 +123,13 @@ struct WidgetSettingsView: View {
               Label("Style", systemImage: "ellipsis").labelStyle(.titleOnly)
                 .frame(maxWidth: labelWidth, alignment:.leading)
               
-              Picker("", selection: $widget.style) {
-                Text("Frosted Glass").tag("Glass")
-                Text("Transparent").tag("Transparent")
-              }.pickerStyle(.menu)
+              Picker("", selection: Binding<String>(
+                get: { self.widget.style.lowercased() },
+                set: { self.widget.style = $0 })) {
+                  Text("Frosted Glass").tag("glass")
+                  Text("Transparent").tag("transparent")
+                }
+                .pickerStyle(.menu)
                 .buttonStyle(.borderless)
                 .frame(alignment: .leading)
                 .labelsHidden()
@@ -326,15 +329,15 @@ struct WidgetSettingsView: View {
         .frame(maxWidth: 640, maxHeight: .infinity, alignment: .center)
         .toolbar {
           
-//          ToolbarItem(placement: .secondaryAction) {
-//            TextField(widget.title ?? "", text: $widget.name)
-//              .autocapitalization(.none)
-//              .disableAutocorrection(true)
-//              .keyboardType(.URL)
-//              .padding(8)
-//            
-//            
-//          }
+          //          ToolbarItem(placement: .secondaryAction) {
+          //            TextField(widget.title ?? "", text: $widget.name)
+          //              .autocapitalization(.none)
+          //              .disableAutocorrection(true)
+          //              .keyboardType(.URL)
+          //              .padding(8)
+          //
+          //
+          //          }
           
           ToolbarItemGroup(placement:.navigation) {
             
@@ -361,7 +364,7 @@ struct WidgetSettingsView: View {
             .background(.clear)
             .buttonStyle(.borderless)
           }
-            ToolbarItemGroup(placement: .primaryAction) {
+          ToolbarItemGroup(placement: .primaryAction) {
             Button { self.callback() } label: {
               Label("Done", systemImage: "chevron.left")
             }
