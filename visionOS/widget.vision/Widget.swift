@@ -13,7 +13,7 @@ import SwiftData
   var location: String?
   var originalLocation: String?
   
-  var style: ViewStyle
+  var style: String = "Glass"
   var backHex: String?
   var foreHex: String?
   var tintHex: String?
@@ -33,13 +33,12 @@ import SwiftData
   var viewport: String?
   var userAgent: String = "mobile"
   
-  // var resizeability // -> none, uniform, freeform, (fitwidth)
-  // var surroundingEffect: systemDark // -> .preferredSurroundingsEffect(.systemDark)
-
+  var surroundingsEffect: String? // dark
+  var resizeability: String? // nil [freeform], uniform, none, (fitwidth)
   
   var lastOpened: Date?
   var options: String = ""
-  var icon: String = "globe"
+  var icon: String?
   
   // Overrides
   @Attribute(originalName: "clearClasses")
@@ -102,7 +101,7 @@ import SwiftData
     self.init( name:url.host() ?? "NAME", location: location, options:parameters)
   }
   
-  init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: ViewStyle = .glass, width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
+  init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: String = "Glass", width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
     self.id = id
     self.name = name
     if let image = image { self.image = image }
@@ -118,7 +117,7 @@ import SwiftData
         if let key = kv.first?.removingPercentEncoding, let value = kv.last?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding {
           switch key {
           case "style":
-            if (value == "transparent") { self.style = .transparent}
+            if (value == "transparent") { self.style = "Transparent"}
           case "name":
             self.name = String(value)
           case "bg", "back":
@@ -214,6 +213,10 @@ extension Widget {
     return  mid;
   }
   
+  @Transient
+  var showGlassBackground: Bool {
+    return style.caseInsensitiveCompare("transparent") != .orderedSame
+  }
   func thumbnailChanged() {
     objectWillChange.send()
   }
@@ -259,7 +262,7 @@ extension Widget {
   var shareURL: URL? {
     
     var items: [URLQueryItem] = []
-    if (style == .transparent) {
+    if (!self.showGlassBackground) {
       items.append(URLQueryItem(name: "style", value: "transparent")) }
     if name.count > 0  {
       items.append(URLQueryItem(name: "name", value: name)) }
@@ -311,7 +314,7 @@ extension Widget {
   }
   
   static var preview: Widget {
-    Widget(name: "Test", location: "https://example.com", style: .glass, options: "bg=0000&fg=ffff&tg=8aff&sz=360x360&zoom=1.0&icon=graduationcap")
+    Widget(name: "Test", location: "https://example.com", style: "Glass", options: "bg=0000&fg=ffff&tg=8aff&sz=360x360&zoom=1.0&icon=graduationcap")
   }
   @Transient
   var userAgentString: String {

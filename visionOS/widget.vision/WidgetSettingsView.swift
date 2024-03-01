@@ -124,11 +124,9 @@ struct WidgetSettingsView: View {
                 .frame(maxWidth: labelWidth, alignment:.leading)
               
               Picker("", selection: $widget.style) {
-                ForEach(ViewStyle.allCases, id: \.self) { value in
-                  Text(value.displayName)
-                }
+                Text("Frosted Glass").tag("Glass")
+                Text("Transparent").tag("Transparent")
               }.pickerStyle(.menu)
-              
                 .buttonStyle(.borderless)
                 .frame(alignment: .leading)
                 .labelsHidden()
@@ -282,7 +280,7 @@ struct WidgetSettingsView: View {
                   Label("Icon", systemImage: "link")
                     .labelStyle(.titleOnly)
                     .frame(maxWidth: labelWidth, alignment: .leading)
-                  TextField("icon name", text:$widget.icon)
+                  TextField("icon name", text:$widget.icon ?? "globe")
                   
                     .autocapitalization(.none)
                     .disableAutocorrection(true)

@@ -326,6 +326,8 @@ struct WebView: UIViewRepresentable {
     
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
+      
+      
       if navigationAction.request.url?.pathExtension == "usdz" {
 //        openWindow(id: "preview", value: navigationAction.request.url!);
         return decisionHandler(.download, preferences)
@@ -339,7 +341,12 @@ struct WebView: UIViewRepresentable {
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
       if navigationResponse.canShowMIMEType {
-        decisionHandler(.allow)
+//        if let mime = navigationResponse.response.mimeType , mime.starts(with: "application/") {
+//          print("Mime \(mime )")
+//          decisionHandler(.download)
+//        } else {
+          decisionHandler(.allow)
+//        }
       } else {
         decisionHandler(.download)
       }
@@ -349,6 +356,7 @@ struct WebView: UIViewRepresentable {
                   response: URLResponse, suggestedFilename: String,
                   completionHandler: @escaping (URL?) -> Void) {
       if let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+        print("⬇️ Downloading \(suggestedFilename)")
         let name = "\(suggestedFilename)"
         currentDownload = path.appendingPathComponent(name, isDirectory: false)
         try? FileManager.default.removeItem(at: currentDownload!)
@@ -362,15 +370,19 @@ struct WebView: UIViewRepresentable {
     
     func downloadDidFinish(_ download: WKDownload) {
       parent.downloadCompleted?(parent, currentDownload!, nil)
-//      parent.attachment = currentDownload
-//      openWindow(id: "preview", value: currentDownload!);
+      // openWindow(id: "preview", value: currentDownload!);
     }
     
     public func download(_ download: WKDownload, didFailWithError error: Error, resumeData: Data?) {
-      // OPTIONAL: In case on Error
       print("Download error: \(error)")
     }
     
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+      guard let url = navigationAction.request.url else { return nil}
+      print("Opening in browser \(url)")
+      UIApplication.shared.open(url)
+      return nil;
+    }
     func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
       return 1
     }

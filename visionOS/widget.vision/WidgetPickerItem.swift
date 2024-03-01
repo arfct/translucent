@@ -35,7 +35,7 @@ struct WidgetPickerItem: View {
             }
           } else {
             VStack {
-              Image(systemName: widget.icon)
+              Image(systemName: widget.icon ?? "globe")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 64, height: 64)

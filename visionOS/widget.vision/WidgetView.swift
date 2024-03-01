@@ -71,7 +71,7 @@ struct WidgetView: View {
               .disabled(flipped)
               .opacity(flipped || !finishedFirstLoad ? 0.0 : 1.0)
               .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
-                                     displayMode: (widget.style == .glass ) ? .always : .never)
+                                     displayMode: (widget.showGlassBackground ) ? .always : .never)
               .background(widget.backColor)
               .cornerRadius(widget.radius)
               .gesture(TapGesture().onEnded({ gesture in
@@ -93,22 +93,15 @@ struct WidgetView: View {
         .overlay() {
           if (!finishedFirstLoad) {
             ZStack {
-              Image(systemName: widget.icon)
+              Image(systemName: widget.icon ?? "globe")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 64, height: 64)
                 .font(Font.title.weight(.light))
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-//            .glassBackgroundEffect()
-            
           }
         }
-
-        //        .popover(isPresented: $flipped, attachmentAnchor:.rect(.bounds), arrowEdge:.trailing) {
-        //          WidgetSettingsView(widget:widget, callback: toggleSettings)
-        //            .frame(width:200, height:400).fixedSize()
-        //        }
 
         .ornament(attachmentAnchor: .scene(.top), contentAlignment:.bottom) {
 //          HStack {
@@ -247,41 +240,41 @@ struct WidgetView: View {
       }
       currentPhase = scenePhase
     }
-    .quickLookPreview($downloadAttachment, in: downloads)
-//    .sheet(isPresented:Binding<Bool>(get: { self.downloadAttachment != nil }, set: { _ in })) {
-//      if let url = downloadAttachment {
-//          Model3D(url: url) { model in
-//            VStack(alignment: .center) {
-//              Text("Drag me.").font(.extraLargeTitle2)
-//
-//              Spacer()
-//              model
-//                .resizable()
-//                .aspectRatio(contentMode: .fit)
-//                .frame(maxDepth:300)
-//                .frame(maxWidth:300, maxHeight: 300)
-//                .padding(80)
-//            }.padding(20)
-//              .onDrag {
-//                if let provider = NSItemProvider(contentsOf:url) {
-//                  provider.suggestedName = url.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "_", with: " ")
-//                  
-//                  DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-//                    downloadAttachment = nil
-//                  }
-//                  return provider
-//                }
-//                return NSItemProvider()
-//              }
-//            
-//          } placeholder: {
-//            ProgressView()
-//          }
-//          .onTapGesture {
-//            downloadAttachment = nil
-//          }
-//      }
-//    }
+//    .quickLookPreview($downloadAttachment, in: downloads)
+    .sheet(isPresented:Binding<Bool>(get: { self.downloadAttachment != nil }, set: { _ in })) {
+      if let url = downloadAttachment {
+          Model3D(url: url) { model in
+            VStack(alignment: .center) {
+              Text("Drag me.").font(.extraLargeTitle2)
+
+              Spacer()
+              model
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(maxDepth:300)
+                .frame(maxWidth:300, maxHeight: 300)
+                .padding(80)
+            }.padding(20)
+              .onDrag {
+                if let provider = NSItemProvider(contentsOf:url) {
+                  provider.suggestedName = url.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "_", with: " ")
+                  
+                  DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                    downloadAttachment = nil
+                  }
+                  return provider
+                }
+                return NSItemProvider()
+              }
+            
+          } placeholder: {
+            ProgressView()
+          }
+          .onTapGesture {
+            downloadAttachment = nil
+          }
+      }
+    }
     
   }
   

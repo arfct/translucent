@@ -26,6 +26,8 @@ struct WidgetApp: App {
         configurations: ModelConfiguration()
       )
       container?.mainContext.autosaveEnabled = true
+      print(container!.mainContext.sqliteCommand)
+
       
             try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
       //      try AVAudioSession.sharedInstance().setActive(true)
