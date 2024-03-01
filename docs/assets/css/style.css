@@ -251,6 +251,7 @@ svg path {
   border-radius: var(--radius, 24px);
   color: #ffffffcc;
   flex-grow: 1;
+  min-width: calc(var(--iconWidth) * 2 + 40px);
   font-size: 90%;
   font-weight:200;
   padding-left:2em;

@@ -423,7 +423,7 @@ extension WKWebView {
     if (image.isBlank()) { return }
     
     if let data = image.pngData(){
-      print("🖼️ Saved Snapshot, \(String(describing: self.url))")
+      print("🖼️ Saved Snapshot, \(String(describing: self.url)) \(wrapper.widget.thumbnailFile)")
       try? data.write(to: path)
       wrapper.widget.thumbnailChanged()
     } else {
