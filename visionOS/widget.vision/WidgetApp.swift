@@ -21,21 +21,31 @@ struct WidgetApp: App {
   private var container: ModelContainer?
   init() {
     do {
-      container = try ModelContainer(
-        for: Widget.self,
-        configurations: ModelConfiguration()
-      )
-      container?.mainContext.autosaveEnabled = true
-      print(container?.mainContext.sqliteCommand ?? "")
+      if let path = FileManager.default.urls(for: .applicationSupportDirectory, 
+                                             in: .userDomainMask).first {
+        
+        // Create thumbnails directory
+        try? FileManager.default.createDirectory(at: path
+          .appendingPathComponent("thumbnails", isDirectory: true), withIntermediateDirectories: true)
+        
+        // Create database
+        let config = ModelConfiguration(url: path.appendingPathComponent("widget.store"))
+        
+        container = try ModelContainer(
+          for: Widget.self,
+          configurations: config
+        )
+        
+        container?.mainContext.autosaveEnabled = true
+        print(container?.mainContext.sqliteCommand ?? "")
+      }
+      
+     
       
       try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
       // try AVAudioSession.sharedInstance().setActive(true)
       
-      if let path = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-        
-        try? FileManager.default.createDirectory(at: path
-          .appendingPathComponent("thumbnails", isDirectory: true), withIntermediateDirectories: true)
-      }
+
       
       
     } catch {

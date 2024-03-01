@@ -94,7 +94,7 @@ struct PreviewView: View {
             print("Dissapear: \(url)")
           }
           .onChange(of: scenePhase) {
-            print("PReview scenePhase \(scenePhase)")
+            print("Preview scenePhase \(scenePhase)")
             if (scenePhase == .active) {
               if (wasBackgrounded) {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {

@@ -1,4 +1,5 @@
 import SwiftUI
+import RealityKit
 
 struct WidgetPickerItem: View {
   
@@ -17,7 +18,24 @@ struct WidgetPickerItem: View {
         
         
         ZStack() {
-          if let image = widget.thumbnailUIImage {
+          if widget.type == "usdz", 
+              let loc = widget.location,
+              let url = URL(string:loc) {
+            ZStack() {
+              Model3D(url: url) { model in
+                model
+                  .resizable()
+                  .aspectRatio(contentMode: .fit)
+                  .frame(maxDepth:iconSize.height)
+                  .frame(maxWidth:iconSize.width, maxHeight: iconSize.height)
+                  .padding(10)
+                
+              } placeholder: {
+                ProgressView()
+              }
+            }
+            .frame(maxWidth:iconSize.width, maxHeight:iconSize.height)
+          } else if let image = widget.thumbnailUIImage {
             if (image.size.width / image.size.height > (iconSize.width / iconSize.height)) {
               Image(uiImage: image)
                 .resizable()

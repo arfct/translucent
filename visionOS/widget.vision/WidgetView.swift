@@ -245,7 +245,20 @@ struct WidgetView: View {
       if let url = downloadAttachment {
           Model3D(url: url) { model in
             VStack(alignment: .center) {
-              Text("Drag me.").font(.extraLargeTitle2)
+              HStack() {
+                Text("Drag me.").font(.extraLargeTitle2)
+                Spacer()
+                Button {
+                  let widget = Widget(url: url)
+                  
+                  modelContext.insert(widget)
+                  try? modelContext.save()
+                } label: {
+                  Label("Add Favorite", systemImage: "star")
+                    .labelStyle(.iconOnly)
+                  
+                }.disabled(true)
+              }.padding()
 
               Spacer()
               model

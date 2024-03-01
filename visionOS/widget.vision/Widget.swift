@@ -9,6 +9,7 @@ import SwiftData
   var id: UUID
   var name: String = ""
   var title: String?
+  var type: String?
   var image: String?
   var location: String?
   var originalLocation: String?
@@ -53,10 +54,16 @@ import SwiftData
   @Transient
   var isLoading: Bool = false
 
+  func save() {
+    modelContext?.insert(self)
+    try? modelContext?.save()
+  }
+  
   func delete() {
     modelContext?.delete(self)
     try? modelContext?.save()
   }
+
 
   func sizeFor(dimensions: String) -> CGSize {
     let dims = dimensions.split(separator: "x")
@@ -76,7 +83,7 @@ import SwiftData
   
   // MARK: Init
   
-  convenience init(url: URL) {
+  convenience init(url: URL, name: String? = nil) {
     
     print("🌐 Opening URL: \(url.absoluteString)")
     var location = url.absoluteString
@@ -98,7 +105,14 @@ import SwiftData
       .replacingOccurrences(of: "https://www.widget.vision/http", with: "http")
       .replacingOccurrences(of: "https://widget.vision/", with: "https://")
   
-    self.init( name:url.host() ?? "NAME", location: location, options:parameters)
+    self.init( name: name ??
+               url.host() ?? url.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "_", with: " ") ??
+               "Untitled",
+               location: location,
+               options:parameters)
+    if (url.pathExtension == "usdz") {
+      type = "usdz"
+    }
   }
   
   init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: String = "Glass", width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {

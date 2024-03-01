@@ -169,7 +169,7 @@ struct WidgetPickerView: View {
                   if index >= widgets.count {
                     VStack {
                       RoundedRectangle(cornerRadius: 30)
-                        .fill(colors[index].opacity(0.6))
+                        .fill(Color(hue: fmod(hue + 0.1 * Double(index), 1.0), saturation: 0.5, brightness: 1.0).opacity(0.2))
                         .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
                         .frame(width:widgetSize.width, height:widgetSize.height)
                         .padding(.bottom, 50)
