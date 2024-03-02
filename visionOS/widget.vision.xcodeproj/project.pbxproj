@@ -150,16 +150,16 @@
 		2C9EE6A12B66844500D36BA6 /* widget.vision */ = {
 			isa = PBXGroup;
 			children = (
-				2C8E78972B769C9F004DA40B /* Widget.swift */,
-				2C42D5572B92F7FE007FCA7F /* Widget+WebContent.swift */,
 				2C9EE6A62B66844500D36BA6 /* WidgetApp.swift */,
 				2C8E78992B769F94004DA40B /* WidgetPickerView.swift */,
 				2C8E789D2B76A0B2004DA40B /* WidgetPickerItem.swift */,
 				2C9EE6A82B66844500D36BA6 /* WidgetView.swift */,
-				2C51DA272B8DD566008ACA1A /* PreviewView.swift */,
 				2C23F8482B6D5B8C0099BA6D /* WidgetSettingsView.swift */,
 				2C9EE6B52B6684C100D36BA6 /* WebView.swift */,
 				2C42D5592B92FABA007FCA7F /* WebViewCoordinator.swift */,
+				2C51DA272B8DD566008ACA1A /* PreviewView.swift */,
+				2C8E78972B769C9F004DA40B /* Widget.swift */,
+				2C42D5572B92F7FE007FCA7F /* Widget+WebContent.swift */,
 				2C42D5482B92EC3C007FCA7F /* Utils */,
 				2C9EE6AA2B66844600D36BA6 /* Assets.xcassets */,
 				2CE229622B8F09510077640A /* widgets */,
