@@ -1,7 +1,6 @@
 import SwiftUI
 import SwiftData
 import RealityKit
-import RealityKitContent
 import Combine
 import QuickLook
 
