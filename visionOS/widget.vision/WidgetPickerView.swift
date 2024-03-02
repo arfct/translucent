@@ -175,7 +175,7 @@ struct WidgetPickerView: View {
                       }
                       .frame(maxWidth:iconSize.width, maxHeight:iconSize.height)
                     } else {   // MARK: Widget
-                      
+
                       WidgetPickerItem(widget: widget)
                         .onDrag {
                           draggedWidget = widget
@@ -318,7 +318,7 @@ struct WidgetPickerView: View {
 
     } // MARK: /Main View modifiers
     .onChange(of: scenePhase) {
-      Logger.lifecycle.log("MainWindow \(String(describing:scenePhase))")
+      Logger.console.log("MainWindow \(String(describing:scenePhase))")
       if (scenePhase == .background) { isVisible = false }
       
       if (scenePhase == .active) {

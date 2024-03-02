@@ -11,8 +11,10 @@ extension Logger {
     private static var subsystem = Bundle.main.bundleIdentifier!
 
     /// Logs the view cycles like a view that appeared.
-    static let lifecycle = Logger(subsystem: subsystem, category: "lifecycle")
+  static let console = Logger(subsystem: subsystem, category: "console")
 }
+
+var console = Logger.console
 
 import SwiftUI
 extension Bool: Comparable {

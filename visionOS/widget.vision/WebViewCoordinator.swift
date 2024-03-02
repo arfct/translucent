@@ -72,7 +72,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   
   func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
     
-    Logger.lifecycle.info("Navigating to \(navigationAction)")
+    Logger.console.info("Navigating to \(navigationAction)")
     
     let url = navigationAction.request.url
     if url?.host() == "widget.vision" {

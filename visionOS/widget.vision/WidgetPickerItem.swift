@@ -70,8 +70,8 @@ struct WidgetPickerItem: View {
     }
     .buttonBorderShape(.roundedRectangle(radius: 30))
     .buttonStyle(.borderless)
-    .hoverEffect(.lift)
     .frame(maxWidth: .infinity, alignment:.leading)
+
   }
 }
 

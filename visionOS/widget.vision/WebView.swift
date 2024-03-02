@@ -1,5 +1,6 @@
 import SwiftUI
 import WebKit
+import OSLog
 
 @objc class Wrapper: NSObject {
   var widget: Widget
@@ -152,18 +153,19 @@ struct WebView: UIViewRepresentable {
 
 extension WKWebView {
   @objc func saveSnapshot(_ wrapper: Wrapper) {
-    if self.url?.absoluteString == "about:blank" { return }
+    guard let url = self.url else { return }
     guard let path = wrapper.widget.thumbnailFile else { return }
+    if url.absoluteString == "about:blank" { return }
     let image = self.snapshotImage
     
     if (image.isBlank()) { return }
     
     if let data = image.pngData(){
-      print("🖼️ Saved Snapshot, \(String(describing: self.url)) \(path)")
+      console.debug("🖼️ Saved Snapshot, \(url.absoluteString)")
       try? data.write(to: path)
       wrapper.widget.thumbnailChanged()
     } else {
-      print("❌ Failed Snapshot, \(String(describing: self.url))")
+      console.error("❌ Failed Snapshot, \(url.absoluteString)")
     }
   }
   
