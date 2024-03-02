@@ -10,56 +10,64 @@ import SwiftData
 import Darwin
 import UniformTypeIdentifiers
 import AVFAudio
+import OSLog
 @main
 struct WidgetApp: App {
   @Environment(\.openWindow) var openWindow
   @Environment(\.dismissWindow) var dismissWindow
-  @AppStorage("windowWidth") var windowWidth = 540.0
-  @AppStorage("windowHeight") var windowHeight = 680.0
   
   // MARK: - ModelContainer
-  private var container: ModelContainer?
+  //  private var container: ModelContainer
+  
+  var container: ModelContainer = {
+    let path  = FileManager.default.urls(for: .applicationSupportDirectory,
+                                         in: .userDomainMask).first!
+    
+    let storePath = path.appendingPathComponent("widget.store")
+    let modelConfiguration = ModelConfiguration(url: storePath)
+    
+    do {
+      return try ModelContainer(for: Widget.self, configurations: modelConfiguration)
+    } catch {
+      if SwiftDataError.loadIssueModelContainer == error as? SwiftDataError {
+        print("Deleting old modelContainer")
+        try? FileManager.default.removeItem(at: storePath)
+      }
+      fatalError("Could not create ModelContainer: \(error)")
+    }
+  }()
+  
   init() {
     do {
-      if let path = FileManager.default.urls(for: .applicationSupportDirectory, 
-                                             in: .userDomainMask).first {
-        
-        // Create thumbnails directory
-        try? FileManager.default.createDirectory(at: path
-          .appendingPathComponent("thumbnails", isDirectory: true), withIntermediateDirectories: true)
-        
-        // Create database
-        let config = ModelConfiguration(url: path.appendingPathComponent("widget.store"))
-        
-        container = try ModelContainer(
-          for: Widget.self,
-          configurations: config
-        )
-        
-        container?.mainContext.autosaveEnabled = true
-        print(container?.mainContext.sqliteCommand ?? "")
-      }
+      let path = URL.applicationSupportDirectory
       
-     
+      // Create thumbnails directory
+      try FileManager.default.createDirectory(at: path
+        .appendingPathComponent("thumbnails", isDirectory: true), withIntermediateDirectories: true)
       
-      try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+      // Create downloads directory
+      try FileManager.default.createDirectory(at: path
+        .appendingPathComponent("downloads", isDirectory: true), withIntermediateDirectories: true)
+      
+      //      try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
       // try AVAudioSession.sharedInstance().setActive(true)
       
-
-      
-      
     } catch {
-      print("An error occurred: \(error)")
-      exit(0)
+      fatalError("Could not create directories: \(error)")
     }
+    
   }
   
   @MainActor func showWindowForURL(_ url: URL?) {
     guard let url = url else { return }
-    let widget = Widget(url:url)
-    container?.mainContext.insert(widget)
-    try! container?.mainContext.save()
-    openWindow(id: "widget", value: widget.persistentModelID)
+    do {
+      let widget = Widget(url:url)
+      container.mainContext.insert(widget)
+      try container.mainContext.save()
+      openWindow(id: "widget", value: widget.persistentModelID)
+    } catch {
+      print("Error opening url \(error)")
+    }
   }
   
   var body: some Scene {
@@ -75,46 +83,38 @@ struct WidgetApp: App {
           .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
             showWindowForURL($0.webpageURL)
           }
-          .onChange(of: mainWindow.size) {
-            windowWidth = mainWindow.size.width
-            windowHeight = mainWindow.size.height
-          }
           .onDrop(of: [.url], isTargeted: nil) { providers, point in
             for provider in providers {
               _ = provider.loadObject(ofClass: URL.self) { url,arg  in
-                DispatchQueue.main.async {
-                  showWindowForURL(url)
-                }
+                DispatchQueue.main.async { showWindowForURL(url) }
               }
             }
-            
             return true
           }
       }
+      
       .frame(idealWidth: 560, idealHeight: 680,
              alignment: .center)
       .fixedSize(horizontal: true, vertical:true)
-      //      .preferredSurroundingsEffect(.systemDark)
       
     } defaultValue: { "main" }
-      .modelContainer(container!)
+      .modelContainer(container)
       .windowResizability(.contentSize)
       .defaultSize(width: 560, height: 680)
       .windowStyle(.plain)
+    
     
     // MARK: - Widget Windows
     
     WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in
       ZStack {
-        if let id = id, let widget = container?.mainContext.model(for: id) as? Widget{
+        if let id = id, let widget = container.mainContext.model(for: id) as? Widget {
           WidgetView(widget:widget, app:self)
             .onAppear() { widget.lastOpened = .now }
-        } else {
-          ProgressView()
-            .progressViewStyle(CircularProgressViewStyle(tint: .primary))
-            .scaleEffect(1.0, anchor: .center)
         }
       }
+      .onOpenURL { showWindowForURL($0) }
+      .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { showWindowForURL($0.webpageURL) }
       .onContinueUserActivity(Activity.openWidget, perform: { activity in
         if let info = activity.userInfo,
            let data = info["modelId"] as? Data,
@@ -122,14 +122,9 @@ struct WidgetApp: App {
           id = modelID
         }
       })
-      .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
-        showWindowForURL($0.webpageURL)
-      }
-      .onOpenURL { showWindowForURL($0) }
-      
     }
     .handlesExternalEvents(matching: [Activity.openWidget])
-    .modelContainer(container!)
+    .modelContainer(container)
     .windowStyle(.plain)
     .windowResizability(.contentSize)
     .defaultSize(width: 320, height: 320)
@@ -142,16 +137,12 @@ struct WidgetApp: App {
       ZStack {
         if let data = data,
            let modelID = try? JSONDecoder().decode(PersistentIdentifier.self, from: data ),
-           let widget = container?.mainContext.model(for: modelID) as? Widget{
+           let widget = container.mainContext.model(for: modelID) as? Widget{
           WidgetSettingsView(widget:widget, callback: {
             dismissWindow(id: "widgetSettings")
           }).task{
             print("Open Settings for \(widget.name)")
           }
-        } else {
-          ProgressView()
-            .progressViewStyle(CircularProgressViewStyle(tint: .primary))
-            .scaleEffect(1.0, anchor: .center)
         }
       }
       .onContinueUserActivity(Activity.openSettings, perform: { activity in
@@ -162,27 +153,24 @@ struct WidgetApp: App {
       })
     }
     .handlesExternalEvents(matching: ["settings"])
-    .modelContainer(container!)
+    .modelContainer(container)
     .windowStyle(.automatic)
     .windowResizability(.contentSize)
     .defaultSize(width: 640, height: 640)
     
     
     // MARK: Preview Window
-    WindowGroup("Preview", id: "preview", for: URL.self) { $url in
-      ZStack {
-        PreviewView(url:url)
-        
-      }
-      .onContinueUserActivity(Activity.openPreview, perform: { activity in
-        if let info = activity.userInfo,
-           let modelData = info["url"] as? URL {
-          url = modelData
-        }
-      })
-    }
-    .handlesExternalEvents(matching: [Activity.openPreview])
-    .windowStyle(.volumetric)
+//    WindowGroup("Preview", id: "preview", for: URL.self) { $url in
+//      PreviewView(url:url)
+//      .onContinueUserActivity(Activity.openPreview, perform: { activity in
+//        if let info = activity.userInfo,
+//           let modelData = info["url"] as? URL {
+//          url = modelData
+//        }
+//      })
+//    }
+//    .handlesExternalEvents(matching: [Activity.openPreview])
+//    .windowStyle(.volumetric)
     
     
     

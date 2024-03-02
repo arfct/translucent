@@ -5,13 +5,6 @@ import RealityKitContent
 import Combine
 import QuickLook
 
-extension Animation {
-  static func ripple() -> Animation {
-    Animation.spring(dampingFraction: 0.5)
-      .speed(2)
-  }
-}
-
 struct WidgetView: View {
   @Environment(\.openWindow) var openWindow
   @Environment(\.dismissWindow) var dismissWindow
@@ -22,7 +15,7 @@ struct WidgetView: View {
   
   @State var widget: Widget
   var app: WidgetApp?
-
+  
   @State var id = UUID()
   @State private var flipped: Bool = false
   @State var isLoading: Bool = true
@@ -41,107 +34,73 @@ struct WidgetView: View {
   
   func toggleSettings() {
     withAnimation(.spring) {
-      try? modelContext.save()
       flipped.toggle()
     }
   }
-
   
   var body: some View {
-
     GeometryReader { geometry in
       VStack(alignment: .center) {
         
         ZStack(alignment: .center) {
-
-          if (loadedWindow && !flipped) {
-            WebView(title: $widget.title, location: $widget.location, widget: $widget, phase:$currentPhase, attachment:$downloadAttachment)
-              .onLoadStatusChanged { content, loading, error in
-                self.isLoading = loading
-                if (loading && !finishedFirstLoad) {
+          
+          if (!flipped) {
+            
+            // MARK: Web View
+            WebView(title: $widget.title,
+                    location: $widget.location,
+                    widget: $widget,
+                    phase:$currentPhase,
+                    attachment:$downloadAttachment)
+            .onLoadStatusChanged { content, loading, error in
+              self.isLoading = loading
+              if (!loading && !finishedFirstLoad) {
+                withAnimation(.easeInOut(duration: 1.0)) {
                   finishedFirstLoad = true;
                 }
-                if let error = error { print("Loading error: \(error)") }
-              }
-              .onDownloadCompleted { content, download, error in
-                downloads.append(download)
-                downloadAttachment = download;
-              }
-              .frame(maxWidth: .infinity, maxHeight: .infinity)
-              .disabled(flipped)
-              .opacity(flipped || !finishedFirstLoad ? 0.0 : 1.0)
-              .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
-                                     displayMode: (widget.showGlassBackground ) ? .always : .never)
-              .background(widget.backColor)
-              .cornerRadius(widget.radius)
-              .gesture(TapGesture().onEnded({ gesture in
-                showInfo = true
-                showHandle = true
                 scheduleHide()
-              }))
-          }
-          
-          WidgetSettingsView(widget:widget, callback: toggleSettings)
+              }
+              if let error = error { print("Loading error: \(error)") }
+            }
+            .onDownloadCompleted { content, download, error in
+              downloads.append(download)
+              downloadAttachment = download;
+            }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(widget.backColor.opacity(0.2))
-            .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
-            .offset(z: flipped ? 1 : 0)
-            .opacity(flipped ? 1.0 : 0.0)
-            .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
-            .disabled(!flipped)
+            .disabled(flipped)
+            .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
+                                   displayMode: (widget.showGlassBackground ) ? .always : .never)
+            .background(widget.backColor)
+            .cornerRadius(widget.radius)
+            .opacity(flipped || !finishedFirstLoad || !loadedWindow ? 0.05 : 1.0)
+            .gesture(TapGesture().onEnded({ gesture in
+              showInfo = true
+              showHandle = true
+              scheduleHide()
+            }))
+          } else {
+            
+            WidgetSettingsView(widget:widget, callback: toggleSettings)
+              .frame(maxWidth: .infinity, maxHeight: .infinity)
+              .background(widget.backColor.opacity(0.2))
+              .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
+              .offset(z: flipped ? 1 : 0)
+              .opacity(flipped ? 1.0 : 0.0)
+              .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
+              .disabled(!flipped)
+          }
         }
-        .overlay() {
+        .overlay(alignment: .center) {
           if (!finishedFirstLoad) {
-            ZStack {
-              Image(systemName: widget.icon ?? "globe")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 64, height: 64)
-                .font(Font.title.weight(.light))
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            ProgressView()
           }
         }
-
-        .ornament(attachmentAnchor: .scene(.top), contentAlignment:.bottom) {
-//          HStack {
-//            
-//            Button {
-//              openWindow(id: "main")
-//            } label: {
-//              Image(systemName: "grid")
-//                .resizable()
-//                .aspectRatio(contentMode: .fit)
-//                .frame(width: 16, height: 16)
-//            }.buttonBorderShape(.circle)
-//            Button {
-//              
-//            } label: {
-//              Image(systemName: "square.and.arrow.up")
-//                .resizable()
-//                .aspectRatio(contentMode: .fit)
-//                .frame(width: 16, height: 16)
-//            }.buttonBorderShape(.circle)
-//            Button {
-//              toggleSettings()
-//            } label: {
-//              Image(systemName: "info")
-//                .resizable()
-//                .aspectRatio(contentMode: .fit)
-//                .frame(width: 16, height: 16)
-//            }.buttonBorderShape(.circle)
-//          }.padding(10).glassBackgroundEffect()
-          
-//      .offset(z: -10)
-//      .offset(y:-10)
-//      .opacity(showOrnaments && !flipped && !wasBackgrounded ? 1.0 : 0.0)
-
-            }
-    
+        
+        // MARK: Info Button
         .ornament(attachmentAnchor: .scene(.top), contentAlignment:.bottom) {
           ZStack {
             Button { } label: {
-              if isLoading {
+              if isLoading && finishedFirstLoad {
                 ProgressView()
                   .progressViewStyle(CircularProgressViewStyle(tint: .primary))
                   .scaleEffect(1.0, anchor: .center)
@@ -166,7 +125,7 @@ struct WidgetView: View {
                 .background(.white.opacity(0.2))
             }
             .simultaneousGesture(LongPressGesture().onEnded { _ in
-//              openWindow(id:"main")
+              //              openWindow(id:"main")
               app?.openWindow(id: "widgetSettings", value: widget.modelID)
             })
             .simultaneousGesture(TapGesture().onEnded {
@@ -177,120 +136,85 @@ struct WidgetView: View {
               }
             })
             .buttonBorderShape(.circle)
+            .buttonStyle(.automatic)
+            .labelStyle(.iconOnly)
             .glassBackgroundEffect(displayMode: showInfo ? .always : .never)
             .background(.clear)
             .transition(.move(edge: .top))
-            .buttonStyle(.automatic)
-            .labelStyle(.iconOnly)
             .hoverEffect()
             .offset(y: showInfo || isLoading ? 0 : 40)
             .padding(.bottom, 10)
-            .opacity((isLoading || showInfo) && !flipped && !wasBackgrounded ? 1.0 : 0.0)
+            .opacity((isLoading || showInfo) && !flipped && !wasBackgrounded && finishedFirstLoad ? 1.0 : 0.0)
             .rotation3DEffect(.degrees(showInfo || isLoading ? 0.0 : 45), axis: (1, 0, 0),
                               anchor: UnitPoint3D(x: 0.5, y: 1.0, z: 0))
             .animation(.spring(), value: flipped)
             .animation(.spring(), value: showInfo)
             .animation(.spring(), value: isLoading)
-
+            
           }
         }
-      }
+      } // MARK: Content view modifiers
       .rotation3DEffect(.degrees(flipped ? -180.0 : 0.0), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
       .onChange(of: geometry.size) {
         widget.width = geometry.size.width
         widget.height = geometry.size.height
         print("↔️ Widget size changed to \(widget.width)×\(widget.height)")
-        try? modelContext.save()
-       }
+        widget.save()
+      }
       .opacity(wasBackgrounded ? 0.0 : 1.0)
       .onDisappear {
-        try? modelContext.save()
+        widget.save()
       }
-      
     }
+    
+//    .sheet(isPresented:Binding<Bool>(
+//      get: { self.downloadAttachment != nil },
+//      set: { _ in })) {
+//        DownloadPanel(downloadAttachment: $downloadAttachment)
+//      }
+      .quickLookPreview($downloadAttachment, in: downloads)
+    
     
     // Clamp the size initially to set the base size, but then allow it to change later.
-    .frame(minWidth: clampInitialSize ? widget.width : widget.minWidth, idealWidth: widget.width, maxWidth: clampInitialSize ? widget.width : widget.maxWidth,
-           minHeight: clampInitialSize ? widget.height : widget.minHeight, idealHeight: widget.height, maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
-    .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
-    .persistentSystemOverlays(showHandle && !wasBackgrounded && !flipped ? .automatic : .hidden)
-  
-    .onAppear(){
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-        clampInitialSize = false
-        loadedWindow = true;
-      }
-      scheduleHide()
-    }
-    .onDisappear {
-      print("Widget Phase DISSAPEAR \(id)")
-      
-    }
-    .onChange(of: scenePhase) {
-      if (scenePhase == .active) {
-        if (wasBackgrounded) {
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            dismiss()
-          }
-          openWindow(id:"main")
-        }
-      }
-      if (scenePhase == .background) {
-        wasBackgrounded = true
-      }
-      currentPhase = scenePhase
-    }
-//    .quickLookPreview($downloadAttachment, in: downloads)
-    .sheet(isPresented:Binding<Bool>(
-      get: { self.downloadAttachment != nil },
-      set: { _ in })) {
-      if let url = downloadAttachment {
-          Model3D(url: url) { model in
-            VStack(alignment: .center) {
-              HStack() {
-                Text("Drag me.").font(.extraLargeTitle2)
-                Spacer()
-                Button {
-                  let widget = Widget(url: url)
-                  
-                  modelContext.insert(widget)
-                  try? modelContext.save()
-                } label: {
-                  Label("Add Favorite", systemImage: "star")
-                    .labelStyle(.iconOnly)
-                  
-                }.disabled(true)
-              }.padding()
-
-              Spacer()
-              model
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxDepth:300)
-                .frame(maxWidth:300, maxHeight: 300)
-                .padding(80)
-            }.padding(20)
-              .onDrag {
-                if let provider = NSItemProvider(contentsOf:url) {
-                  provider.suggestedName = url.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "_", with: " ")
-                  
-                  DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                    downloadAttachment = nil
-                  }
-                  return provider
-                }
-                return NSItemProvider()
-              }
-            
-          } placeholder: {
-            ProgressView()
-          }
-          .onTapGesture {
-            downloadAttachment = nil
-          }
-      }
-    }
+      .frame(minWidth: clampInitialSize ? widget.width : widget.minWidth,
+             idealWidth: widget.width,
+             maxWidth: clampInitialSize ? widget.width : widget.maxWidth,
+             minHeight: clampInitialSize ? widget.height : widget.minHeight,
+             idealHeight: widget.height,
+             maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
+      .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
+      .persistentSystemOverlays(showHandle && !wasBackgrounded && !flipped ? .automatic : .hidden)
     
+      .onAppear(){
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+          clampInitialSize = false
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            withAnimation(.easeInOut(duration: 1.0)) {
+              loadedWindow = true;
+              
+            }
+          }
+        }
+
+      }
+      .onDisappear {
+        print("❌ Closing Widget \(widget.name)")
+      }
+      .onChange(of: scenePhase) {
+        if (scenePhase == .active) {
+          if (wasBackgrounded) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+              dismiss()
+            }
+            openWindow(id:"main")
+          }
+        }
+        if (scenePhase == .background) {
+          print("💤 Backgrounding \(widget.name)")
+          wasBackgrounded = true
+        }
+        currentPhase = scenePhase
+      }
   }
   
   func scheduleHide() {

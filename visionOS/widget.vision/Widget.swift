@@ -2,25 +2,23 @@ import Foundation
 import SwiftUI
 import SwiftData
 
-
-
-@Model final class Widget: Transferable, ObservableObject {
+@Model final class Widget: Transferable, ObservableObject, Hashable {
   
+  // MARK: Core Properties
   var id: UUID
   var name: String = ""
   var title: String?
   var type: String?
   var image: String?
+  var icon: String?
   var location: String?
-  var originalLocation: String?
+  var lastOpened: Date?
+  var favorite: Bool = false
   
+  // MARK: Window Properties
   var style: String = "glass"
-  var backHex: String?
-  var foreHex: String?
-  var tintHex: String?
-  var fontName: String?
-  var fontWeight: String?
-
+  var radius: CGFloat = 30
+  
   var width: CGFloat = 360
   var height: CGFloat = 360
   var minWidth: CGFloat = 320
@@ -28,64 +26,56 @@ import SwiftData
   var maxWidth: CGFloat = CGFloat.infinity
   var maxHeight: CGFloat = CGFloat.infinity
   
-  var radius: CGFloat = 30
-
-  var zoom: CGFloat = 1.0
-  var viewport: String?
-  var userAgent: String = "mobile"
-  
   var surroundingsEffect: String? // dark
   var resizeability: String? // nil [freeform], uniform, none, (fitwidth)
   
-  var lastOpened: Date?
-  var options: String = ""
-  var icon: String?
-  
-  // Overrides
-  @Attribute(originalName: "clearClasses")
+  // MARK: Theme Properties
+  var backHex: String?
+  var foreHex: String?
+  var tintHex: String?
+  var fontName: String?
+  var fontWeight: String?
+
+  // MARK: Web Properties
+  var zoom: CGFloat = 1.0
+  var viewport: String?
+  var userAgent: String = "mobile"
+
+  // MARK: Web Overrides
   var clearSelectors: String?
-  @Attribute(originalName: "removeClasses")
   var removeSelectors: String?
   var injectCSS: String?
   var injectJS: String?
   
-  var favorite: Bool = false
+  // MARK: Transient Properties
+  @Transient var originalLocation: String?
+  @Transient var isLoading: Bool = false
   
-  @Transient
-  var isLoading: Bool = false
-
+  // MARK: Model Functions
+  @MainActor
   func save() {
-    modelContext?.insert(self)
-    try? modelContext?.save()
+    do {
+      try modelContext!.save()
+    } catch {
+      print("Could not save ModelContainer: \(error)")
+    }
   }
   
+  @MainActor
   func delete() {
     modelContext?.delete(self)
     try? modelContext?.save()
   }
 
-
-  func sizeFor(dimensions: String) -> CGSize {
-    let dims = dimensions.split(separator: "x")
-    var size = CGSize()
-    if let width = dims.first.map(String.init), let widthDouble = Double(width) {
-      size.width = CGFloat(widthDouble)
-    }
-    if let height = dims.last.map(String.init), let heightDouble = Double(height) {
-      size.height = CGFloat(heightDouble)
-    }
-    return size;
-  }
-  
   static var transferRepresentation: some TransferRepresentation {
     ProxyRepresentation(exporting: \.safeShareURL)
   }
   
-  // MARK: Init
   
+  
+  // MARK: init()
   convenience init(url: URL, name: String? = nil) {
-    
-    print("🌐 Opening URL: \(url.absoluteString)")
+    print("🌐 Creating from URL: \(url.absoluteString)")
     var location = url.absoluteString
     var parameters: String?
     if let regex = try? Regex(#"(?:\?)format=widget\&(.*)"#) {
@@ -98,6 +88,7 @@ import SwiftData
     if let decodedLocation = location.removingPercentEncoding {
       location = decodedLocation
     }
+    
     location = location
       .replacingOccurrences(of: "widget-http", with: "http")
       .replacingOccurrences(of: "widget://", with: "https://")
@@ -105,25 +96,21 @@ import SwiftData
       .replacingOccurrences(of: "https://www.widget.vision/http", with: "http")
       .replacingOccurrences(of: "https://widget.vision/", with: "https://")
   
-    self.init( name: name ??
-               url.host() ?? url.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "_", with: " ") ??
-               "Untitled",
+    self.init( name: name ?? url.host() ??
+               url.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "_", with: " "),
                location: location,
                options:parameters)
+    
     if (url.pathExtension == "usdz") {
       type = "usdz"
     }
   }
   
-  init(id: UUID = UUID(), name: String, image:String? = nil, location: String, style: String = "glass", width: CGFloat? = nil, height: CGFloat? = nil, zoom: CGFloat? = nil, options: String? = nil) {
+  init(id: UUID = UUID(), name: String, location: String, options: String? = nil) {
     self.id = id
     self.name = name
-    if let image = image { self.image = image }
     self.location = location
     self.originalLocation = location
-    self.style = style
-    if let width = width {self.width = width }
-    if let height = height {self.height = height }
     
     if let options = options {
       options.split(separator: "&").forEach({ param in
@@ -182,12 +169,20 @@ import SwiftData
         }
       })
     }
-    if let zoom = zoom { self.zoom = zoom }
   }
   
+  func thumbnailChanged() {
+    objectWillChange.send()
+  }
+  
+  static var preview: Widget {
+    Widget(name: "Test",
+           location: "https://example.com",
+           options: "bg=0000&fg=ffff&tg=8aff&sz=360x360&zoom=1.0&icon=graduationcap")
+  }
 }
 
-// MARK: Transient Props
+// MARK: Transient Properties
 
 extension Widget {
   @Transient
@@ -218,22 +213,28 @@ extension Widget {
   
   @Transient
   var hostName: String? {
-    URLComponents(string: location!)?.host
+    if let loc = location {
+      return URLComponents(string: loc)?.host
+    }
+    return nil;
   }
   
   @Transient
   var modelID: Data {
-    let mid = try! JSONEncoder().encode(persistentModelID);
-    return  mid;
+    do {
+      let mid = try JSONEncoder().encode(persistentModelID);
+      return mid;
+    } catch {
+      fatalError("ID Encoding Error \(error) ")
+    }
   }
   
   @Transient
   var showGlassBackground: Bool {
     return style.caseInsensitiveCompare("transparent") != .orderedSame
   }
-  func thumbnailChanged() {
-    objectWillChange.send()
-  }
+  
+  // MARK: Thumbnails
   
   @Transient
   var thumbnailUIImage: UIImage? {
@@ -267,6 +268,7 @@ extension Widget {
     return ("\(width)x\(height)")
   }
   
+  // MARK: Share URL
   @Transient
   var safeShareURL:URL {
     return shareURL ?? URL(string:"about:blank")!
@@ -274,7 +276,6 @@ extension Widget {
   
   @Transient
   var shareURL: URL? {
-    
     var items: [URLQueryItem] = []
     if (!self.showGlassBackground) {
       items.append(URLQueryItem(name: "style", value: "transparent")) }
@@ -288,7 +289,6 @@ extension Widget {
       items.append(URLQueryItem(name: "tint", value: tintHex)) }
     if zoom != 1.0 {
       items.append(URLQueryItem(name: "zoom", value: String(describing:zoom))) }
-    
     if radius != 30 {
       items.append(URLQueryItem(name: "radius", value: String(describing:radius))) }
     if let value = viewport {
@@ -327,9 +327,6 @@ extension Widget {
     return "Widget \(id) - \(location ?? "")"
   }
   
-  static var preview: Widget {
-    Widget(name: "Test", location: "https://example.com", style: "glass", options: "bg=0000&fg=ffff&tg=8aff&sz=360x360&zoom=1.0&icon=graduationcap")
-  }
   @Transient
   var userAgentString: String {
     if (userAgent == "desktop") {
@@ -339,21 +336,11 @@ extension Widget {
     } else {
       return userAgent;
     }
-    
   }
-  
 }
 
-private extension Color {
-  static var random: Color {
-    var generator: RandomNumberGenerator = SystemRandomNumberGenerator()
-    return random(using: &generator)
-  }
-  
-  static func random(using generator: inout RandomNumberGenerator) -> Color {
-    let red = Double.random(in: 0..<1, using: &generator)
-    let green = Double.random(in: 0..<1, using: &generator)
-    let blue = Double.random(in: 0..<1, using: &generator)
-    return Color(red: red, green: green, blue: blue)
-  }
+extension Widget: Equatable {
+    static func == (lhs: Widget, rhs: Widget) -> Bool {
+        return lhs.shareURL == rhs.shareURL
+    }
 }

@@ -182,6 +182,7 @@ struct WidgetSettingsView: View {
               .buttonStyle(.borderless)
             }
             
+            // MARK: Colors
             HStack(spacing:spacing - 16) {
               Label("Colors", systemImage: "ellipsis").labelStyle(.titleOnly)
                 .frame(maxWidth: labelWidth, alignment:.leading)
@@ -216,11 +217,8 @@ struct WidgetSettingsView: View {
               }.frame(maxWidth:.infinity)
             }
             
-            
-            
-            
-            
-          } footer: {
+          
+          } footer: { // MARK: Footer
             if (!showAllOptions) {
               HStack() {
                 Spacer()
@@ -238,9 +236,8 @@ struct WidgetSettingsView: View {
             }
           }.listRowBackground(Color.clear)
           
+          // MARK: Advanced Options
           if (showAllOptions) {
-            
-            
             Section(header: Text("CSS Tweaks")){
               HStack(alignment: .top, spacing:spacing) {
                 Label("Clear", systemImage: "link")
@@ -327,17 +324,9 @@ struct WidgetSettingsView: View {
           }
         }
         .frame(maxWidth: 640, maxHeight: .infinity, alignment: .center)
+        
+        // MARK: Toolbar
         .toolbar {
-          
-          //          ToolbarItem(placement: .secondaryAction) {
-          //            TextField(widget.title ?? "", text: $widget.name)
-          //              .autocapitalization(.none)
-          //              .disableAutocorrection(true)
-          //              .keyboardType(.URL)
-          //              .padding(8)
-          //
-          //
-          //          }
           
           ToolbarItemGroup(placement:.navigation) {
             
@@ -365,7 +354,10 @@ struct WidgetSettingsView: View {
             .buttonStyle(.borderless)
           }
           ToolbarItemGroup(placement: .primaryAction) {
-            Button { self.callback() } label: {
+            Button { 
+              DispatchQueue.main.async { widget.save() }
+              self.callback()
+            } label: {
               Label("Done", systemImage: "chevron.left")
             }
             .labelStyle(.titleOnly)

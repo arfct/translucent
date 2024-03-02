@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
-
+import RealityKit
+import OSLog
 
 struct Activity {
   static let openWidget = "vision.widget.open"
@@ -8,37 +9,15 @@ struct Activity {
   static let openPreview = "vision.widget.preview"
 }
 
-
-struct WidgetPickerDropDelegate: DropDelegate {
-  var picker: WidgetPickerView?
-  
-  
-  func dropEntered(info: DropInfo) {
-    print("ENTER")
-    picker?.isDragDestination = true
-  }
-  func dropExited(info: DropInfo) {
-    print("EXIT")
-    picker?.isDragDestination = false
-  }
-  func validateDrop(info: DropInfo) -> Bool {
-    return true;
-  }
-  func performDrop(info: DropInfo) -> Bool {
-    return true
-  }
-}
-
-
 struct WidgetPickerView: View {
   @Environment(\.modelContext) private var modelContext
+  @Environment(\.scenePhase) private var scenePhase
   
-  @Query(sort: [SortDescriptor(\Widget.favorite, order: .reverse), SortDescriptor(\Widget.lastOpened, order: .reverse)])
-  
+  @Query(sort: [SortDescriptor(\Widget.favorite, order: .reverse),
+                SortDescriptor(\Widget.lastOpened, order: .reverse)])
   var widgets: [Widget]
   
   @State private var showAddWidget = false
-  @State private var selection: Widget?
   @State private var path: [Widget] = []
   @State private var hue: CGFloat = 0.6
   @State private var draggedWidget: Widget?
@@ -51,10 +30,9 @@ struct WidgetPickerView: View {
   var app: WidgetApp?
   
   
-  let columns =
-  [
-    GridItem(.adaptive(minimum: 160, maximum: 160), spacing:24, alignment: .center)
-  ]
+  let columns = [GridItem(.adaptive(minimum: 160, maximum: 160),
+                          spacing:24,
+                          alignment: .center)]
   
   let colors = [
     Color.withHex("E03A3E"),
@@ -96,9 +74,7 @@ struct WidgetPickerView: View {
       value = innerFrame.midY
     }
     
-    let fraction = max(0, min(1, (value - start) / (end - start)))
-    
-    return fraction;
+    return max(0, min(1, (value - start) / (end - start)));
   }
   
   func proximity(of innerView: GeometryProxy, to outerView: GeometryProxy, distance: CGFloat = 20.0, at edge: CGRectEdge = .maxYEdge) -> CGFloat{
@@ -128,13 +104,13 @@ struct WidgetPickerView: View {
       value = innerFrame.minY
     }
     
-    let fraction = max(0, min(1, (value - start) / (end - start)))
-    return fraction;
+    return max(0, min(1, (value - start) / (end - start)))
   }
   
   
-  let widgetSize: CGSize = CGSize(width: 160, height: 120)
+  let iconSize: CGSize = CGSize(width: 160, height: 120)
   
+  // MARK: body
   var body: some View {
     VStack {
       Image("widget.vision")
@@ -148,7 +124,8 @@ struct WidgetPickerView: View {
         .padding(.horizontal, 20)
         .padding(.bottom, 20)
         .frame(width: 400)
-      
+        .opacity(isVisible ? 1.0 : 0.0)
+        .offset(z: isVisible ? 0 : 200)
       GeometryReader { scrollView in
         ScrollView() {
           
@@ -156,76 +133,95 @@ struct WidgetPickerView: View {
           LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
             ForEach((0...max(8, widgets.count - 1)), id: \.self) { index in
               GeometryReader { widgetView in
-                let xoffset = position(of:widgetView, to:scrollView, distance:widgetSize.width, at: .maxXEdge)
-                //                  let yoffset = position(of:widgetView, to:scrollView, distance:widgetSize.width, at: .maxYEdge)
+                let xoffset = position(of:widgetView, to:scrollView, distance:iconSize.width, at: .maxXEdge)
+                //                  let yoffset = position(of:widgetView, to:scrollView, distance:iconSize.width, at: .maxYEdge)
                 let anchor = UnitPoint3D(x: xoffset > 0.5 ? 0 : 1,
                                          y: xoffset > 0.5 ? 0 : 1,
                                          z: 0)
-                let minProx = proximity(of:widgetView, to:scrollView, distance:widgetSize.width, at: .minYEdge)
-                let maxProx = proximity(of:widgetView, to:scrollView, distance:widgetSize.width, at: .maxYEdge)
+                let minProx = proximity(of:widgetView, to:scrollView, distance:iconSize.width, at: .minYEdge)
+                let maxProx = proximity(of:widgetView, to:scrollView, distance:iconSize.width, at: .maxYEdge)
                 let combinedProx = minProx * maxProx
                 
                 ZStack {
+                  // MARK: Placeholders
+                  
                   if index >= widgets.count {
                     VStack {
                       RoundedRectangle(cornerRadius: 30)
                         .fill(Color(hue: fmod(hue + 0.1 * Double(index), 1.0), saturation: 0.5, brightness: 1.0).opacity(0.2))
                         .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
-                        .frame(width:widgetSize.width, height:widgetSize.height)
+                        .frame(width:iconSize.width, height:iconSize.height)
                         .padding(.bottom, 50)
                     }
                     
-                  } else {
+                  } else {   // MARK: USDZ
+                    
                     let widget = widgets[index]
                     
-                    WidgetPickerItem(widget: widget)
-                      .onDrag {
-                        draggedWidget = widget
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
-                          draggedWidget = nil
+                    if widget.type == "usdz",
+                       let loc = widget.location,
+                       let url = URL(string:loc) {
+                      ZStack() {
+                        Model3D(url: url) { model in
+                          model
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(maxDepth:iconSize.height)
+                            .frame(maxWidth:iconSize.width, maxHeight: iconSize.height)
+                            .padding(10)
+                        } placeholder: {
+                          ProgressView()
                         }
-                        let modelID = widget.modelID
-                        let userActivity = NSUserActivity(activityType: Activity.openWidget)
-                        userActivity.targetContentIdentifier = Activity.openWidget
-                        try? userActivity.setTypedPayload(["modelId": modelID])
-                        let itemProvider = NSItemProvider(object: "" as NSString)
-                        itemProvider.registerObject(userActivity, visibility: .all)
-                        return itemProvider
-                      } preview: {
-                        WidgetPickerItem(widget: widget, asDrag:true)
                       }
-                    
+                      .frame(maxWidth:iconSize.width, maxHeight:iconSize.height)
+                    } else {   // MARK: Widget
+                      
+                      WidgetPickerItem(widget: widget)
+                        .onDrag {
+                          draggedWidget = widget
+                          DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
+                            draggedWidget = nil
+                          }
+                          let modelID = widget.modelID
+                          let userActivity = NSUserActivity(activityType: Activity.openWidget)
+                          userActivity.targetContentIdentifier = Activity.openWidget
+                          try? userActivity.setTypedPayload(["modelId": modelID])
+                          let itemProvider = NSItemProvider(object: "" as NSString)
+                          itemProvider.registerObject(userActivity, visibility: .all)
+                          return itemProvider
+                        } preview: {
+                          WidgetPickerItem(widget: widget, asDrag:true)
+                        }
+                    }
                   }
+                  
                 }
-                // Style
-
                 .scaleEffect(minProx * 0.8 + 0.2, anchor:.bottom)
                 .scaleEffect(maxProx * 0.8 + 0.2, anchor:.top)
                 .offset(z:combinedProx * 20 + abs(xoffset - 0.5) * 8)
                 .blur(radius: (1 - combinedProx) * 10)
                 .opacity(combinedProx * (isVisible ? 1.0 : 0.0))
-                .offset(z: isVisible ? 0 : 400)
+                .offset(z: isVisible ? 0 : 200)
                 .rotation3DEffect(.degrees(-30.0 * (xoffset - 0.5)), axis: (x: 0, y: 1, z: 0), anchor:anchor)
                 .rotation3DEffect(.degrees(20.0 * (1.0 - minProx)), axis: (x: 1, y: 0, z: 0), anchor:.trailing)
                 .rotation3DEffect(.degrees(-20.0 * (1.0 - maxProx)), axis: (x: 1, y: 0, z: 0), anchor:.leading)
                 .transition(.move(edge: .trailing))
-
+                
               } // GeometryReader
-              .frame(width:widgetSize.width, height:widgetSize.width)
+              .frame(width:iconSize.width, height:iconSize.width)
             } // ForEach
             
-          } // LazyVGrid
+          } // MARK: /grid modifiers
           .frame(minHeight: scrollView.size.height, alignment:.top)
           .padding(.top, 20)
           .padding(.bottom, 100)
-          
-          
-        }
-        
+        }   // MARK: /scroll modifiers
         .padding(.top, -20)
         .padding(.horizontal, 16)
         .frame(maxHeight:.infinity, alignment:.top)
         .padding(.bottom, 40)
+        
+        // MARK: Empty Placeholder
         .overlay(alignment: .bottom) {
           if widgets.isEmpty {
             ContentUnavailableView {
@@ -244,11 +240,13 @@ struct WidgetPickerView: View {
             .glassBackgroundEffect()
             .padding(.bottom, 40)
             .offset(z: 50)
+            .offset(z: isVisible ? 0 : 200)
           }
           
         } // overlay
         
         // ScrollView
+        // MARK: /ScrollView
         
       } // ScrollView GeometryReader
       .offset(z: -40)
@@ -267,12 +265,14 @@ struct WidgetPickerView: View {
           endRadius: 560.0 / 2
         ).offset(z: -100)
       )
+      // MARK: Bottom Button
+      
       .ornament(attachmentAnchor: .scene(.bottom), contentAlignment:.bottom) {
         if (!widgets.isEmpty) {
           ZStack {
             Button(role: draggedWidget == nil ? .cancel : .destructive) {
               if let draggedWidget = draggedWidget {
-                deleteWidget(draggedWidget)
+                draggedWidget.delete()
               } else {
                 getMoreWidgets()
               }
@@ -287,51 +287,49 @@ struct WidgetPickerView: View {
               .buttonBorderShape(.roundedRectangle(radius: 30))
               .buttonStyle(.borderless)
             
-          }
-          .dropDestination(for: String.self) { items, location in
-            draggedWidget?.delete()
-            draggedWidget = nil
-            return true
-          }
-          .padding(10)
-          .background(draggedWidget != nil ? .white.opacity(0.5) : .black.opacity(0.0))
-          .glassBackgroundEffect()
-          .padding(.bottom, 8)
-          .animation(.spring(), value: draggedWidget)
-          .animation(.spring(), value: isDragDestination)
-          .animation(.spring(), value: widgets)
+          }.offset(z: isVisible ? 0 : 200)
+            .dropDestination(for: String.self) { items, location in
+              draggedWidget?.delete()
+              draggedWidget = nil
+              return true
+            }
+            .padding(10)
+            .background(draggedWidget != nil ? .white.opacity(0.5) : .black.opacity(0.0))
+            .glassBackgroundEffect()
+            .padding(.bottom, 8)
+            .animation(.spring(), value: draggedWidget)
+            .animation(.spring(), value: isDragDestination)
+            .animation(.spring(), value: widgets)
         }
       }
       
+    } // MARK: /Main View modifiers
+    .onChange(of: scenePhase) {
+      Logger.viewCycle.log("MainWindow \(String(describing:scenePhase))")
+      if (scenePhase == .background) { isVisible = false }
+      
+      if (scenePhase == .active) {
+        withAnimation(.easeOut) {
+          isVisible = true
+        }
+      }
     }
-//    .task {
-//      print("Task")
-//    }
+    .windowGeometryPreferences(resizingRestrictions: .none)
     .onAppear() {
-//      print("Appear")
       updateHue()
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-        withAnimation(.spring) {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        withAnimation(.easeOut) {
           isVisible = true
         }
       }
       
-    
       Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
         updateHue()
       }
     }
-    .windowGeometryPreferences(resizingRestrictions: .none)
-    .defaultHoverEffect(.lift)
+    
   }
   
-  
-  private func deleteWidget(_ widget: Widget) {
-    if widget.persistentModelID == selection?.persistentModelID {
-      selection = nil
-    }
-    modelContext.delete(widget)
-  }
 }
 
 #Preview {
