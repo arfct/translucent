@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import SwiftData
 
-@Model final class Widget: Transferable, ObservableObject, Hashable {
+@Model final class Widget: Transferable, ObservableObject {
   
   // MARK: Core Properties
   var id: UUID
@@ -337,10 +337,4 @@ extension Widget {
       return userAgent;
     }
   }
-}
-
-extension Widget: Equatable {
-    static func == (lhs: Widget, rhs: Widget) -> Bool {
-        return lhs.shareURL == rhs.shareURL
-    }
 }

@@ -23,7 +23,6 @@
 		2C8E78982B769C9F004DA40B /* Widget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E78972B769C9F004DA40B /* Widget.swift */; };
 		2C8E789A2B769F94004DA40B /* WidgetPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E78992B769F94004DA40B /* WidgetPickerView.swift */; };
 		2C8E789E2B76A0B2004DA40B /* WidgetPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E789D2B76A0B2004DA40B /* WidgetPickerItem.swift */; };
-		2C9EE6A52B66844500D36BA6 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 2C9EE6A42B66844500D36BA6 /* RealityKitContent */; };
 		2C9EE6A72B66844500D36BA6 /* WidgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9EE6A62B66844500D36BA6 /* WidgetApp.swift */; };
 		2C9EE6A92B66844500D36BA6 /* WidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9EE6A82B66844500D36BA6 /* WidgetView.swift */; };
 		2C9EE6AB2B66844600D36BA6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C9EE6AA2B66844600D36BA6 /* Assets.xcassets */; };
@@ -99,7 +98,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2C9EE6A52B66844500D36BA6 /* RealityKitContent in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,7 +214,6 @@
 			);
 			name = widget.vision;
 			packageProductDependencies = (
-				2C9EE6A42B66844500D36BA6 /* RealityKitContent */,
 			);
 			productName = ittybittywidgets;
 			productReference = 2C9EE69F2B66844500D36BA6 /* widget.vision.app */;
@@ -585,13 +582,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		2C9EE6A42B66844500D36BA6 /* RealityKitContent */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RealityKitContent;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2C9EE6972B66844500D36BA6 /* Project object */;
 }

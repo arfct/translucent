@@ -14,6 +14,7 @@ struct WidgetApp: App {
   //  private var container: ModelContainer
 
   var container: ModelContainer = {
+    console.log("Loading ModelContainer")
     let path  = FileManager.default.urls(for: .applicationSupportDirectory,
                                          in: .userDomainMask).first!
     
@@ -21,10 +22,11 @@ struct WidgetApp: App {
     let modelConfiguration = ModelConfiguration(url: storePath)
     
     do {
+      console.log("Loading ModelContainer from \(storePath)")
       return try ModelContainer(for: Widget.self, configurations: modelConfiguration)
     } catch {
       if SwiftDataError.loadIssueModelContainer == error as? SwiftDataError {
-        print("Deleting old modelContainer")
+        console.error("Deleting old modelContainer due to \(error)")
         try? FileManager.default.removeItem(at: storePath)
       }
       fatalError("Could not create ModelContainer: \(error)")
