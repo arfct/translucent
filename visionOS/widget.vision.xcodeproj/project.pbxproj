@@ -76,7 +76,6 @@
 		2C8E789D2B76A0B2004DA40B /* WidgetPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPickerItem.swift; sourceTree = "<group>"; };
 		2C8E789F2B76C377004DA40B /* widget.vision.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = widget.vision.entitlements; sourceTree = "<group>"; };
 		2C9EE69F2B66844500D36BA6 /* widget.vision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = widget.vision.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		2C9EE6A32B66844500D36BA6 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		2C9EE6A62B66844500D36BA6 /* WidgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetApp.swift; sourceTree = "<group>"; };
 		2C9EE6A82B66844500D36BA6 /* WidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetView.swift; sourceTree = "<group>"; };
 		2C9EE6AA2B66844600D36BA6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -173,7 +172,6 @@
 		2C9EE6A22B66844500D36BA6 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				2C9EE6A32B66844500D36BA6 /* RealityKitContent */,
 			);
 			path = Packages;
 			sourceTree = "<group>";
