@@ -25,10 +25,10 @@ struct WidgetApp: App {
       console.log("Loading ModelContainer from \(storePath)")
       return try ModelContainer(for: Widget.self, configurations: modelConfiguration)
     } catch {
-      if SwiftDataError.loadIssueModelContainer == error as? SwiftDataError {
-        console.error("Deleting old modelContainer due to \(error)")
-        try? FileManager.default.removeItem(at: storePath)
-      }
+//      if SwiftDataError.loadIssueModelContainer == error as? SwiftDataError {
+      console.error("Deleting old modelContainer due to \(error)")
+      try? FileManager.default.removeItem(at: storePath)
+    
       fatalError("Could not create ModelContainer: \(error)")
     }
   }()
