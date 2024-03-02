@@ -1,16 +1,10 @@
-//
-//  WebWidgetsApp.swift
-//  ittybittywidgets
-//
-//  Created by Nicholas Jitkoff on 1/28/24.
-//
-
 import SwiftUI
 import SwiftData
 import Darwin
 import UniformTypeIdentifiers
 import AVFAudio
 import OSLog
+
 @main
 struct WidgetApp: App {
   @Environment(\.openWindow) var openWindow
@@ -18,7 +12,7 @@ struct WidgetApp: App {
   
   // MARK: - ModelContainer
   //  private var container: ModelContainer
-  
+
   var container: ModelContainer = {
     let path  = FileManager.default.urls(for: .applicationSupportDirectory,
                                          in: .userDomainMask).first!
@@ -37,7 +31,7 @@ struct WidgetApp: App {
     }
   }()
   
-  init() {
+   init() {
     do {
       let path = URL.applicationSupportDirectory
       
@@ -55,7 +49,9 @@ struct WidgetApp: App {
     } catch {
       fatalError("Could not create directories: \(error)")
     }
-    
+     
+     
+     
   }
   
   @MainActor func showWindowForURL(_ url: URL?) {
@@ -91,6 +87,7 @@ struct WidgetApp: App {
             }
             return true
           }
+      
       }
       
       .frame(idealWidth: 560, idealHeight: 680,
@@ -128,6 +125,7 @@ struct WidgetApp: App {
     .windowStyle(.plain)
     .windowResizability(.contentSize)
     .defaultSize(width: 320, height: 320)
+    
     
     
     // MARK: - Settings Window

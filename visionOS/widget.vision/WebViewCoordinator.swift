@@ -1,11 +1,13 @@
 import SwiftUI
 import WebKit
 import QuickLook
+import OSLog
 
 // MARK: Coordinator
 class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler, WKScriptMessageHandlerWithReply, WKDownloadDelegate, QLPreviewControllerDataSource {
   
   @Environment(\.openWindow) var openWindow
+  
   
   let webView: WKWebView = WKWebView()
   let parent: WebView
@@ -42,14 +44,14 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     
     if let body = message.body as? NSDictionary {
       let action = body.value(forKey: "action") as? String
-//        let args = body.value(forKey: "args") as? NSDictionary
+      //        let args = body.value(forKey: "args") as? NSDictionary
       
       if (action == "battery") {
         print("battery level: \(UIDevice.current.batteryLevel)")
         return (["level": String(UIDevice.current.batteryLevel),
                  "state": String(UIDevice.current.batteryState.rawValue)] as? NSDictionary, nil)
       } else if (action == "resize") {
-      // https://developer.apple.com/documentation/uikit/uiwindowscene/geometrypreferences/vision?changes=latest_minor
+        // https://developer.apple.com/documentation/uikit/uiwindowscene/geometrypreferences/vision?changes=latest_minor
         
       }
     }
@@ -69,12 +71,26 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   
   
   func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
-
-    if navigationAction.request.url?.pathExtension == "usdz" {
-      //        openWindow(id: "preview", value: navigationAction.request.url!);
+    
+    Logger.lifecycle.info("Navigating to \(navigationAction)")
+    
+    let url = navigationAction.request.url
+    if url?.host() == "widget.vision" {
+      if let url = url, let context = parent.widget.modelContext {
+        do {
+          let widget = Widget(url:url)
+          context.insert(widget)
+          try context.save()
+          openWindow(id: "widget", value: widget.persistentModelID)
+        } catch {
+          print("Error opening url \(error)")
+        }
+      }
+      return decisionHandler(.cancel, preferences)
+    } else if navigationAction.request.url?.pathExtension == "usdz" {
+      // openWindow(id: "preview", value: navigationAction.request.url!);
       return decisionHandler(.download, preferences)
-    }
-    if navigationAction.shouldPerformDownload {
+    } else if navigationAction.shouldPerformDownload {
       decisionHandler(.download, preferences)
     } else {
       decisionHandler(.allow, preferences)
@@ -83,12 +99,12 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   
   func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
     if navigationResponse.canShowMIMEType {
-//        if let mime = navigationResponse.response.mimeType , mime.starts(with: "application/") {
-//          print("Mime \(mime )")
-//          decisionHandler(.download)
-//        } else {
-        decisionHandler(.allow)
-//        }
+      //        if let mime = navigationResponse.response.mimeType , mime.starts(with: "application/") {
+      //          print("Mime \(mime )")
+      //          decisionHandler(.download)
+      //        } else {
+      decisionHandler(.allow)
+      //        }
     } else {
       decisionHandler(.download)
     }

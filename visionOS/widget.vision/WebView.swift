@@ -10,6 +10,7 @@ import WebKit
 
 struct WebView: UIViewRepresentable {
   @Environment(\.openWindow) var openWindow
+  
   @Binding var title: String?
   @Binding var location: String?
   @Binding var widget: Widget

@@ -279,6 +279,7 @@ struct WidgetPickerView: View {
             Button(role: draggedWidget == nil ? .cancel : .destructive) {
               if let draggedWidget = draggedWidget {
                 draggedWidget.delete()
+                self.draggedWidget = nil
               } else {
                 getMoreWidgets()
               }
@@ -301,22 +302,23 @@ struct WidgetPickerView: View {
             return true
           }
           .padding(10)
-          .background(draggedWidget != nil ? .white.opacity(0.5) : .black.opacity(0.0))
+          .background(draggedWidget != nil ? .black.opacity(0.5) : .black.opacity(0.0))
           .glassBackgroundEffect()
           .padding(.bottom, 8)
           .animation(.spring(), value: draggedWidget)
           .animation(.spring(), value: isDragDestination)
           .animation(.spring(), value: widgets)
+          .animation(.easeOut(duration: 0.2).delay(0.03 * 10)) { content in
+            content
+              .offset(z: isVisible ? 0 : 200)
+              .opacity(isVisible ? 1.0 : 0.0)
+          }
         }
       }
-      .animation(.easeOut(duration: 0.2).delay(0.03 * 10)) { content in
-        content
-          .offset(z: isVisible ? 0 : 200)
-          .opacity(isVisible ? 1.0 : 0.0)
-      }
+
     } // MARK: /Main View modifiers
     .onChange(of: scenePhase) {
-      Logger.viewCycle.log("MainWindow \(String(describing:scenePhase))")
+      Logger.lifecycle.log("MainWindow \(String(describing:scenePhase))")
       if (scenePhase == .background) { isVisible = false }
       
       if (scenePhase == .active) {
