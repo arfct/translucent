@@ -34,9 +34,11 @@ struct WidgetApp: App {
   }()
   
    init() {
+     
+       
     do {
       let path = URL.applicationSupportDirectory
-      
+      console.log("Creating directories in \(path)")
       // Create thumbnails directory
       try FileManager.default.createDirectory(at: path
         .appendingPathComponent("thumbnails", isDirectory: true), withIntermediateDirectories: true)
