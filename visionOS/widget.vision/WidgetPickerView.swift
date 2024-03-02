@@ -201,12 +201,18 @@ struct WidgetPickerView: View {
                 .offset(z:combinedProx * 20 + abs(xoffset - 0.5) * 8)
                 .blur(radius: (1 - combinedProx) * 10)
                 .opacity(combinedProx * (isVisible ? 1.0 : 0.0))
-                .offset(z: isVisible ? 0 : 200)
+                
                 .rotation3DEffect(.degrees(-30.0 * (xoffset - 0.5)), axis: (x: 0, y: 1, z: 0), anchor:anchor)
                 .rotation3DEffect(.degrees(20.0 * (1.0 - minProx)), axis: (x: 1, y: 0, z: 0), anchor:.trailing)
                 .rotation3DEffect(.degrees(-20.0 * (1.0 - maxProx)), axis: (x: 1, y: 0, z: 0), anchor:.leading)
                 .transition(.move(edge: .trailing))
                 
+                .animation(.easeOut(duration: 0.2).delay(0.03 * Double(index))) { content in
+                  content
+                    .offset(z: isVisible ? 0 : 200)
+                    .opacity(isVisible ? 1.0 : 0.0)
+                    .brightness(isVisible ? 0.0 : 1.0)
+                }
               } // GeometryReader
               .frame(width:iconSize.width, height:iconSize.width)
             } // ForEach
@@ -287,22 +293,27 @@ struct WidgetPickerView: View {
               .buttonBorderShape(.roundedRectangle(radius: 30))
               .buttonStyle(.borderless)
             
-          }.offset(z: isVisible ? 0 : 200)
-            .dropDestination(for: String.self) { items, location in
-              draggedWidget?.delete()
-              draggedWidget = nil
-              return true
-            }
-            .padding(10)
-            .background(draggedWidget != nil ? .white.opacity(0.5) : .black.opacity(0.0))
-            .glassBackgroundEffect()
-            .padding(.bottom, 8)
-            .animation(.spring(), value: draggedWidget)
-            .animation(.spring(), value: isDragDestination)
-            .animation(.spring(), value: widgets)
+          }
+
+          .dropDestination(for: String.self) { items, location in
+            draggedWidget?.delete()
+            draggedWidget = nil
+            return true
+          }
+          .padding(10)
+          .background(draggedWidget != nil ? .white.opacity(0.5) : .black.opacity(0.0))
+          .glassBackgroundEffect()
+          .padding(.bottom, 8)
+          .animation(.spring(), value: draggedWidget)
+          .animation(.spring(), value: isDragDestination)
+          .animation(.spring(), value: widgets)
         }
       }
-      
+      .animation(.easeOut(duration: 0.2).delay(0.03 * 10)) { content in
+        content
+          .offset(z: isVisible ? 0 : 200)
+          .opacity(isVisible ? 1.0 : 0.0)
+      }
     } // MARK: /Main View modifiers
     .onChange(of: scenePhase) {
       Logger.viewCycle.log("MainWindow \(String(describing:scenePhase))")
