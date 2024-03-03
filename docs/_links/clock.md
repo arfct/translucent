@@ -5,7 +5,7 @@ order: 6
 href: https://www.widget.vision/widgets/clock
 size: 320x198
 description: Simple, themable, digital clock
-style: transparent
+style: clear
 class: wide
 ---
 
