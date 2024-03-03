@@ -247,6 +247,7 @@ struct WidgetPickerView: View {
             .padding(.bottom, 40)
             .offset(z: 50)
             .offset(z: isVisible ? 0 : 200)
+            .opacity(isVisible ? 1.0 : 0.0)
           }
           
         } // overlay
