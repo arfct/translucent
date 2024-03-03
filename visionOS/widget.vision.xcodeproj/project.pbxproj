@@ -23,6 +23,8 @@
 		2C8E78982B769C9F004DA40B /* Widget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E78972B769C9F004DA40B /* Widget.swift */; };
 		2C8E789A2B769F94004DA40B /* WidgetPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E78992B769F94004DA40B /* WidgetPickerView.swift */; };
 		2C8E789E2B76A0B2004DA40B /* WidgetPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E789D2B76A0B2004DA40B /* WidgetPickerItem.swift */; };
+		2C94A6102B93BDD000324AA1 /* WidgetViewBrowserBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C94A60F2B93BDD000324AA1 /* WidgetViewBrowserBar.swift */; };
+		2C94A6122B93EFB400324AA1 /* Widget+WebOrnaments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C94A6112B93EFB400324AA1 /* Widget+WebOrnaments.swift */; };
 		2C9EE6A72B66844500D36BA6 /* WidgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9EE6A62B66844500D36BA6 /* WidgetApp.swift */; };
 		2C9EE6A92B66844500D36BA6 /* WidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9EE6A82B66844500D36BA6 /* WidgetView.swift */; };
 		2C9EE6AB2B66844600D36BA6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C9EE6AA2B66844600D36BA6 /* Assets.xcassets */; };
@@ -75,6 +77,8 @@
 		2C8E78992B769F94004DA40B /* WidgetPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPickerView.swift; sourceTree = "<group>"; };
 		2C8E789D2B76A0B2004DA40B /* WidgetPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPickerItem.swift; sourceTree = "<group>"; };
 		2C8E789F2B76C377004DA40B /* widget.vision.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = widget.vision.entitlements; sourceTree = "<group>"; };
+		2C94A60F2B93BDD000324AA1 /* WidgetViewBrowserBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetViewBrowserBar.swift; sourceTree = "<group>"; };
+		2C94A6112B93EFB400324AA1 /* Widget+WebOrnaments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Widget+WebOrnaments.swift"; sourceTree = "<group>"; };
 		2C9EE69F2B66844500D36BA6 /* widget.vision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = widget.vision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C9EE6A62B66844500D36BA6 /* WidgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetApp.swift; sourceTree = "<group>"; };
 		2C9EE6A82B66844500D36BA6 /* WidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetView.swift; sourceTree = "<group>"; };
@@ -154,11 +158,13 @@
 				2C8E78992B769F94004DA40B /* WidgetPickerView.swift */,
 				2C8E789D2B76A0B2004DA40B /* WidgetPickerItem.swift */,
 				2C9EE6A82B66844500D36BA6 /* WidgetView.swift */,
+				2C94A60F2B93BDD000324AA1 /* WidgetViewBrowserBar.swift */,
 				2C23F8482B6D5B8C0099BA6D /* WidgetSettingsView.swift */,
 				2C9EE6B52B6684C100D36BA6 /* WebView.swift */,
 				2C42D5592B92FABA007FCA7F /* WebViewCoordinator.swift */,
 				2C51DA272B8DD566008ACA1A /* PreviewView.swift */,
 				2C8E78972B769C9F004DA40B /* Widget.swift */,
+				2C94A6112B93EFB400324AA1 /* Widget+WebOrnaments.swift */,
 				2C42D5572B92F7FE007FCA7F /* Widget+WebContent.swift */,
 				2C42D5482B92EC3C007FCA7F /* Utils */,
 				2C9EE6AA2B66844600D36BA6 /* Assets.xcassets */,
@@ -286,9 +292,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C94A6102B93BDD000324AA1 /* WidgetViewBrowserBar.swift in Sources */,
 				2C8E789E2B76A0B2004DA40B /* WidgetPickerItem.swift in Sources */,
 				2C42D5502B92ED45007FCA7F /* RealityKitEntity+Enumerate.swift in Sources */,
 				2C42D5582B92F7FE007FCA7F /* Widget+WebContent.swift in Sources */,
+				2C94A6122B93EFB400324AA1 /* Widget+WebOrnaments.swift in Sources */,
 				2C9EE6B62B6684C100D36BA6 /* WebView.swift in Sources */,
 				2C8E78982B769C9F004DA40B /* Widget.swift in Sources */,
 				2C42D5542B92EDA5007FCA7F /* Binding+Utils.swift in Sources */,

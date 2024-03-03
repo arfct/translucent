@@ -13,22 +13,26 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   let parent: WebView
   var lastSize: CGSize = .zero
   var updateWorkItem: DispatchWorkItem?
-  var activeLocation: String?
+  var lastSetLocation: String?
   var currentDownload: URL?
   
   init(_ parent: WebView) {
     self.parent = parent
   }
   
-  func loadURL(string: String?) {
-    if let urlString = string,
-       var url = URL(string:urlString) {
+  func open(location: String?, saveValue: Bool = false) {
+    print("Opening \(location) \(lastSetLocation) \(saveValue)")
+    if let urlString = location,
+       var url = lastSetLocation == nil ? URL(string:urlString) : URL(string:urlString, relativeTo: URL(string: lastSetLocation ?? "")) {
+      print("Open \(url.absoluteString)")
       if url.scheme == "file", let widgets = Bundle.main.url(forResource: "widgets", withExtension:nil) {
         url = URL(filePath: String(url.path(percentEncoded: false).dropFirst()), relativeTo: widgets)
       }
-      activeLocation = urlString
+      if (saveValue) { lastSetLocation = urlString }
+      
       webView.load(URLRequest(url: url))
     }
+    
   }
   
   func loadURL(_ url: URL) {
@@ -43,16 +47,18 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) async -> (Any?, String?) {
     
     if let body = message.body as? NSDictionary {
-      let action = body.value(forKey: "action") as? String
-      //        let args = body.value(forKey: "args") as? NSDictionary
-      
-      if (action == "battery") {
-        print("battery level: \(UIDevice.current.batteryLevel)")
-        return (["level": String(UIDevice.current.batteryLevel),
-                 "state": String(UIDevice.current.batteryState.rawValue)] as? NSDictionary, nil)
-      } else if (action == "resize") {
-        // https://developer.apple.com/documentation/uikit/uiwindowscene/geometrypreferences/vision?changes=latest_minor
+      if let action = body.value(forKey: "action") as? String {
+        let args = body.value(forKey: "args") as? NSDictionary
         
+        print("Action \(action) \(String(describing:args))")
+        if (action == "battery") {
+          print("battery level: \(UIDevice.current.batteryLevel)")
+          return (["level": String(UIDevice.current.batteryLevel),
+                   "state": String(UIDevice.current.batteryState.rawValue)] as? NSDictionary, nil)
+        } else if (action == "resize") {
+          // https://developer.apple.com/documentation/uikit/uiwindowscene/geometrypreferences/vision?changes=latest_minor
+          
+        }
       }
     }
     return (nil, nil)
@@ -110,6 +116,9 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     }
   }
   
+  func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo) async {
+    console.log("Javascript Alert: \(message)")
+  }
   func download(_ download: WKDownload, decideDestinationUsing
                 response: URLResponse, suggestedFilename: String,
                 completionHandler: @escaping (URL?) -> Void) {
@@ -154,17 +163,30 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     updateWorkItem = DispatchWorkItem(block: callback)
   }
   
+  func updateState(webView: WKWebView, loading: Bool) {
+    if let url = webView.url  {
+      parent.browserState.isLoading = loading;
+      parent.browserState.canGoBack = webView.canGoBack
+      parent.browserState.canGoForward = webView.canGoForward
+      parent.browserState.location = url.absoluteString
+      parent.browserState.url = url;
+    }
+  }
+  
   func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+    updateState(webView: webView, loading: true)
     parent.loadStatusChanged?(parent, true, nil)
   }
   
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-    parent.title = webView.title ?? ""
+    updateState(webView: webView, loading: false)
     parent.loadStatusChanged?(parent, false, nil)
+
   }
   
   func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-    parent.loadStatusChanged?(parent, false, error)
+    updateState(webView: webView, loading: false)
+    parent.loadStatusChanged?(parent, false, nil)
   }
   
 }

@@ -26,16 +26,6 @@ struct WidgetSettingsView: View {
     return formatter
   }()
   
-  func clean(url: String) -> String? {
-    if (url.hasPrefix("http") || url.hasPrefix("file://")) {
-      return url
-    } else {
-      if (url.contains(".") && !url.contains(" ")) {
-        return "https://\(url)"
-      }
-    }
-    return nil
-  }
   func commitLocation() {
     if let url = clean(url:locationTempString) {
       widget.location = url
@@ -92,7 +82,6 @@ struct WidgetSettingsView: View {
               
                 .focused($isTextFieldFocused)
                 .onChange(of: isTextFieldFocused) {
-                  print("focus changed \(isTextFieldFocused)")
                   if isTextFieldFocused {
                     DispatchQueue.main.async {
                       UIApplication.shared.sendAction(#selector(UIResponder.selectAll(_:)), to: nil, from: nil, for: nil)
@@ -126,15 +115,14 @@ struct WidgetSettingsView: View {
               Picker("", selection: Binding<String>(
                 get: { self.widget.style.lowercased() },
                 set: { self.widget.style = $0 })) {
-                  Text("Frosted Glass").tag("glass")
                   Text("Transparent").tag("transparent")
+                  Text("Frosted Glass").tag("glass")
+//                  Text("Mini Browser").tag("browser")
                 }
                 .pickerStyle(.menu)
                 .buttonStyle(.borderless)
                 .frame(alignment: .leading)
                 .labelsHidden()
-              
-              
             }
             
             // MARK: Font
@@ -340,7 +328,7 @@ struct WidgetSettingsView: View {
             
           }
           
-          ToolbarItemGroup(placement: .primaryAction) {
+          ToolbarItemGroup(placement: .navigation) {
             ShareLink(
               item: widget,
               preview: SharePreview(
@@ -350,8 +338,7 @@ struct WidgetSettingsView: View {
               Image(systemName: "square.and.arrow.up")
             }
             .buttonBorderShape(.circle)
-            .background(.clear)
-            .buttonStyle(.borderless)
+            
           }
           ToolbarItemGroup(placement: .primaryAction) {
             Button { 

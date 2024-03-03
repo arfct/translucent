@@ -17,6 +17,7 @@ struct WebView: UIViewRepresentable {
   @Binding var widget: Widget
   @Binding var phase: ScenePhase
   @Binding var attachment: URL?
+  @Binding var browserState: BrowserState
   
   
   // MARK: Modifiers
@@ -34,12 +35,13 @@ struct WebView: UIViewRepresentable {
     return copy
   }
   
-  
+
   
   func makeCoordinator() -> WebViewCoordinator { WebViewCoordinator(self) }
  
   // MARK: makeUIView
   func makeUIView(context: Context) -> WKWebView {
+    
     let webView = context.coordinator.webView
     webView.navigationDelegate = context.coordinator
     webView.uiDelegate = context.coordinator
@@ -48,7 +50,14 @@ struct WebView: UIViewRepresentable {
     webView.scrollView.backgroundColor = UIColor.clear
     webView.overrideUserInterfaceStyle = .dark
     
-    print("User Agent \(widget.userAgent)")
+    
+  #if DEBUG
+    webView.isInspectable = true
+  #endif
+    
+    browserState.webView = webView
+    browserState.coordinator = context.coordinator
+    
     webView.customUserAgent = widget.userAgentString
     
     UIDevice.current.isBatteryMonitoringEnabled = true
@@ -56,7 +65,6 @@ struct WebView: UIViewRepresentable {
     let config = webView.configuration
     
     // Post messages with widget.postMessage('Clicked Page!');
-    //        config.userContentController.add(context.coordinator, name: "widget")
     config.userContentController.addScriptMessageHandler(context.coordinator, contentWorld: .page, name: "widget")
     
     config.userContentController.addUserScript(WKUserScript(
@@ -86,7 +94,7 @@ struct WebView: UIViewRepresentable {
     let script = WKUserScript(source:js, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     config.userContentController.addUserScript(script)
     
-    context.coordinator.loadURL(string: location)
+    context.coordinator.open(location: location, saveValue: true)
     
     updateSnapshot(webView)
     return webView
@@ -96,13 +104,12 @@ struct WebView: UIViewRepresentable {
   func updateUIView(_ webView: WKWebView, context: Context) {
     
     if (phase == .background) {
-      context.coordinator.loadURL(string: "about:blank")
+      context.coordinator.open(location: "about:blank")
     }
     
-    if (context.coordinator.activeLocation != location) {
-      context.coordinator.loadURL(string: location)
+    if (context.coordinator.lastSetLocation != location) {
+      context.coordinator.open(location: location, saveValue: true)
     }
-    
     
     let size = CGSize(width:widget.width, height: widget.height)
     
@@ -135,7 +142,6 @@ struct WebView: UIViewRepresentable {
     webView.navigationDelegate = nil
     webView.saveSnapshot(Wrapper(widget));
     webView.removeFromSuperview()
-    
   }
 
   func sizeThatFits(

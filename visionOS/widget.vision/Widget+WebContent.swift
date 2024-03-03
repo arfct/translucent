@@ -13,7 +13,7 @@ extension Widget {
     
     var css: [String] = []
     
-    var clearSelectors = "body"
+    var clearSelectors = "html, body"
     if let selectors = self.clearSelectors {
       clearSelectors += ", \(selectors)"
     }

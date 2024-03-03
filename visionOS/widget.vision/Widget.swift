@@ -2,6 +2,10 @@ import Foundation
 import SwiftUI
 import SwiftData
 
+
+
+
+
 @Model final class Widget: Transferable, ObservableObject {
   
   // MARK: Core Properties
@@ -26,8 +30,8 @@ import SwiftData
   var maxWidth: CGFloat = CGFloat.infinity
   var maxHeight: CGFloat = CGFloat.infinity
   
-  var surroundingsEffect: String? // dark
-  var resizeability: String? // nil [freeform], uniform, none, (fitwidth)
+  var effect: String? // dark
+  var resize: String? // nil [freeform], uniform, none, (fitwidth)
   
   // MARK: Theme Properties
   var backHex: String?
@@ -35,17 +39,20 @@ import SwiftData
   var tintHex: String?
   var fontName: String?
   var fontWeight: String?
-
+  
   // MARK: Web Properties
   var zoom: CGFloat = 1.0
   var viewport: String?
   var userAgent: String = "mobile"
-
+  
   // MARK: Web Overrides
   var clearSelectors: String?
   var removeSelectors: String?
   var injectCSS: String?
   var injectJS: String?
+  
+  var toolsJSON: String?
+  var tabsJSON: String?
   
   // MARK: Transient Properties
   @Transient var originalLocation: String?
@@ -66,7 +73,7 @@ import SwiftData
     modelContext?.delete(self)
     try? modelContext?.save()
   }
-
+  
   static var transferRepresentation: some TransferRepresentation {
     ProxyRepresentation(exporting: \.safeShareURL)
   }
@@ -95,7 +102,7 @@ import SwiftData
       .replacingOccurrences(of: "https://widget.vision/http", with: "http")
       .replacingOccurrences(of: "https://www.widget.vision/http", with: "http")
       .replacingOccurrences(of: "https://widget.vision/", with: "https://")
-  
+    
     self.init( name: name ?? url.host() ??
                url.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "_", with: " "),
                location: location,
@@ -118,7 +125,7 @@ import SwiftData
         if let key = kv.first?.removingPercentEncoding, let value = kv.last?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding {
           switch key {
           case "style":
-            if (value == "transparent") { self.style = "transparent"}
+            self.style = String(value)
           case "name":
             self.name = String(value)
           case "bg", "back":
@@ -127,6 +134,10 @@ import SwiftData
             self.foreHex = String(value)
           case "tg", "tint":
             self.tintHex = String(value)
+          case "effect":
+            self.effect = String(value)
+          case "resize":
+            self.resize = String(value)
           case "ms", "sz", "size":
             let size = sizeFor(dimensions: String(value))
             self.width = size.width
@@ -144,9 +155,7 @@ import SwiftData
               self.zoom = value
             }
           case "ua", "agent":
-            if let value = Double(value) {
-              self.userAgent = String(value)
-            }
+            self.userAgent = String(value)
           case "vw":
             self.viewport = String(value)
           case "remove":
@@ -161,6 +170,10 @@ import SwiftData
             self.injectJS = String(value)
           case "css":
             self.injectCSS = String(value)
+          case "tools":
+            self.toolsJSON = String(value)
+          case "tabs":
+            self.tabsJSON = String(value)
           case "icon":
             self.icon = String(value)
           default:
@@ -234,6 +247,11 @@ extension Widget {
     return style.caseInsensitiveCompare("transparent") != .orderedSame
   }
   
+  @Transient
+  var showBrowserBar: Bool {
+    return style.caseInsensitiveCompare("browser") == .orderedSame
+  }
+  
   // MARK: Thumbnails
   
   @Transient
@@ -262,7 +280,7 @@ extension Widget {
     }
     return nil
   }
-
+  
   @Transient
   var sizeString: String {
     return ("\(width)x\(height)")
@@ -330,7 +348,7 @@ extension Widget {
   @Transient
   var userAgentString: String {
     if (userAgent == "desktop") {
-      return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15"
+      return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3.1 Safari/605.1.15"
     } else if (userAgent == "mobile" || userAgent.count == 0) {
       return "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
     } else {

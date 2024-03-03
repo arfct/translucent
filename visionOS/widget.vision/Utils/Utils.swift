@@ -52,3 +52,18 @@ func sizeFor(dimensions: String) -> CGSize {
   }
   return size;
 }
+
+func clean(url: String) -> String? {
+  if (url.hasPrefix("http") || url.hasPrefix("file://")) {
+    return url
+  } else {
+    if (url.contains(".") && !url.contains(" ")) {
+      return "https://\(url)"
+    }
+  }
+  return nil
+}
+
+extension URL {
+  
+}
