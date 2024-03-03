@@ -204,8 +204,8 @@ body {
   background-color: #222;
   min-height: 100vh;
   box-sizing: border-box;
-  --iconWidth: 164px;
-  --iconHeight: 164px;
+  --iconWidth: 160px;
+  --iconHeight: 160px;
 }
 
 .tiles {

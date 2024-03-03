@@ -3,7 +3,7 @@ name: Beautiful Things
 icon: ipod
 href: https://beautifulthings.xyz
 size: 400x600
-class: experimental
+class: experimental cover
 description: Beautiful things for spatial computing
 clear: >
   #main > div
