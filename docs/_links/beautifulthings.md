@@ -9,7 +9,6 @@ clear: >
   #main > div
 css:  >
   *{color: white !important;} [data-framer-name="Active"] {background-color:black !important;}
-
 ---
 
 

@@ -4,7 +4,13 @@ collections:
   links:
     sort_by: order
     output: true
-    layout: link
+
+defaults:
+  - scope:
+      path: ""
+      type: "links"
+    values:
+      layout: "link"
 
 plugins:
   - jekyll-feed

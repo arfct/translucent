@@ -1,16 +1,19 @@
 html {
   --hue: 0;
-  background: linear-gradient(
-    to bottom right,
-    hsl(var(--hue), 33%, 25%),
-    hsl(var(--hue), 15%, 10%),
-    #0004
-  );
-  background-attachment: fixed;
+
 }
 
 body {
+  background: linear-gradient(
+    to bottom right,
+    hsla(var(--hue), 33%, 25%, 0.9),
+    hsla(var(--hue), 45%, 10%, 0.9),
+    
+    hsla(var(--hue), 95%, 3%, 0.5)
+    
+  );
 
+  background-attachment: fixed;
   color: white;
 }
 
@@ -72,6 +75,12 @@ a.tile.wide .thumbnail {
   background-position: center;
   background-size:90%;
 }
+a.tile.clear .thumbnail{
+  background-color :transparent !important;
+}
+a.tile.circle .thumbnail  {
+border-radius:1000px;
+}
 a.tile.cover .thumbnail {
   background-position: center;
   background-size:cover;
@@ -117,6 +126,7 @@ a.experiment .icon {
   width:60px;
   height:60px;
   line-height:60px;
+  border-radius:30px;
 }
 a.experiment .label {
 
@@ -194,8 +204,8 @@ body {
   background-color: #222;
   min-height: 100vh;
   box-sizing: border-box;
-  --iconWidth: 120px;
-  --iconHeight: 90px;
+  --iconWidth: 164px;
+  --iconHeight: 164px;
 }
 
 .tiles {
@@ -208,8 +218,9 @@ body {
   justify-content: center;
   width: 100%;
   margin: auto;
-box-sizing: border-box;
-  max-width:768px;
+  box-sizing: border-box;
+  max-width:900px;
+  margin-bottom:100px;
 }
 
 
@@ -230,10 +241,9 @@ div.header {
   padding: 2vmin 20px ;
   margin-top:2vmin;
   box-sizing:border-box;
-  position:absolute;
   left:0;
   right:0;
-  bottom:0;
+
 }
     
 img.icon {
@@ -256,7 +266,7 @@ svg path {
 .explainer {
   position: relative;
   grid-column: -3 / -1;
-  grid-row: 1 / 3;
+  grid-row: 1 / 2;
   color: white;
   width: auto;
   height:auto;
@@ -267,7 +277,6 @@ svg path {
   border-radius: var(--radius, 24px);
   color: #ffffffcc;
   flex-grow: 1;
-  min-width: calc(var(--iconWidth) * 2 + 40px);
   font-size: 90%;
   font-weight:200;
   padding-left:2em;
