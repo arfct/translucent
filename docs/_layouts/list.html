@@ -34,6 +34,8 @@ layout: default
     {%- if widget.vw %}&vw={{ widget.vw }}{% endif -%}
     {%- if widget.ua %}&ua={{ widget.ua }}{% endif -%}
     {%- if widget.css %}&css={{ widget.css | url_encode}}{% endif -%}
+    {%- if widget.tools %}&tools={{ widget.tools | url_encode}}{% endif -%}
+    {%- if widget.tabs %}&tabs={{ widget.tabs | url_encode}}{% endif -%}
     "
 
     >
@@ -63,7 +65,9 @@ layout: default
   
   
 </div>
-<a class="experiment" onclick="document.body.classList.toggle('experimental')">∏</a>
+<a class="experiment" onclick="document.body.classList.toggle('experimental')">
+  <div class="label">Experimental</div>
+  <div class="icon">∏</div></a>
   
 {% if site.paginate %}
 <div class="pager">
