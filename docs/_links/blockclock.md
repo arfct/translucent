@@ -1,6 +1,6 @@
 ---
 name: Block Clock
-tags: widget
+tags: widget all
 icon: clock
 order: 7
 href: https://www.widget.vision/widgets/blockclock

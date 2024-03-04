@@ -1,6 +1,6 @@
 ---
 name: Simple Digital
-tags: widget
+tags: widget all
 icon: clock
 order: 6
 href: https://www.widget.vision/widgets/clock

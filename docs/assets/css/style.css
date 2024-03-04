@@ -92,14 +92,15 @@ a.tile.cover .thumbnail {
 
 a.tile {
   display:none;
+  user-select: none;
 }
 
 
-body.website a.tile.website {
+body.websites a.tile.website {
   display:block;
 }
 
-body.widget a.tile.widget {
+body.widgets a.tile.widget {
   display:block;
 }
 
@@ -107,7 +108,7 @@ body.experimental a.tile.experimental {
   display:block;
 }
 
-body:not(.widget):not(.website):not(.experimental) a.tile.all {
+body:not(.widgets):not(.websites):not(.experimental) a.tile.all {
   display:block !important;
 }
 
