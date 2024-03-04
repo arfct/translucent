@@ -14,6 +14,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   var lastSize: CGSize = .zero
   var updateWorkItem: DispatchWorkItem?
   var lastSetLocation: String?
+  var lastPhase: ScenePhase?
   var currentDownload: URL?
   
   init(_ parent: WebView) {

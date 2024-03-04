@@ -84,9 +84,7 @@ struct WebView: UIViewRepresentable {
     
     
     var js =  widget.jsSrc()
-    js += """
-      window.widget?.postMessage({"event":"loaded"})
-      """
+    js += "window.widget?.postMessage({'event':'loaded'})\n"
     
     console.debug("💉 Injecting Source:\n\n\(js)")
     
@@ -102,8 +100,11 @@ struct WebView: UIViewRepresentable {
   // MARK: updateUIView
   func updateUIView(_ webView: WKWebView, context: Context) {
     
-    if (phase == .background) {
-      context.coordinator.open(location: "about:blank")
+    if context.coordinator.lastPhase != phase {
+      if phase == .background {
+        context.coordinator.open(location: "about:blank")
+        context.coordinator.lastPhase = phase;
+      }
     }
     
     if (context.coordinator.lastSetLocation != location) {

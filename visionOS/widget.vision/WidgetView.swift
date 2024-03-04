@@ -73,16 +73,16 @@ struct WidgetView: View {
         // MARK: Tab View
         ZStack(alignment: .center) {
             if let tabs = widget.tabs {
-              TabView(selection: $activeTab) {
+              TabView(selection: $activeTab.onUpdate {
+                if let tab = widget.tabs?[activeTab] {
+                  browserState.coordinator?.open(location:tab.url)
+                }
+              }) {
                 ForEach(tabs.indices, id: \.self) { i in
                   let info = tabs[i]
                   ZStack {}.tabItem { Label(info.label, systemImage: info.image )}.tag(i)
                 }
-              }.onChange(of: activeTab) {
-                if let tab = widget.tabs?[activeTab] {
-                  browserState.coordinator?.open(location:tab.url)
-                }
-            }
+              }
           }
           
           
@@ -111,12 +111,11 @@ struct WidgetView: View {
             downloadAttachment = download;
           }
           .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .disabled(flipped)
           .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
                                  displayMode: (widget.showGlassBackground ) ? .always : .never)
           .background(widget.backColor)
           .cornerRadius(widget.radius)
-          .opacity(flipped || !finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
+          .opacity(!finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
           .disabled(flipped)
           .gesture(TapGesture().onEnded({ gesture in
             showInfo = true
