@@ -8,8 +8,8 @@ import WebKit
 
 // MARK: Coordinator
 class BrowserState  {
-  var webView: WKWebView?
-  var coordinator: WebViewCoordinator?
+  weak var webView: WKWebView?
+  weak var coordinator: WebViewCoordinator?
   
   var url = URL(string: "about:blank")!
   var location: String = ""
@@ -39,7 +39,7 @@ struct WidgetView: View {
   @State var finishedFirstLoad: Bool = false
   @State var loadedWindow: Bool = false
   @State var showInfo: Bool = false
-  @State var showHandle: Bool = true
+  @State var showSystemOverlay: Bool = true
   @State var ornamentTimer: Timer?
   @State var clampInitialSize: Bool = true
   @State var foreColor: Color = .white
@@ -50,13 +50,16 @@ struct WidgetView: View {
   @State var downloads: [URL] = []
   @State var activeTab: Int = 0
   @State var browserState = BrowserState();
-  @State var webView: WebView?
   
   func toggleSettings() {
     withAnimation(.spring) {
       flipped.toggle()
-      if !flipped, let location = widget.location {
+      
+      if (flipped) {
+        cancelHide()
+      } else if let location = widget.location {
         browserState.location = location
+        scheduleHide()
       }
     }
   }
@@ -84,38 +87,52 @@ struct WidgetView: View {
           
           
           
-          if let webView = webView, !flipped {
-            
-            // MARK: Web View
-            webView
-              .onLoadStatusChanged { content, loading, error in
-                self.isLoading = loading
-                if (!loading && !finishedFirstLoad) {
-                  withAnimation(.easeInOut(duration: 1.0)) {
-                    finishedFirstLoad = true;
-                  }
-                  scheduleHide()
-                }
-                if let error = error { print("Loading error: \(error)") }
+          
+          
+          // MARK: Web View
+          WebView(title: $widget.title,
+                  location: $widget.location,
+                  widget: $widget,
+                  phase:$currentPhase,
+                  attachment:$downloadAttachment,
+                  browserState:$browserState)
+          .onLoadStatusChanged { content, loading, error in
+            self.isLoading = loading
+            if (!loading && !finishedFirstLoad) {
+              withAnimation(.easeInOut(duration: 1.0)) {
+                finishedFirstLoad = true;
               }
-              .onDownloadCompleted { content, download, error in
-                downloads.append(download)
-                downloadAttachment = download;
-              }
-              .frame(maxWidth: .infinity, maxHeight: .infinity)
-              .disabled(flipped)
-              .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
-                                     displayMode: (widget.showGlassBackground ) ? .always : .never)
-              .background(widget.backColor)
-              .cornerRadius(widget.radius)
-              .opacity(flipped || !finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
-              .gesture(TapGesture().onEnded({ gesture in
-                showInfo = true
-                showHandle = true
-                scheduleHide()
-              }))
-          } else {
-            
+              scheduleHide()
+            }
+            if let error = error { print("Loading error: \(error)") }
+          }
+          .onDownloadCompleted { content, download, error in
+            downloads.append(download)
+            downloadAttachment = download;
+          }
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .disabled(flipped)
+          .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
+                                 displayMode: (widget.showGlassBackground ) ? .always : .never)
+          .background(widget.backColor)
+          .cornerRadius(widget.radius)
+          .opacity(flipped || !finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
+          .disabled(flipped)
+          .gesture(TapGesture().onEnded({ gesture in
+            showInfo = true
+            showSystemOverlay = true
+            scheduleHide()
+          }))
+          .overlay {
+            if !widget.showGlassBackground && showSystemOverlay {
+    
+              RoundedRectangle(cornerRadius: widget.radius).inset(by: 1)
+                .stroke(Color.white.opacity(0.03), lineWidth: 1)
+              
+            }
+          }
+          
+          if (flipped) {
             WidgetSettingsView(widget:widget, callback: toggleSettings)
               .frame(maxWidth: .infinity, maxHeight: .infinity)
               .background(widget.backColor.opacity(0.2))
@@ -125,7 +142,6 @@ struct WidgetView: View {
               .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
               .disabled(!flipped)
           }
-          
         }
         .overlay(alignment: .center) {
           if (!finishedFirstLoad) {
@@ -231,14 +247,6 @@ struct WidgetView: View {
     //        DownloadPanel(downloadAttachment: $downloadAttachment)
     //      }
     .quickLookPreview($downloadAttachment, in: downloads)
-    .task {
-      webView = WebView(title: $widget.title,
-                        location: $widget.location,
-                        widget: $widget,
-                        phase:$currentPhase,
-                        attachment:$downloadAttachment,
-                        browserState:$browserState)
-    }
     
     // Clamp the size initially to set the base size, but then allow it to change later.
     .frame(minWidth: clampInitialSize ? widget.width : widget.minWidth,
@@ -248,7 +256,7 @@ struct WidgetView: View {
            idealHeight: widget.height,
            maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
     .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
-    .persistentSystemOverlays(showHandle && !wasBackgrounded && !flipped ? .automatic : .hidden)
+    .persistentSystemOverlays(showSystemOverlay && !wasBackgrounded && !flipped ? .automatic : .hidden)
     
     .onAppear(){
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
@@ -268,10 +276,10 @@ struct WidgetView: View {
     .onChange(of: scenePhase) {
       if (scenePhase == .active) {
         if (wasBackgrounded) {
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            dismiss()
-          }
-          openWindow(id:"main")
+          // We can't trust this alone - it's triggered by stuff like the camera
+          console.log("Widget returned from background \(widget.name)")
+          // DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { dismiss() }
+          // openWindow(id:"main")
         }
       }
       if (scenePhase == .background) {
@@ -282,10 +290,15 @@ struct WidgetView: View {
     }
   }
   
-  func scheduleHide() {
+  func cancelHide() {
     ornamentTimer?.invalidate()
+    showSystemOverlay = true
+    showInfo = true
+  }
+  func scheduleHide() {
+    cancelHide()
     ornamentTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false, block: { timer in
-      showHandle = false
+      showSystemOverlay = false
       showInfo = false
     })
   }

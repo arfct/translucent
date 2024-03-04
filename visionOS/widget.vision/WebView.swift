@@ -19,7 +19,6 @@ struct WebView: UIViewRepresentable {
   @Binding var attachment: URL?
   @Binding var browserState: BrowserState
   
-  
   // MARK: Modifiers
   var loadStatusChanged: ((WebView, Bool, Error?) -> Void)? = nil
   func onLoadStatusChanged(perform: ((WebView, Bool, Error?) -> Void)?) -> WebView {
@@ -138,6 +137,7 @@ struct WebView: UIViewRepresentable {
   // MARK: dismantleUIView
   func dismantleUIView(_ webView: WKWebView,coordinator: WebViewCoordinator ) {
     print("Dismantling \(webView) \(coordinator)")
+    webView.configuration.userContentController.removeScriptMessageHandler(forName: "widget")
     webView.stopLoading()
     webView.navigationDelegate = nil
     webView.saveSnapshot(Wrapper(widget));
