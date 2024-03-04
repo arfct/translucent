@@ -34,8 +34,6 @@ struct WidgetApp: App {
   }()
   
    init() {
-     
-       
     do {
       let path = URL.applicationSupportDirectory
       console.log("Creating directories in \(path)")
@@ -72,17 +70,13 @@ struct WidgetApp: App {
   
   var body: some Scene {
     
-    // MARK: - Main Window
+    // MARK: Main Window
     
     WindowGroup("Main", id: "main") { // value in // removed because it causes a crash in window restoration by reading PersistentIDs as strings
       GeometryReader { mainWindow in
         WidgetPickerView(app: self)
-          .onOpenURL {
-            showWindowForURL($0)
-          }
-          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
-            showWindowForURL($0.webpageURL)
-          }
+          .onOpenURL { showWindowForURL($0) }
+          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { showWindowForURL($0.webpageURL) }
           .onDrop(of: [.url], isTargeted: nil) { providers, point in
             for provider in providers {
               _ = provider.loadObject(ofClass: URL.self) { url,arg  in
@@ -91,13 +85,9 @@ struct WidgetApp: App {
             }
             return true
           }
-      
       }
-      
-      .frame(idealWidth: 560, idealHeight: 680,
-             alignment: .center)
+      .frame(idealWidth: 560, idealHeight: 680, alignment: .center)
       .fixedSize(horizontal: true, vertical:true)
-      
     } // defaultValue: { "main" }
       .modelContainer(container)
       .windowResizability(.contentSize)
@@ -105,7 +95,7 @@ struct WidgetApp: App {
       .windowStyle(.plain)
     
     
-    // MARK: - Widget Windows
+    // MARK: Widget Windows
     
     WindowGroup("Widget", id: "widget", for: PersistentIdentifier.self) { $id in
       ZStack {
@@ -132,7 +122,7 @@ struct WidgetApp: App {
     
     
     
-    // MARK: - Settings Window
+    // MARK: Widget Settings Windows
     // TODO: These don't work with dragging for some reason?
     
     WindowGroup("Settings", id: "widgetSettings", for: Foundation.Data.self) { $data in
@@ -142,9 +132,7 @@ struct WidgetApp: App {
            let widget = container.mainContext.model(for: modelID) as? Widget{
           WidgetSettingsView(widget:widget, callback: {
             dismissWindow(id: "widgetSettings")
-          }).task{
-            print("Open Settings for \(widget.name)")
-          }
+          })
         }
       }
       .onContinueUserActivity(Activity.openSettings, perform: { activity in
@@ -162,20 +150,18 @@ struct WidgetApp: App {
     
     
     // MARK: Preview Window
-//    WindowGroup("Preview", id: "preview", for: URL.self) { $url in
-//      PreviewView(url:url)
-//      .onContinueUserActivity(Activity.openPreview, perform: { activity in
-//        if let info = activity.userInfo,
-//           let modelData = info["url"] as? URL {
-//          url = modelData
-//        }
-//      })
-//    }
-//    .handlesExternalEvents(matching: [Activity.openPreview])
-//    .windowStyle(.volumetric)
+    //    WindowGroup("Preview", id: "preview", for: URL.self) { $url in
+    //      PreviewView(url:url)
+    //      .onContinueUserActivity(Activity.openPreview, perform: { activity in
+    //        if let info = activity.userInfo,
+    //           let modelData = info["url"] as? URL {
+    //          url = modelData
+    //        }
+    //      })
+    //    }
+    //    .handlesExternalEvents(matching: [Activity.openPreview])
+    //    .windowStyle(.volumetric)
     
     
-    
-    // MARK: /Body
   }
 }
