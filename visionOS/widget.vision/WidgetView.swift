@@ -54,12 +54,8 @@ struct WidgetView: View {
   func toggleSettings() {
     withAnimation(.spring) {
       flipped.toggle()
-      
-      if (flipped) {
-        cancelHide()
-      } else if let location = widget.location {
+      if !flipped, let location = widget.location {
         browserState.location = location
-        scheduleHide()
       }
     }
   }
@@ -102,7 +98,7 @@ struct WidgetView: View {
               withAnimation(.easeInOut(duration: 1.0)) {
                 finishedFirstLoad = true;
               }
-              scheduleHide()
+              if !flipped {scheduleHide()}
             }
             if let error = error { print("Loading error: \(error)") }
           }
@@ -121,7 +117,7 @@ struct WidgetView: View {
           .gesture(TapGesture().onEnded({ gesture in
             showInfo = true
             showSystemOverlay = true
-            scheduleHide()
+            if !flipped {scheduleHide()}
           }))
           .overlay {
             if !widget.showGlassBackground && showSystemOverlay {
@@ -256,7 +252,7 @@ struct WidgetView: View {
            idealHeight: widget.height,
            maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
     .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
-    .persistentSystemOverlays(showSystemOverlay && !wasBackgrounded && !flipped ? .automatic : .hidden)
+    .persistentSystemOverlays((flipped || showSystemOverlay) && !wasBackgrounded ? .automatic : .hidden)
     
     .onAppear(){
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
@@ -284,7 +280,7 @@ struct WidgetView: View {
       }
       if (scenePhase == .background) {
         print("💤 Backgrounding \(widget.name)")
-        wasBackgrounded = true
+//        wasBackgrounded = true
       }
       currentPhase = scenePhase
     }

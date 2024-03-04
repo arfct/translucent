@@ -88,7 +88,7 @@ struct WebView: UIViewRepresentable {
       window.widget?.postMessage({"event":"loaded"})
       """
     
-    console.debug("💉 Injecting Source:\n\n\(js)")
+    // console.debug("💉 Injecting Source:\n\n\(js)")
     
     let script = WKUserScript(source:js, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     config.userContentController.addUserScript(script)
@@ -135,12 +135,13 @@ struct WebView: UIViewRepresentable {
   }
   
   // MARK: dismantleUIView
-  func dismantleUIView(_ webView: WKWebView,coordinator: WebViewCoordinator ) {
+  static func dismantleUIView(_ webView: WKWebView, coordinator: WebViewCoordinator) {
+  
     print("Dismantling \(webView) \(coordinator)")
     webView.configuration.userContentController.removeScriptMessageHandler(forName: "widget")
     webView.stopLoading()
     webView.navigationDelegate = nil
-    webView.saveSnapshot(Wrapper(widget));
+//    webView.saveSnapshot(Wrapper(widget));
     webView.removeFromSuperview()
   }
 
