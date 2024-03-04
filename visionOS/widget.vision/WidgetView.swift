@@ -92,42 +92,6 @@ struct WidgetView: View {
               }
           }
           
-          // MARK: Web View
-          webView
-          .onLoadStatusChanged { content, loading, error in
-            self.isLoading = loading
-            if (!loading && !finishedFirstLoad) {
-              withAnimation(.easeInOut(duration: 1.0)) {
-                finishedFirstLoad = true;
-              }
-              if !flipped {scheduleHide()}
-            }
-            if let error = error { console.log("Loading error: \(error)") }
-          }
-          .onDownloadCompleted { content, download, error in
-            downloads.append(download)
-            downloadAttachment = download;
-          }
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
-                                 displayMode: (widget.showGlassBackground ) ? .always : .never)
-          .background(widget.backColor)
-          .cornerRadius(widget.radius)
-          .opacity(!finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
-          .disabled(flipped)
-          .gesture(TapGesture().onEnded({ gesture in
-            showInfo = true
-            showSystemOverlay = true
-            if !flipped {scheduleHide()}
-          }))
-          .overlay {
-            if !widget.showGlassBackground && showSystemOverlay {
-    
-              RoundedRectangle(cornerRadius: widget.radius).inset(by: 1)
-                .stroke(Color.white.opacity(0.03), lineWidth: 1)
-              
-            }
-          }
           
           if (flipped) {
             WidgetSettingsView(widget:widget, callback: toggleSettings)
@@ -138,7 +102,47 @@ struct WidgetView: View {
               .opacity(flipped ? 1.0 : 0.0)
               .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
               .disabled(!flipped)
+          } else {
+            
+            // MARK: Web View
+            
+            webView
+              .onLoadStatusChanged { content, loading, error in
+                self.isLoading = loading
+                if (!loading && !finishedFirstLoad) {
+                  withAnimation(.easeInOut(duration: 1.0)) {
+                    finishedFirstLoad = true;
+                  }
+                  if !flipped {scheduleHide()}
+                }
+                if let error = error { console.log("Loading error: \(error)") }
+              }
+              .onDownloadCompleted { content, download, error in
+                downloads.append(download)
+                downloadAttachment = download;
+              }
+              .frame(maxWidth: .infinity, maxHeight: .infinity)
+              .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
+                                     displayMode: (widget.showGlassBackground ) ? .always : .never)
+              .background(widget.backColor)
+              .cornerRadius(widget.radius)
+              .opacity(!finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
+              .disabled(flipped)
+              .gesture(TapGesture().onEnded({ gesture in
+                showInfo = true
+                showSystemOverlay = true
+                if !flipped {scheduleHide()}
+              }))
+              .overlay {
+                if !widget.showGlassBackground && showSystemOverlay {
+                  
+                  RoundedRectangle(cornerRadius: widget.radius).inset(by: 1)
+                    .stroke(Color.white.opacity(0.03), lineWidth: 1)
+                  
+                }
+              }
           }
+
         }
         .overlay(alignment: .center) {
           if (!finishedFirstLoad) {
