@@ -116,7 +116,7 @@ struct WebView: UIViewRepresentable {
     if (!CGSizeEqualToSize(size, context.coordinator.lastSize)) {
       context.coordinator.lastSize = size
       context.coordinator.queueUpdate() {
-        print("Callback after queue")
+        console.log("Callback after queue")
       }
     } else {
       updateWebView(webView, context: context)
@@ -137,7 +137,7 @@ struct WebView: UIViewRepresentable {
   
   // MARK: dismantleUIView
   func dismantleUIView(_ webView: WKWebView,coordinator: WebViewCoordinator ) {
-    print("Dismantling \(webView) \(coordinator)")
+    console.log("Dismantling \(webView) \(coordinator)")
     webView.configuration.userContentController.removeScriptMessageHandler(forName: "widget")
     webView.stopLoading()
     webView.navigationDelegate = nil

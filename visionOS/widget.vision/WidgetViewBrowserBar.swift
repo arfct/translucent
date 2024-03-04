@@ -40,10 +40,10 @@ struct WidgetViewBrowserBar: View {
         }
         
           .onSubmit {
-            print("location \(locationTempString)" )
+            console.log("location \(locationTempString)" )
             if let location = clean(url:locationTempString),
             let url = URL(string: location) {
-              print("coordinator \(location)")
+              console.log("coordinator \(location)")
               browserState.coordinator?.open(location: location)
             }
           }

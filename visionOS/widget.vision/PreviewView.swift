@@ -59,7 +59,7 @@ struct PreviewView: View {
                     
                     entity.scale /= maxDim
                   }
-                  print("offset \(-0.5 - model.mesh.bounds.min.y)")
+                  console.log("offset \(-0.5 - model.mesh.bounds.min.y)")
                   entity.position.y -= 0.5
                   entity.position.y -= mesh.bounds.min.y * entity.scale.y
                   
@@ -91,10 +91,10 @@ struct PreviewView: View {
           //            .persistentSystemOverlays(!wasBackgrounded ? .automatic : .hidden)
           
           .onDisappear {
-            print("Dissapear: \(url)")
+            console.log("Dissapear: \(url)")
           }
           .onChange(of: scenePhase) {
-            print("Preview scenePhase \(scenePhase)")
+            console.log("Preview scenePhase \(scenePhase)")
             if (scenePhase == .active) {
               if (wasBackgrounded) {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {

@@ -22,7 +22,6 @@ struct WidgetApp: App {
     let modelConfiguration = ModelConfiguration(url: storePath)
     
     do {
-      console.log("Loading ModelContainer from \(storePath)")
       return try ModelContainer(for: Widget.self, configurations: modelConfiguration)
     } catch {
 //      if SwiftDataError.loadIssueModelContainer == error as? SwiftDataError {
@@ -64,7 +63,7 @@ struct WidgetApp: App {
       try container.mainContext.save()
       openWindow(id: "widget", value: widget.persistentModelID)
     } catch {
-      print("Error opening url \(error)")
+      console.log("Error opening url \(error)")
     }
   }
   

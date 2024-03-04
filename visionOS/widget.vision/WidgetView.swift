@@ -104,7 +104,7 @@ struct WidgetView: View {
               }
               scheduleHide()
             }
-            if let error = error { print("Loading error: \(error)") }
+            if let error = error { console.log("Loading error: \(error)") }
           }
           .onDownloadCompleted { content, download, error in
             downloads.append(download)
@@ -231,7 +231,7 @@ struct WidgetView: View {
       .onChange(of: geometry.size) {
         widget.width = geometry.size.width
         widget.height = geometry.size.height
-        print("↔️ Widget size changed to \(widget.width)×\(widget.height)")
+        console.log("↔️ Widget size changed to \(widget.width)×\(widget.height)")
         widget.save()
       }
       .opacity(wasBackgrounded ? 0.0 : 1.0)
@@ -270,7 +270,7 @@ struct WidgetView: View {
       
     }
     .onDisappear {
-      print("❌ Closing Widget \(widget.name)")
+      console.log("❌ Closing Widget \(widget.name)")
     }
     .onChange(of: scenePhase) {
       if (scenePhase == .active) {
@@ -282,7 +282,7 @@ struct WidgetView: View {
         }
       }
       if (scenePhase == .background) {
-        print("💤 Backgrounding \(widget.name)")
+        console.log("💤 Backgrounding \(widget.name)")
         wasBackgrounded = true
       }
       currentPhase = scenePhase
