@@ -89,7 +89,7 @@ struct WebView: UIViewRepresentable {
       window.widget?.postMessage({"event":"loaded"})
       """
     
-    print("💉 Injecting Source:\n\n\(js)")
+    console.debug("💉 Injecting Source:\n\n\(js)")
     
     let script = WKUserScript(source:js, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     config.userContentController.addUserScript(script)
