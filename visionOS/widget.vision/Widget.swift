@@ -114,11 +114,16 @@ import SwiftData
   }
   
   init(id: UUID = UUID(), name: String, location: String, options: String? = nil) {
-    self.id = id
-    self.name = name
-    self.location = location
-    self.originalLocation = location
+
+      self.id = id
+      self.name = name
+      self.location = location
+      self.originalLocation = location
+      apply(options: options)
     
+  }
+  
+  func apply(options: String?) {
     if let options = options {
       options.split(separator: "&").forEach({ param in
         let kv = param.split(separator:"=")
@@ -296,33 +301,57 @@ extension Widget {
   var shareURL: URL? {
     var items: [URLQueryItem] = []
     if (!self.showGlassBackground) {
-      items.append(URLQueryItem(name: "style", value: "transparent")) }
+      items.append(URLQueryItem(name: "style", value: "transparent"))
+    }
     if name.count > 0  {
-      items.append(URLQueryItem(name: "name", value: name)) }
-    if backHex != nil { 
-      items.append(URLQueryItem(name: "back", value: backHex)) }
-    if foreHex != nil { 
-      items.append(URLQueryItem(name: "fore", value: foreHex)) }
-    if tintHex != nil { 
-      items.append(URLQueryItem(name: "tint", value: tintHex)) }
+      items.append(URLQueryItem(name: "name", value: name))
+    }
+    if backHex != nil {
+      items.append(URLQueryItem(name: "back", value: backHex))
+    }
+    if foreHex != nil {
+      items.append(URLQueryItem(name: "fore", value: foreHex))
+    }
+    if tintHex != nil {
+      items.append(URLQueryItem(name: "tint", value: tintHex))
+    }
     if zoom != 1.0 {
-      items.append(URLQueryItem(name: "zoom", value: String(describing:zoom))) }
+      items.append(URLQueryItem(name: "zoom", value: String(describing:zoom)))
+    }
     if radius != 30 {
-      items.append(URLQueryItem(name: "radius", value: String(describing:radius))) }
+      items.append(URLQueryItem(name: "radius", value: String(describing:radius)))
+    }
     if let value = viewport {
-      items.append(URLQueryItem(name: "vw", value: value)) }
+      items.append(URLQueryItem(name: "vw", value: value))
+    }
     if let string = injectJS, string.count > 0 {
-      items.append(URLQueryItem(name: "js", value: string))}
+      items.append(URLQueryItem(name: "js", value: string))
+    }
     if let string = injectCSS, string.count > 0 {
-      items.append(URLQueryItem(name: "css", value: string))}
+      items.append(URLQueryItem(name: "css", value: string))
+    }
     if (userAgent != "mobile") {
-      items.append(URLQueryItem(name: "ua", value: userAgent)) }
+      items.append(URLQueryItem(name: "ua", value: userAgent))
+    }
     if let string = removeSelectors, string.count > 0 {
       items.append(URLQueryItem(name: "remove", value: string))
     }
     if let string = clearSelectors, string.count > 0 {
       items.append(URLQueryItem(name: "clear", value: string))
     }
+    if let string = toolsJSON, string.count > 0 {
+      items.append(URLQueryItem(name: "tools", value: string))
+    }
+    if let string = tabsJSON, string.count > 0 {
+      items.append(URLQueryItem(name: "tabs", value: string))
+    }
+    if let string = resize, string.count > 0 {
+      items.append(URLQueryItem(name: "resize", value: string))
+    }
+    if let string = effect, string.count > 0 {
+      items.append(URLQueryItem(name: "effect", value: string))
+    }
+    
     items.append(URLQueryItem(name: "size", value: sizeString))
     
     var components = URLComponents()
