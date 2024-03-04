@@ -319,7 +319,7 @@ struct WidgetSettingsView: View {
           ToolbarItemGroup(placement:.navigation) {
             
             Button {
-              openWindow(id:"main", value: "main")
+              openWindow(id:"main")
             } label: {
               Label("List", systemImage: "rectangle.grid.2x2.fill")
             }

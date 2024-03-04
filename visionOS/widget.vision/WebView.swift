@@ -66,14 +66,15 @@ struct WebView: UIViewRepresentable {
     
     config.userContentController.addUserScript(WKUserScript(
       source:"""
+      document.documentElement.classList.add("asWidget")
       window.widget = window.webkit.messageHandlers.widget
-      console.log("window.widget", window.widget)
       window.widgetproxy = new Proxy(window.widget, {
         get(target, prop, receiver) {
           return Reflect.get(...arguments);
         }
       })
-      
+      console.log("window.widget", window.widget)
+
       """,
       injectionTime: .atDocumentStart,
       forMainFrameOnly: false))
