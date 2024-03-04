@@ -19,6 +19,10 @@ class BrowserState  {
   var canGoBack: Bool = false
   var canGoForward: Bool = false
   var isLoading: Bool = false
+  
+  //  var alert: Alert? = nil
+  //  var alertTitle = ""
+  //  var alertMessage = ""
 }
 
 
@@ -61,7 +65,14 @@ struct WidgetView: View {
   }
   
   var body: some View {
-  
+    
+    let webView = WebView(title: $widget.title,
+                              location: $widget.location,
+                              widget: $widget,
+                              phase:$currentPhase,
+                              attachment:$downloadAttachment,
+                              browserState:$browserState)
+    
     GeometryReader { geometry in
       VStack() {
         
@@ -81,17 +92,8 @@ struct WidgetView: View {
               }
           }
           
-          
-          
-          
-          
           // MARK: Web View
-          WebView(title: $widget.title,
-                  location: $widget.location,
-                  widget: $widget,
-                  phase:$currentPhase,
-                  attachment:$downloadAttachment,
-                  browserState:$browserState)
+          webView
           .onLoadStatusChanged { content, loading, error in
             self.isLoading = loading
             if (!loading && !finishedFirstLoad) {
@@ -143,8 +145,10 @@ struct WidgetView: View {
             ProgressView()
           }
         }
-        
-        
+        // TODO: Add alert https://developer.apple.com/documentation/swiftui/view/alert(_:ispresented:presenting:actions:message:)-8584l
+        //        .alert(isPresented: $showAlert, content: {
+        //            Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("Close")))
+        //        })
         // MARK: Toolbar {
         .toolbar {
           if let toolbar = widget.toolbar {
@@ -219,7 +223,7 @@ struct WidgetView: View {
             .animation(.spring(), value: flipped)
             .animation(.spring(), value: showInfo)
             .animation(.spring(), value: isLoading)
-            
+            .preferredSurroundingsEffect(widget.effect == "dim" ? .systemDark : nil)
           }
         }
       } // MARK: Content view modifiers
@@ -251,6 +255,12 @@ struct WidgetView: View {
            idealHeight: widget.height,
            maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
     .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
+    .windowGeometryPreferences(
+      minimumSize: CGSize(width: widget.minWidth, height: widget.minHeight),
+      resizingRestrictions: 
+        widget.resize == "uniform" ? .uniform :
+        widget.resize == "none" ? .none :
+          .freeform)
     .persistentSystemOverlays((flipped || showSystemOverlay) && !wasBackgrounded ? .automatic : .hidden)
     
     .onAppear(){

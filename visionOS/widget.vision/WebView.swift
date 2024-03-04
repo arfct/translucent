@@ -34,36 +34,34 @@ struct WebView: UIViewRepresentable {
     return copy
   }
   
-
-  
   func makeCoordinator() -> WebViewCoordinator { WebViewCoordinator(self) }
- 
+  
   // MARK: makeUIView
+  
   func makeUIView(context: Context) -> WKWebView {
     
     let webView = context.coordinator.webView
     webView.navigationDelegate = context.coordinator
     webView.uiDelegate = context.coordinator
+
+    browserState.coordinator = context.coordinator
+    browserState.webView = webView
+
     webView.isOpaque = false
     webView.backgroundColor = UIColor.clear
     webView.scrollView.backgroundColor = UIColor.clear
     webView.overrideUserInterfaceStyle = .dark
-    
-    
-  #if DEBUG
-    webView.isInspectable = true
-  #endif
-    
-    browserState.webView = webView
-    browserState.coordinator = context.coordinator
-    
     webView.customUserAgent = widget.userAgentString
+
+#if DEBUG
+    webView.isInspectable = true
+#endif
     
     UIDevice.current.isBatteryMonitoringEnabled = true
     
+    // MARK: Configuration
     let config = webView.configuration
-    
-    // Post messages with widget.postMessage('Clicked Page!');
+  
     config.userContentController.addScriptMessageHandler(context.coordinator, contentWorld: .page, name: "widget")
     
     config.userContentController.addUserScript(WKUserScript(
@@ -75,18 +73,13 @@ struct WebView: UIViewRepresentable {
           return Reflect.get(...arguments);
         }
       })
-            console.log("window.widget", window.widget)
       
       """,
       injectionTime: .atDocumentStart,
       forMainFrameOnly: false))
-    
-    
-    
+
     var js =  widget.jsSrc()
     js += "window.widget?.postMessage({'event':'loaded'})\n"
-    
-    // console.debug("💉 Injecting Source:\n\n\(js)")
     
     let script = WKUserScript(source:js, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     config.userContentController.addUserScript(script)
@@ -98,6 +91,7 @@ struct WebView: UIViewRepresentable {
   }
   
   // MARK: updateUIView
+  
   func updateUIView(_ webView: WKWebView, context: Context) {
     
     if context.coordinator.lastPhase != phase {
@@ -112,16 +106,12 @@ struct WebView: UIViewRepresentable {
     }
     
     let size = CGSize(width:widget.width, height: widget.height)
-    
     if (!CGSizeEqualToSize(size, context.coordinator.lastSize)) {
       context.coordinator.lastSize = size
-      context.coordinator.queueUpdate() {
-        console.log("Callback after queue")
-      }
     } else {
       updateWebView(webView, context: context)
     }
-    
+  
     updateSnapshot(webView)
   }
   
@@ -136,23 +126,22 @@ struct WebView: UIViewRepresentable {
   }
   
   // MARK: dismantleUIView
-
-  static func dismantleUIView(_ webView: WKWebView, coordinator: WebViewCoordinator) {
   
+  static func dismantleUIView(_ webView: WKWebView, coordinator: WebViewCoordinator) {
     print("Dismantling \(webView) \(coordinator)")
-    webView.configuration.userContentController.removeScriptMessageHandler(forName: "widget")
     webView.stopLoading()
     webView.navigationDelegate = nil
-//    webView.saveSnapshot(Wrapper(widget));
+    webView.uiDelegate = nil
+    webView.configuration.userContentController.removeScriptMessageHandler(forName: "widget")
     webView.removeFromSuperview()
   }
-
-  func sizeThatFits(
-    _ proposal: ProposedViewSize,
-    uiView: WebView, context: Context
-  ) -> CGSize? {
-    return CGSizeMake(360, 640)
-  }
+  
+  //  func sizeThatFits( _ proposal: ProposedViewSize, uiView: WebView, context: Context) -> CGSize? {
+  //    return CGSizeMake(360, 640)
+  //  }
+  
+  
+  // MARK: snapshotting
   
   func updateSnapshot(_ webView: WKWebView) {
     NSObject.cancelPreviousPerformRequests(withTarget: webView)

@@ -5,21 +5,22 @@ import OSLog
 
 // MARK: Coordinator
 class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler, WKScriptMessageHandlerWithReply, WKDownloadDelegate, QLPreviewControllerDataSource {
-  
   @Environment(\.openWindow) var openWindow
   
-  
+  let container: WebView
   let webView: WKWebView = WKWebView()
-  let parent: WebView
   var lastSize: CGSize = .zero
   var updateWorkItem: DispatchWorkItem?
   var lastSetLocation: String?
   var lastPhase: ScenePhase?
   var currentDownload: URL?
   
-  init(_ parent: WebView) {
-    self.parent = parent
+  init(_ container: WebView) {
+    self.container = container
   }
+  
+  
+  // MARK: Navigation
   
   func open(location: String?, saveValue: Bool = false) {
     console.log("Opening \(location ?? "")")
@@ -38,6 +39,8 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   func loadURL(_ url: URL) {
     webView.load(URLRequest(url: url))
   }
+  
+  // MARK: WKUserContentController
   
   func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
     //      console.log("💬 Web Message:\n\(message.body)")
@@ -64,25 +67,47 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     return (nil, nil)
   }
   
+  
+  // MARK: WKUIDelegate
+  
+  func webView(_ webView: WKWebView,
+               createWebViewWith configuration: WKWebViewConfiguration,
+               for navigationAction: WKNavigationAction,
+               windowFeatures: WKWindowFeatures) -> WKWebView? {
+    guard let url = navigationAction.request.url else { return nil}
+    console.log("Opening in browser \(url)")
+    UIApplication.shared.open(url)
+    return nil;
+  }
+  
+  func webView(_ webView: WKWebView, 
+               runJavaScriptAlertPanelWithMessage message: String,
+               initiatedByFrame frame: WKFrameInfo) async {
+    console.log("Javascript Alert: \(message)")
+  }
+  
   func webView(
     _ webView: WKWebView,
     requestMediaCapturePermissionFor origin: WKSecurityOrigin,
     initiatedByFrame frame: WKFrameInfo,
     type: WKMediaCaptureType,
-    decisionHandler: @escaping (WKPermissionDecision) -> Void
-  ) {
-    
+    decisionHandler: @escaping (WKPermissionDecision) -> Void) {
     decisionHandler(.grant)
   }
   
+
+  // MARK: WKNavigationDelegate
   
-  func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
+  func webView(_ webView: WKWebView,
+               decidePolicyFor navigationAction: WKNavigationAction, 
+               preferences: WKWebpagePreferences,
+               decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
     
     console.log("Navigating to \(String(describing:navigationAction.request.url))")
     
     let url = navigationAction.request.url
     if url?.host() == "widget.vision" {
-      if let url = url, let context = parent.widget.modelContext {
+      if let url = url, let context = container.widget.modelContext {
         do {
           let widget = Widget(url:url)
           context.insert(widget)
@@ -103,10 +128,11 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     }
   }
   
-  func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+  func webView(_ webView: WKWebView, 
+               decidePolicyFor navigationResponse: WKNavigationResponse,
+               decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
     if navigationResponse.canShowMIMEType {
       //        if let mime = navigationResponse.response.mimeType , mime.starts(with: "application/") {
-      //          console.log("Mime \(mime )")
       //          decisionHandler(.download)
       //        } else {
       decisionHandler(.allow)
@@ -116,9 +142,15 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     }
   }
   
-  func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo) async {
-    console.log("Javascript Alert: \(message)")
+  
+  // MARK: WKDownloadDelegate
+  
+  func webView(_ webView: WKWebView,
+               navigationAction: WKNavigationAction,
+               didBecome download: WKDownload) {
+    download.delegate = self
   }
+  
   func download(_ download: WKDownload, decideDestinationUsing
                 response: URLResponse, suggestedFilename: String,
                 completionHandler: @escaping (URL?) -> Void) {
@@ -130,63 +162,57 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
       completionHandler(currentDownload)
     }
   }
-  
-  func webView(_ webView: WKWebView, navigationAction: WKNavigationAction, didBecome download: WKDownload) {
-    download.delegate = self
-  }
-  
+
   func downloadDidFinish(_ download: WKDownload) {
-    parent.downloadCompleted?(parent, currentDownload!, nil)
+    container.downloadCompleted?(container, currentDownload!, nil)
     // openWindow(id: "preview", value: currentDownload!);
   }
   
-  public func download(_ download: WKDownload, didFailWithError error: Error, resumeData: Data?) {
+  public func download(_ download: WKDownload,
+                       didFailWithError error: Error,
+                       resumeData: Data?) {
     console.log("Download error: \(error)")
   }
   
-  func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-    guard let url = navigationAction.request.url else { return nil}
-    console.log("Opening in browser \(url)")
-    UIApplication.shared.open(url)
-    return nil;
-  }
-  func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
-    return 1
-  }
+
   
+  // MARK: QuickLook preview
+  func numberOfPreviewItems(in controller: QLPreviewController) -> Int { return 1 }
   func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> any QLPreviewItem {
     return NSURL(string: currentDownload!.absoluteString)! as QLPreviewItem
   }
+  
   // TODO: Not working yet
   func queueUpdate(callback: @escaping (() -> Void)) {
     updateWorkItem?.cancel()
     updateWorkItem = DispatchWorkItem(block: callback)
   }
   
+  // MARK: State management
   func updateState(webView: WKWebView, loading: Bool) {
     if let url = webView.url  {
-      parent.browserState.isLoading = loading;
-      parent.browserState.canGoBack = webView.canGoBack
-      parent.browserState.canGoForward = webView.canGoForward
-      parent.browserState.location = url.absoluteString
-      parent.browserState.url = url;
+      container.browserState.isLoading = loading;
+      container.browserState.canGoBack = webView.canGoBack
+      container.browserState.canGoForward = webView.canGoForward
+      container.browserState.location = url.absoluteString
+      container.browserState.url = url;
     }
   }
   
   func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
     updateState(webView: webView, loading: true)
-    parent.loadStatusChanged?(parent, true, nil)
+    container.loadStatusChanged?(container, true, nil)
   }
   
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
     updateState(webView: webView, loading: false)
-    parent.loadStatusChanged?(parent, false, nil)
-
+    container.loadStatusChanged?(container, false, nil)
+    
   }
   
   func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
     updateState(webView: webView, loading: false)
-    parent.loadStatusChanged?(parent, false, nil)
+    container.loadStatusChanged?(container, false, nil)
   }
   
 }
