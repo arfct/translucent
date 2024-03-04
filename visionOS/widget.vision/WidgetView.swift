@@ -256,8 +256,8 @@ struct WidgetView: View {
            maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
     .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
     .windowGeometryPreferences(
-      minimumSize: CGSize(width: widget.minWidth, height: widget.minHeight),
-      resizingRestrictions: 
+      size: CGSize(width: widget.width, height: widget.height),
+      resizingRestrictions:
         widget.resize == "uniform" ? .uniform :
         widget.resize == "none" ? .none :
           .freeform)
