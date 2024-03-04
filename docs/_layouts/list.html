@@ -2,7 +2,14 @@
 layout: default
 ---
 
+<!-- <div class="nav hideInWidget">
 
+  <a href="#">All</a>
+  <a href="#experimental">Experimental</a>
+  <a href="#widget">Widget</a>
+  <a href="#website">Website</a>
+
+</div> -->
 <div class="content">
 
   <div class="header">
@@ -22,7 +29,7 @@ layout: default
     <meta name="widget" content="{% include queryparams.html content=page %}">
     {% endif %}
 
-    <a class="tile{% if widget.class %} {{ widget.class }}{% endif %} {{ widget.style }}" 
+    <a class="tile{% if widget.class %} {{ widget.class }}{% endif %} {{widget.tags | join: ' '}} {{ widget.style }}" 
        href="https://widget.vision/{{widget.href | replace: 'https://', '' | url_encode}}{%- include queryparams.html -%}">
     <div class="thumbnail" style="
       background-image:url({{widget.url | replace: 'html', 'png' }});
@@ -72,7 +79,8 @@ layout: default
 
 <script>
   onhashchange = function() {
-    var hash = window.location.hash.;
+    var hash = window.location.hash;
+    console.log("hash", hash)
     if (hash) {
       var el = document.body.className = hash.substring(1);
     }

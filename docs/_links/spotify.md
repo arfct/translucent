@@ -1,5 +1,6 @@
 ---
 name: Spotify Player
+tags: website
 order: 9
 icon: music.note.list
 href: https://open.spotify.com

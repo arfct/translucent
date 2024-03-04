@@ -1,5 +1,6 @@
 ---
 name: ChatGPT
+tags: website
 icon: bubble
 href: https://chat.openai.com
 class: experimental

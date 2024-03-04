@@ -1,5 +1,6 @@
 ---
 name: NYT Front Page
+tags: widget all
 order: 1
 icon: newspaper
 class: cover

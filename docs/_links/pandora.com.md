@@ -1,5 +1,6 @@
 ---
 name: Pandora
+tags: website
 icon: music.note
 href: https://www.pandora.com/
 ua: desktop

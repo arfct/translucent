@@ -1,12 +1,13 @@
 ---
 name: Netflix
+description: Netflix desktop site
+tags: experimental website
 icon: movieclapper
 micon: movie
 href: https://www.netflix.com
 ua: desktop
 size: 640x400
-description: Netflix desktop site
-class: experimental
+class: cover
 effect: dim
 tabs: |
   {"tabs":[

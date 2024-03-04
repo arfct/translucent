@@ -1,5 +1,6 @@
 ---
 name: Figma
+tags: website
 icon: square.and.pencil
 micon: edit_square
 href: https://www.figma.com/

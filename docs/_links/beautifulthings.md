@@ -1,5 +1,6 @@
 ---
 name: Beautiful Things
+tags: website
 icon: ipod
 href: https://beautifulthings.xyz
 size: 400x600

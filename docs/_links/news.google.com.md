@@ -1,10 +1,12 @@
 ---
 name: Google News
+tags: website
 icon: newspaper
 href: https://news.google.com
 size: 430x640
 order: 9
 description: Google News mobile site as a widget
+class: website all
 clear: >
   body > *:not([role="menu"]), [role="button"], [role="presentation"] > a
 remove: >

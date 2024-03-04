@@ -1,5 +1,6 @@
 ---
 name: Digital Orrery
+tags: widget all
 icon: circle.circle
 order: 5
 href: https://www.widget.vision/widgets/orrery

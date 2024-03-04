@@ -1,5 +1,6 @@
 ---
 name: Poem/1
+tags: widget all
 order: 4
 icon: clock
 href: https://poem.town/special/widget.vision

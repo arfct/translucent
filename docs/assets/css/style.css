@@ -3,6 +3,10 @@ html {
 
 }
 
+html.asWidget .hideInWidget {
+  display:none;
+}
+
 body {
   background: linear-gradient(
     to bottom right,
@@ -85,9 +89,31 @@ a.tile.cover .thumbnail {
   background-position: center;
   background-size:cover;
 }
-body:not(.experimental) a.tile.experimental {
+
+a.tile {
   display:none;
 }
+
+
+body.website a.tile.website {
+  display:block;
+}
+
+body.widget a.tile.widget {
+  display:block;
+}
+
+body.experimental a.tile.experimental {
+  display:block;
+}
+
+body:not(.widget):not(.website):not(.experimental) a.tile.all {
+  display:block !important;
+}
+
+
+
+
 a.tile.hidden {
   opacity: 0.0;
   pointer-events: none;

@@ -8,9 +8,9 @@ minsize: 400x600
 description: Netflix desktop site
 tabs: |
   {"tabs":[
-    {"label": "Directory", "image":"globe", "url":"#"},
+    {"label": "Everything", "image":"rectangle.grid.2x2.fill", "url":"#"},
     {"label": "Widgets", "image":"rectangle.3.offgrid.fill", "url":"#widgets"},
-    {"label": "Web Apps", "image":"circle.square", "url":"#websites"},
+    {"label": "Websites", "image":"rectangle.fill", "url":"#websites"},
     {"label": "Experimental", "image":"testtube.2", "url":"#experimental"},
   ]}
 ---

@@ -1,5 +1,6 @@
 ---
 name: Gmail
+tags: hidden
 icon: envelope
 href: https://mail.google.com
 size: 430x640
