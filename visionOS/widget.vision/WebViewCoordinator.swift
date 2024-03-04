@@ -9,14 +9,17 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   
   let container: WebView
   let webView: WKWebView = WKWebView()
+  let widget: Widget
   var lastSize: CGSize = .zero
   var updateWorkItem: DispatchWorkItem?
   var lastSetLocation: String?
   var lastPhase: ScenePhase?
   var currentDownload: URL?
   
-  init(_ container: WebView) {
+  
+  init(_ container: WebView, widget: Widget) {
     self.container = container
+    self.widget = widget
   }
   
   
@@ -208,6 +211,16 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     updateState(webView: webView, loading: false)
     container.loadStatusChanged?(container, false, nil)
     
+    let fetchManifestJS = """
+      document.querySelector('meta[name="widget"]').getAttribute('content');
+      """
+    
+    webView.evaluateJavaScript(fetchManifestJS, completionHandler: { value, error in
+      if let queryString = value as? String {  
+        console.log("Found Value \(queryString)")
+        self.container.widget.apply(options: queryString, fromSite:true)
+      }
+    })
   }
   
   func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {

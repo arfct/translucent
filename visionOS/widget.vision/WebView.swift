@@ -34,7 +34,7 @@ struct WebView: UIViewRepresentable {
     return copy
   }
   
-  func makeCoordinator() -> WebViewCoordinator { WebViewCoordinator(self) }
+  func makeCoordinator() -> WebViewCoordinator { WebViewCoordinator(self, widget: widget) }
   
   // MARK: makeUIView
   

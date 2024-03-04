@@ -70,7 +70,14 @@ layout: default
 
 {%- endif -%}
 
-
+<script>
+  onhashchange = function() {
+    var hash = window.location.hash.;
+    if (hash) {
+      var el = document.body.className = hash.substring(1);
+    }
+  }
+</script>
 
 
 </div>

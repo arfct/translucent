@@ -123,8 +123,10 @@ import SwiftData
     
   }
   
-  func apply(options: String?) {
+  func apply(options: String?, fromSite: Bool? = false) {
+    
     if let options = options {
+      console.log("Applying options: \(options)")
       options.split(separator: "&").forEach({ param in
         let kv = param.split(separator:"=")
         if let key = kv.first?.removingPercentEncoding, let value = kv.last?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding {
