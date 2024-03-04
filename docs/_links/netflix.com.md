@@ -1,6 +1,7 @@
 ---
 name: Netflix
 icon: movieclapper
+micon: movie
 href: https://www.netflix.com
 ua: desktop
 size: 640x400

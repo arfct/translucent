@@ -1,6 +1,7 @@
 ---
 name: Figma
 icon: square.and.pencil
+micon: edit_square
 href: https://www.figma.com/
 size: 1280x800
 ua: desktop
