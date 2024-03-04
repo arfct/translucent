@@ -64,7 +64,7 @@ import SwiftData
     do {
       try modelContext!.save()
     } catch {
-      print("Could not save ModelContainer: \(error)")
+      console.log("Could not save ModelContainer: \(error)")
     }
   }
   
@@ -82,7 +82,7 @@ import SwiftData
   
   // MARK: init()
   convenience init(url: URL, name: String? = nil) {
-    print("🌐 Creating from URL: \(url.absoluteString)")
+    console.log("🌐 Creating from URL: \(url.absoluteString)")
     var location = url.absoluteString
     var parameters: String?
     if let regex = try? Regex(#"(?:\?)format=widget\&(.*)"#) {

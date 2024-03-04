@@ -14,6 +14,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   var lastSize: CGSize = .zero
   var updateWorkItem: DispatchWorkItem?
   var lastSetLocation: String?
+  var lastPhase: ScenePhase?
   var currentDownload: URL?
   
   init(_ parent: WebView) {
@@ -21,10 +22,9 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   }
   
   func open(location: String?, saveValue: Bool = false) {
-    print("Opening \(location) \(lastSetLocation) \(saveValue)")
+    console.log("Opening \(location ?? "")")
     if let urlString = location,
        var url = lastSetLocation == nil ? URL(string:urlString) : URL(string:urlString, relativeTo: URL(string: lastSetLocation ?? "")) {
-      print("Open \(url.absoluteString)")
       if url.scheme == "file", let widgets = Bundle.main.url(forResource: "widgets", withExtension:nil) {
         url = URL(filePath: String(url.path(percentEncoded: false).dropFirst()), relativeTo: widgets)
       }
@@ -40,7 +40,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   }
   
   func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-    //      print("💬 Web Message:\n\(message.body)")
+    //      console.log("💬 Web Message:\n\(message.body)")
   }
   
   @MainActor
@@ -50,9 +50,9 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
       if let action = body.value(forKey: "action") as? String {
         let args = body.value(forKey: "args") as? NSDictionary
         
-        print("Action \(action) \(String(describing:args))")
+        console.log("Action \(action) \(String(describing:args))")
         if (action == "battery") {
-          print("battery level: \(UIDevice.current.batteryLevel)")
+          console.log("battery level: \(UIDevice.current.batteryLevel)")
           return (["level": String(UIDevice.current.batteryLevel),
                    "state": String(UIDevice.current.batteryState.rawValue)] as? NSDictionary, nil)
         } else if (action == "resize") {
@@ -89,7 +89,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
           try context.save()
           openWindow(id: "widget", value: widget.persistentModelID)
         } catch {
-          print("Error opening url \(error)")
+          console.log("Error opening url \(error)")
         }
       }
       return decisionHandler(.cancel, preferences)
@@ -106,7 +106,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
     if navigationResponse.canShowMIMEType {
       //        if let mime = navigationResponse.response.mimeType , mime.starts(with: "application/") {
-      //          print("Mime \(mime )")
+      //          console.log("Mime \(mime )")
       //          decisionHandler(.download)
       //        } else {
       decisionHandler(.allow)
@@ -123,7 +123,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
                 response: URLResponse, suggestedFilename: String,
                 completionHandler: @escaping (URL?) -> Void) {
     if let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-      print("⬇️ Downloading \(suggestedFilename)")
+      console.log("⬇️ Downloading \(suggestedFilename)")
       let name = "\(suggestedFilename)"
       currentDownload = path.appendingPathComponent(name, isDirectory: false)
       try? FileManager.default.removeItem(at: currentDownload!)
@@ -141,12 +141,12 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   }
   
   public func download(_ download: WKDownload, didFailWithError error: Error, resumeData: Data?) {
-    print("Download error: \(error)")
+    console.log("Download error: \(error)")
   }
   
   func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
     guard let url = navigationAction.request.url else { return nil}
-    print("Opening in browser \(url)")
+    console.log("Opening in browser \(url)")
     UIApplication.shared.open(url)
     return nil;
   }

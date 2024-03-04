@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 import SwiftData
 import JavaScriptCore
+import OSLog
 
 struct TabInfo: Decodable {
   var tabs: [TabItem]
@@ -33,9 +34,7 @@ extension Widget {
         let tabInfo: TabInfo = try JSONDecoder().decode(TabInfo.self, from: json)
         return tabInfo.tabs
       } catch {
-        print(error)
-        
-        print(tabsJSON ?? "")
+        console.log("Tabs parsing error\(error)")
       }
     }
     return nil
@@ -48,8 +47,7 @@ extension Widget {
         let toolbarInfo: ToolbarInfo = try JSONDecoder().decode(ToolbarInfo.self, from: json)
         return toolbarInfo
       } catch {
-        print(error)
-        print(toolsJSON ?? "")
+        console.log("Tools parsing error\(error)")
       }
     }
     return nil

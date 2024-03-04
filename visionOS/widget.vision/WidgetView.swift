@@ -69,16 +69,16 @@ struct WidgetView: View {
         // MARK: Tab View
         ZStack(alignment: .center) {
             if let tabs = widget.tabs {
-              TabView(selection: $activeTab) {
+              TabView(selection: $activeTab.onUpdate {
+                if let tab = widget.tabs?[activeTab] {
+                  browserState.coordinator?.open(location:tab.url)
+                }
+              }) {
                 ForEach(tabs.indices, id: \.self) { i in
                   let info = tabs[i]
                   ZStack {}.tabItem { Label(info.label, systemImage: info.image )}.tag(i)
                 }
-              }.onChange(of: activeTab) {
-                if let tab = widget.tabs?[activeTab] {
-                  browserState.coordinator?.open(location:tab.url)
-                }
-            }
+              }
           }
           
           
@@ -100,19 +100,18 @@ struct WidgetView: View {
               }
               if !flipped {scheduleHide()}
             }
-            if let error = error { print("Loading error: \(error)") }
+            if let error = error { console.log("Loading error: \(error)") }
           }
           .onDownloadCompleted { content, download, error in
             downloads.append(download)
             downloadAttachment = download;
           }
           .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .disabled(flipped)
           .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
                                  displayMode: (widget.showGlassBackground ) ? .always : .never)
           .background(widget.backColor)
           .cornerRadius(widget.radius)
-          .opacity(flipped || !finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
+          .opacity(!finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
           .disabled(flipped)
           .gesture(TapGesture().onEnded({ gesture in
             showInfo = true
@@ -228,7 +227,7 @@ struct WidgetView: View {
       .onChange(of: geometry.size) {
         widget.width = geometry.size.width
         widget.height = geometry.size.height
-        print("↔️ Widget size changed to \(widget.width)×\(widget.height)")
+        console.log("↔️ Widget size changed to \(widget.width)×\(widget.height)")
         widget.save()
       }
       .opacity(wasBackgrounded ? 0.0 : 1.0)
@@ -267,7 +266,7 @@ struct WidgetView: View {
       
     }
     .onDisappear {
-      print("❌ Closing Widget \(widget.name)")
+      console.log("❌ Closing Widget \(widget.name)")
     }
     .onChange(of: scenePhase) {
       if (scenePhase == .active) {
