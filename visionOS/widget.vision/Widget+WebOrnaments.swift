@@ -4,18 +4,17 @@ import SwiftData
 import JavaScriptCore
 import OSLog
 
-struct TabInfo: Decodable {
-  var tabs: [TabItem]
+
+struct Config: Decodable {
+  var tabs: [TabItem]?
+  var tools: [ToolbarItem]?
+  var settings: [SettingsItem]?
 }
 
 struct TabItem: Decodable {
     var label: String
     var image: String
     var url: String
-}
-
-struct ToolbarInfo: Decodable {
-  var tools: [ToolbarItem]
 }
 
 struct ToolbarItem: Decodable {
@@ -25,31 +24,37 @@ struct ToolbarItem: Decodable {
   var style: String?
 }
 
+struct SettingsItem: Decodable {
+  var label: String
+  var key: String?
+  var type: String?
+  var value: String?
+}
 
 extension Widget {
   @Transient
-  var tabs: [TabItem]? {
-    if let json = tabsJSON?.data(using: .utf8) {
+  var config: Config? {
+    if let json = configJSON?.data(using: .utf8) {
       do {
-        let tabInfo: TabInfo = try JSONDecoder().decode(TabInfo.self, from: json)
-        return tabInfo.tabs
+        return try JSONDecoder().decode(Config.self, from: json)
       } catch {
         console.log("Tabs parsing error\(error)")
       }
     }
     return nil
   }
+  @Transient
+  var tabs: [TabItem]? {
+    return config?.tabs;
+  }
   
   @Transient
-  var toolbar: ToolbarInfo? {
-    if let json = toolsJSON?.data(using: .utf8) {
-      do {
-        let toolbarInfo: ToolbarInfo = try JSONDecoder().decode(ToolbarInfo.self, from: json)
-        return toolbarInfo
-      } catch {
-        console.log("Tools parsing error\(error)")
-      }
-    }
-    return nil
+  var tools: [ToolbarItem]? {
+    return config?.tools
+  }
+  
+  @Transient
+  var settings: [SettingsItem]? {
+    return config?.settings
   }
 }

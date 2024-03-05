@@ -9,7 +9,7 @@ ua: desktop
 size: 640x400
 class: cover
 effect: dim
-tabs: |
+config: |
   {"tabs":[
     {"label": "Home", "image":"person.circle.fill", "url":"/browse"},
     {"label": "TV Shows", "image":"person.circle.fill", "url":"/browse/genre/83"},

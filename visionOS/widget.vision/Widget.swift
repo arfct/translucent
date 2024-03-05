@@ -4,8 +4,6 @@ import SwiftData
 
 
 
-
-
 @Model final class Widget: Transferable, ObservableObject {
   
   // MARK: Core Properties
@@ -24,7 +22,7 @@ import SwiftData
   var radius: CGFloat = 30
   
   var width: CGFloat = 360
-  var height: CGFloat = 360
+  var height: CGFloat = 480
   var minWidth: CGFloat = 320
   var minHeight: CGFloat = 180
   var maxWidth: CGFloat = CGFloat.infinity
@@ -51,8 +49,7 @@ import SwiftData
   var injectCSS: String?
   var injectJS: String?
   
-  var toolsJSON: String?
-  var tabsJSON: String?
+  var configJSON: String?
   
   // MARK: Transient Properties
   @Transient var originalLocation: String?
@@ -177,10 +174,8 @@ import SwiftData
             self.injectJS = String(value)
           case "css":
             self.injectCSS = String(value)
-          case "tools":
-            self.toolsJSON = String(value)
-          case "tabs":
-            self.tabsJSON = String(value)
+          case "config":
+            self.configJSON = String(value)
           case "icon":
             self.icon = String(value)
           default:
@@ -341,11 +336,8 @@ extension Widget {
     if let string = clearSelectors, string.count > 0 {
       items.append(URLQueryItem(name: "clear", value: string))
     }
-    if let string = toolsJSON, string.count > 0 {
-      items.append(URLQueryItem(name: "tools", value: string))
-    }
-    if let string = tabsJSON, string.count > 0 {
-      items.append(URLQueryItem(name: "tabs", value: string))
+    if let string = configJSON, string.count > 0 {
+      items.append(URLQueryItem(name: "config", value: string))
     }
     if let string = resize, string.count > 0 {
       items.append(URLQueryItem(name: "resize", value: string))

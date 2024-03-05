@@ -157,10 +157,10 @@ struct WidgetView: View {
       //        })
       // MARK: Toolbar {
       .toolbar {
-        if let toolbar = widget.toolbar {
+        if let tools = widget.tools {
           ToolbarItemGroup(placement:.bottomOrnament) {
-            ForEach(toolbar.tools.indices, id: \.self) { i in
-              let info = toolbar.tools[i]
+            ForEach(tools.indices, id: \.self) { i in
+              let info = tools[i]
               Button {
                 browserState.coordinator?.open(location:info.url)
               } label: {
@@ -242,7 +242,7 @@ struct WidgetView: View {
       }
       .opacity(wasBackgrounded ? 0.0 : 1.0)
       .onDisappear {
-        widget.save()
+//        widget.save()
       }
     }
     
@@ -269,6 +269,11 @@ struct WidgetView: View {
         widget.resize == "uniform" ? .uniform :
         widget.resize == "none" ? .none :
           .freeform)
+    .onReceive(NotificationCenter.default.publisher(for: Notification.Name.widgetDeleted)) { notif in
+      if let anotherWidget = notif.object as? Widget, widget == anotherWidget {
+        dismiss()
+      }
+    }
     .persistentSystemOverlays((flipped || showSystemOverlay) && !wasBackgrounded ? .automatic : .hidden)
     
     .onAppear(){

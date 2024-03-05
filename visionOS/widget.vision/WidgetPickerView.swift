@@ -9,13 +9,17 @@ struct Activity {
   static let openPreview = "vision.widget.preview"
 }
 
+extension Notification.Name {
+  static let mainWindowOpened = Notification.Name("mainWindowOpened")
+  static let widgetDeleted = Notification.Name("widgetDeleted")
+}
+
 struct WidgetPickerView: View {
   @Environment(\.modelContext) private var modelContext
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.dismiss) private var dismiss
   
-  @Query(sort: [SortDescriptor(\Widget.favorite, order: .reverse),
-                SortDescriptor(\Widget.lastOpened, order: .reverse)])
+  @Query(sort: [SortDescriptor(\Widget.lastOpened, order: .reverse)], animation: .default)
   var widgets: [Widget]
   
   @State private var showAddWidget = false
@@ -33,7 +37,7 @@ struct WidgetPickerView: View {
   
   
   let columns = [GridItem(.adaptive(minimum: 160, maximum: 160),
-                          spacing:24,
+                          spacing:40,
                           alignment: .center)]
   
   let colors = [
@@ -110,7 +114,7 @@ struct WidgetPickerView: View {
   }
   
   
-  let iconSize: CGSize = CGSize(width: 160, height: 120)
+  let iconSize: CGSize = CGSize(width: 160, height: 160)
   
   // MARK: body
   var body: some View {
@@ -216,7 +220,7 @@ struct WidgetPickerView: View {
                     .brightness(isVisible ? 0.0 : 1.0)
                 }
               } // GeometryReader
-              .frame(width:iconSize.width, height:iconSize.width)
+              .frame(width:iconSize.width, height:iconSize.height + 40)
             } // ForEach
             
           } // MARK: /grid modifiers
@@ -281,8 +285,12 @@ struct WidgetPickerView: View {
           ZStack {
             Button(role: draggedWidget == nil ? .cancel : .destructive) {
               if let draggedWidget = draggedWidget {
-                draggedWidget.delete()
-                self.draggedWidget = nil
+                withAnimation(.spring) {
+                  NotificationCenter.default.post(name: Notification.Name.widgetDeleted, object: draggedWidget)
+
+                  draggedWidget.delete()
+                  self.draggedWidget = nil
+                }
               } else {
                 getMoreWidgets()
               }
@@ -359,9 +367,6 @@ struct WidgetPickerView: View {
   
 }
 
-extension Notification.Name {
-  static let mainWindowOpened = Notification.Name("mainWindowOpened")   
-}
 #Preview {
   WidgetPickerView(app:nil)
 }

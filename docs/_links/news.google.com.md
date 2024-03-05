@@ -13,7 +13,7 @@ remove: >
   [role="tablist"]
 css: >
   [role="banner"] {background-color: #00000044 !important; -webkit-backdrop-filter: blur(20px);}
-tabs: |
+config: |
   {"tabs":[
     {"label": "For You", "image":"person.circle.fill", "url":"https://news.google.com/foryou"},
     {"label": "Top Stories", "image":"globe", "url":"https://news.google.com/topstories"},

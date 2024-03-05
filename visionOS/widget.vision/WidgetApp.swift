@@ -74,8 +74,12 @@ struct WidgetApp: App {
     WindowGroup("Main", id: "main") { // value in // removed because it causes a crash in window restoration by reading PersistentIDs as strings
       GeometryReader { mainWindow in
         WidgetPickerView(app: self)
-          .onOpenURL { showWindowForURL($0) }
-          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { showWindowForURL($0.webpageURL) }
+          .onOpenURL {
+            showWindowForURL($0)
+          }
+          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
+            showWindowForURL($0.webpageURL)
+          }
           .onDrop(of: [.url], isTargeted: nil) { providers, point in
             for provider in providers {
               _ = provider.loadObject(ofClass: URL.self) { url,arg  in
@@ -85,12 +89,12 @@ struct WidgetApp: App {
             return true
           }
       }
-      .frame(idealWidth: 560, idealHeight: 680, alignment: .center)
+      .frame(idealWidth: 600, idealHeight: 800, alignment: .center)
       .fixedSize(horizontal: true, vertical:true)
     } // defaultValue: { "main" }
       .modelContainer(container)
       .windowResizability(.contentSize)
-      .defaultSize(width: 560, height: 680)
+      .defaultSize(width: 600, height: 800)
       .windowStyle(.plain)
     
     

@@ -7,7 +7,7 @@ ua: desktop
 description: Pandora desktop site
 class: experimental
 zoom:
-# tabs: |
+# config: |
 #   {"tabs":[
 #     {"label": "Home", "image":"person.circle.fill", "url":"/browse"},
 #     {"label": "Collection", "image":"person.circle.fill", "url":"/collection"},

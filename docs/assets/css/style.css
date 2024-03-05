@@ -108,6 +108,11 @@ body.experimental a.tile.experimental {
   display:block;
 }
 
+body.widgets .explainer,
+body.websites .explainer,
+body.experimental .explainer {
+  display:none;
+}
 body:not(.widgets):not(.websites):not(.experimental) a.tile.all {
   display:block !important;
 }

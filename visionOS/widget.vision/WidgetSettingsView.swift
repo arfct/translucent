@@ -124,86 +124,7 @@ struct WidgetSettingsView: View {
                 .frame(alignment: .leading)
                 .labelsHidden()
             }
-            
-            // MARK: Font
-            HStack(spacing:spacing) {
-              Text("Font")
-                .frame(maxWidth: labelWidth, alignment:.leading)
-              
-              
-              TextField("default font", text:$widget.fontName ?? "")
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .frame(maxWidth: .infinity)
-              
-              TextField("normal", text:$widget.fontWeight ?? "")
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .frame(maxWidth: .infinity)
-              
-              // MARK: Menu
-              Menu {
-                Picker("Font Override", selection: $fontMenu) {
-                  Text("Default").tag("")
-                  Text("System (San Francisco)").tag("-apple-system")
-                  Divider()
-                  Text("Archivo Narrow").tag("Archivo Narrow")
-                  Text("Bungee").tag("Bungee")
-                  Text("DM Sans").tag("DM Sans")
-                  Text("Space Mono").tag("Space Mono")
-                  Text("VF Semi Cond").tag("VF Semi Cond")
-                }
-                Divider()
-                
-                Button("More on Google Fonts…") {
-                  openURL(URL(string:"https://fonts.google.com")!)
-                }
-              } label: {
-                Label("Location", systemImage: "ellipsis")
-              }.onChange(of: fontMenu, {
-                widget.fontName = fontMenu;
-              })
-              .onAppear() {
-                fontMenu = widget.fontName ?? ""
-              }
-              .labelStyle(.iconOnly)
-              .buttonStyle(.borderless)
-            }
-            
-            // MARK: Colors
-            HStack(spacing:spacing - 16) {
-              Label("Colors", systemImage: "ellipsis").labelStyle(.titleOnly)
-                .frame(maxWidth: labelWidth, alignment:.leading)
-              
-              LazyVGrid(columns:columns) {
-                
-                HStack {
-                  ColorPicker(selection: $foreColor, supportsOpacity: true) {
-                    Image(systemName: "textformat.size.smaller")
-                  }.frame(maxWidth:56).onChange(of: foreColor) {
-                    if let hex = foreColor.toHex() { widget.foreHex = hex }
-                  }.labelsHidden().scaleEffect(1.0)
-                  Text("Text")
-                }
-                HStack {
-                  ColorPicker(selection: $tintColor, supportsOpacity: true) {
-                    Image(systemName: "a.square")
-                  }.frame(maxWidth:56).onChange(of: tintColor) {
-                    if let hex = tintColor.toHex() { widget.tintHex = hex }
-                  }.labelsHidden().scaleEffect(1.0)
-                  Text("Tint")
-                }
-                HStack {
-                  ColorPicker(selection: $backColor) {
-                    Image(systemName: "square.fill")
-                  }.frame(maxWidth:56).onChange(of: backColor) {
-                    if let hex = backColor.toHex() { widget.backHex = hex }
-                  }.labelsHidden().scaleEffect(1.0)
-                  Text("Back")
-                }
-                
-              }.frame(maxWidth:.infinity)
-            }
+  
             
           
           } footer: { // MARK: Footer
@@ -227,6 +148,86 @@ struct WidgetSettingsView: View {
           // MARK: Advanced Options
           if (showAllOptions) {
             Section(header: Text("CSS Tweaks")){
+              
+              // MARK: Font
+              HStack(spacing:spacing) {
+                Text("Font")
+                  .frame(maxWidth: labelWidth, alignment:.leading)
+                
+                
+                TextField("default font", text:$widget.fontName ?? "")
+                  .autocapitalization(.none)
+                  .disableAutocorrection(true)
+                  .frame(maxWidth: .infinity)
+                
+                TextField("normal", text:$widget.fontWeight ?? "")
+                  .autocapitalization(.none)
+                  .disableAutocorrection(true)
+                  .frame(maxWidth: .infinity)
+                
+                // MARK: Menu
+                Menu {
+                  Picker("Font Override", selection: $fontMenu) {
+                    Text("Default").tag("")
+                    Text("System (San Francisco)").tag("-apple-system")
+                    Divider()
+                    Text("Archivo Narrow").tag("Archivo Narrow")
+                    Text("Bungee").tag("Bungee")
+                    Text("DM Sans").tag("DM Sans")
+                    Text("Space Mono").tag("Space Mono")
+                    Text("VF Semi Cond").tag("VF Semi Cond")
+                  }
+                  Divider()
+                  
+                  Button("More on Google Fonts…") {
+                    openURL(URL(string:"https://fonts.google.com")!)
+                  }
+                } label: {
+                  Label("Location", systemImage: "ellipsis")
+                }.onChange(of: fontMenu, {
+                  widget.fontName = fontMenu;
+                })
+                .onAppear() {
+                  fontMenu = widget.fontName ?? ""
+                }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.borderless)
+              }
+              
+              // MARK: Colors
+              HStack(spacing:spacing - 16) {
+                Label("Colors", systemImage: "ellipsis").labelStyle(.titleOnly)
+                  .frame(maxWidth: labelWidth, alignment:.leading)
+                
+                LazyVGrid(columns:columns) {
+                  
+                  HStack {
+                    ColorPicker(selection: $foreColor, supportsOpacity: true) {
+                      Image(systemName: "textformat.size.smaller")
+                    }.frame(maxWidth:56).onChange(of: foreColor) {
+                      if let hex = foreColor.toHex() { widget.foreHex = hex }
+                    }.labelsHidden().scaleEffect(1.0)
+                    Text("Text")
+                  }
+                  HStack {
+                    ColorPicker(selection: $tintColor, supportsOpacity: true) {
+                      Image(systemName: "a.square")
+                    }.frame(maxWidth:56).onChange(of: tintColor) {
+                      if let hex = tintColor.toHex() { widget.tintHex = hex }
+                    }.labelsHidden().scaleEffect(1.0)
+                    Text("Tint")
+                  }
+                  HStack {
+                    ColorPicker(selection: $backColor) {
+                      Image(systemName: "square.fill")
+                    }.frame(maxWidth:56).onChange(of: backColor) {
+                      if let hex = backColor.toHex() { widget.backHex = hex }
+                    }.labelsHidden().scaleEffect(1.0)
+                    Text("Back")
+                  }
+                  
+                }.frame(maxWidth:.infinity)
+              }
               HStack(alignment: .top, spacing:spacing) {
                 Label("Clear", systemImage: "link")
                   .labelStyle(.titleOnly)
@@ -308,11 +309,25 @@ struct WidgetSettingsView: View {
                   .disableAutocorrection(true)
                   .frame(maxWidth: .infinity)
               }
+              HStack(alignment: .top, spacing:spacing) {
+                Label("Config", systemImage: "link")
+                  .labelStyle(.titleOnly)
+                  .frame(maxWidth: labelWidth, alignment: .leading)
+                TextField("json ui configuration", text:$widget.configJSON ?? "", axis: .vertical)
+                  .autocapitalization(.none)
+                  .disableAutocorrection(true)
+                  .frame(maxWidth: .infinity)
+              }
             }
           }
         }
         .frame(maxWidth: 640, maxHeight: .infinity, alignment: .center)
         
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name.widgetDeleted)) { notif in
+          if let anotherWidget = notif.object as? Widget, widget == anotherWidget {
+            callback()
+          }
+        }
         // MARK: Toolbar
         .toolbar {
           
