@@ -67,170 +67,172 @@ struct WidgetView: View {
   var body: some View {
     
     let webView = WebView(title: $widget.title,
-                              location: $widget.location,
-                              widget: $widget,
-                              phase:$currentPhase,
-                              attachment:$downloadAttachment,
-                              browserState:$browserState)
+                          location: $widget.location,
+                          widget: $widget,
+                          phase:$currentPhase,
+                          attachment:$downloadAttachment,
+                          browserState:$browserState)
     
     GeometryReader { geometry in
-      VStack() {
-        
-        
-        // MARK: Tab View
-        ZStack(alignment: .center) {
-            if let tabs = widget.tabs {
-              TabView(selection: $activeTab.onUpdate {
-                if let tab = widget.tabs?[activeTab] {
-                  browserState.coordinator?.open(location:tab.url)
-                }
-              }) {
-                ForEach(tabs.indices, id: \.self) { i in
-                  let info = tabs[i]
-                  ZStack {}.tabItem { Label(info.label, systemImage: info.image )}.tag(i)
-                }
-              }
+      
+      
+      // MARK: Tab View
+      ZStack(alignment: .center) {
+        if let tabs = widget.tabs {
+          TabView(selection: $activeTab.onUpdate {
+            if let tab = widget.tabs?[activeTab] {
+              browserState.coordinator?.open(location:tab.url)
+            }
+          }) {
+            ForEach(tabs.indices, id: \.self) { i in
+              let info = tabs[i]
+              ZStack {}.tabItem { Label(info.label, systemImage: info.image )}.tag(i)
+            }
           }
+        }
+        
+        
+        if (flipped) {
+          WidgetSettingsView(widget:widget, callback: toggleSettings)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(widget.backColor.opacity(0.2))
+            .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
+            .offset(z: flipped ? 1 : 0)
+            .opacity(flipped ? 1.0 : 0.0)
+            .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
+            .disabled(!flipped)
+        } else {
           
+          // MARK: Web View
           
-          if (flipped) {
-            WidgetSettingsView(widget:widget, callback: toggleSettings)
-              .frame(maxWidth: .infinity, maxHeight: .infinity)
-              .background(widget.backColor.opacity(0.2))
-              .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
-              .offset(z: flipped ? 1 : 0)
-              .opacity(flipped ? 1.0 : 0.0)
-              .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
-              .disabled(!flipped)
-          } else {
-            
-            // MARK: Web View
-            
-            webView
-              .onLoadStatusChanged { content, loading, error in
-                self.isLoading = loading
-                if (!loading && !finishedFirstLoad) {
-                  withAnimation(.easeInOut(duration: 1.0)) {
-                    finishedFirstLoad = true;
-                  }
-                  if !flipped {scheduleHide()}
+          webView
+            .onLoadStatusChanged { content, loading, error in
+              self.isLoading = loading
+              if (!loading && !finishedFirstLoad) {
+                withAnimation(.easeInOut(duration: 1.0)) {
+                  finishedFirstLoad = true;
                 }
-                if let error = error { console.log("Loading error: \(error)") }
-              }
-              .onDownloadCompleted { content, download, error in
-                downloads.append(download)
-                downloadAttachment = download;
-              }
-              .frame(maxWidth: .infinity, maxHeight: .infinity)
-              .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
-                                     displayMode: (widget.showGlassBackground ) ? .always : .never)
-              .background(widget.backColor)
-              .cornerRadius(widget.radius)
-              .opacity(!finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
-              .disabled(flipped)
-              .gesture(TapGesture().onEnded({ gesture in
-                showInfo = true
-                showSystemOverlay = true
                 if !flipped {scheduleHide()}
-              }))
-              .overlay {
-                if !widget.showGlassBackground && showSystemOverlay {
-                  
-                  RoundedRectangle(cornerRadius: widget.radius).inset(by: 1)
-                    .stroke(Color.white.opacity(0.03), lineWidth: 1)
-                  
-                }
               }
-          }
-
-        }
-        .overlay(alignment: .center) {
-          if (!finishedFirstLoad) {
-            ProgressView()
-          }
-        }
-        // TODO: Add alert https://developer.apple.com/documentation/swiftui/view/alert(_:ispresented:presenting:actions:message:)-8584l
-        //        .alert(isPresented: $showAlert, content: {
-        //            Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("Close")))
-        //        })
-        // MARK: Toolbar {
-        .toolbar {
-          if let toolbar = widget.toolbar {
-            ToolbarItemGroup(placement:.bottomOrnament) {
-              ForEach(toolbar.tools.indices, id: \.self) { i in
-                let info = toolbar.tools[i]
-                Button {
-                  browserState.coordinator?.open(location:info.url)
-                } label: {
-                  Label(info.label ?? "untitled", systemImage: info.image ?? "")
-                }
+              if let error = error { console.log("Loading error: \(error)") }
+            }
+            .onDownloadCompleted { content, download, error in
+              downloads.append(download)
+              downloadAttachment = download;
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
+                                   displayMode: (widget.showGlassBackground ) ? .always : .never)
+            .background(widget.backColor)
+            .cornerRadius(widget.radius)
+            .opacity(!finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
+            .disabled(flipped)
+            .gesture(TapGesture().onEnded({ gesture in
+              showInfo = true
+              showSystemOverlay = true
+              if !flipped {scheduleHide()}
+            }))
+            .overlay {
+              if !widget.showGlassBackground && showSystemOverlay {
+                
+                RoundedRectangle(cornerRadius: widget.radius).inset(by: 1)
+                  .stroke(Color.white.opacity(0.03), lineWidth: 1)
+                
               }
             }
-          }
         }
-
-        // MARK: Info Button
-        .ornament(attachmentAnchor: .scene(.top), contentAlignment:.bottom) {
-          if (widget.showBrowserBar) {
-            WidgetViewBrowserBar(widget: $widget, browserState: $browserState, infoCallback: toggleSettings)
-              .frame(maxWidth:geometry.size.width - 10)
-            
-          } else {
-            Button { } label: {
-              if isLoading && finishedFirstLoad {
-                ProgressView()
-                  .progressViewStyle(CircularProgressViewStyle(tint: .primary))
-                  .scaleEffect(1.0, anchor: .center)
-              } else {
-                Image(systemName: "info")
-                  .resizable()
-                  .aspectRatio(contentMode: .fit)
-                  .frame(width: 16, height: 16)
+        
+      }
+      
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      
+      .overlay(alignment: .center) {
+        if (!finishedFirstLoad) {
+          ProgressView()
+        }
+      }
+      // TODO: Add alert https://developer.apple.com/documentation/swiftui/view/alert(_:ispresented:presenting:actions:message:)-8584l
+      //        .alert(isPresented: $showAlert, content: {
+      //            Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("Close")))
+      //        })
+      // MARK: Toolbar {
+      .toolbar {
+        if let toolbar = widget.toolbar {
+          ToolbarItemGroup(placement:.bottomOrnament) {
+            ForEach(toolbar.tools.indices, id: \.self) { i in
+              let info = toolbar.tools[i]
+              Button {
+                browserState.coordinator?.open(location:info.url)
+              } label: {
+                Label(info.label ?? "untitled", systemImage: info.image ?? "")
               }
             }
-            .onDrag {
-              let userActivity = NSUserActivity(activityType: Activity.openSettings)
-              userActivity.targetContentIdentifier = "settings"
-              try? userActivity.setTypedPayload(["modelId": widget.modelID])
-              let itemProvider = NSItemProvider(object: widget.id.uuidString as NSString)
-              itemProvider.registerObject(userActivity, visibility: .all)
-              return itemProvider
-            } preview: {
-              ZStack {
-                Text("Widget Settings")
-              }.frame(width:100, height: 100).fixedSize()
-                .background(.white.opacity(0.2))
+          }
+        }
+      }
+      
+      // MARK: Info Button
+      .ornament(attachmentAnchor: .scene(.top), contentAlignment:.bottom) {
+        if (widget.showBrowserBar) {
+          WidgetViewBrowserBar(widget: $widget, browserState: $browserState, infoCallback: toggleSettings)
+            .frame(maxWidth:geometry.size.width - 10)
+          
+        } else {
+          Button { } label: {
+            if isLoading && finishedFirstLoad {
+              ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .primary))
+                .scaleEffect(1.0, anchor: .center)
+            } else {
+              Image(systemName: "info")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 16, height: 16)
             }
-            .simultaneousGesture(LongPressGesture().onEnded { _ in
-              //              openWindow(id:"main")
+          }
+          .onDrag {
+            let userActivity = NSUserActivity(activityType: Activity.openSettings)
+            userActivity.targetContentIdentifier = "settings"
+            try? userActivity.setTypedPayload(["modelId": widget.modelID])
+            let itemProvider = NSItemProvider(object: widget.id.uuidString as NSString)
+            itemProvider.registerObject(userActivity, visibility: .all)
+            return itemProvider
+          } preview: {
+            ZStack {
+              Text("Widget Settings")
+            }.frame(width:100, height: 100).fixedSize()
+              .background(.white.opacity(0.2))
+          }
+          .simultaneousGesture(LongPressGesture().onEnded { _ in
+            //              openWindow(id:"main")
+            app?.openWindow(id: "widgetSettings", value: widget.modelID)
+          })
+          .simultaneousGesture(TapGesture().onEnded {
+            if (geometry.size.width < 400 || geometry.size.height < 400) {
               app?.openWindow(id: "widgetSettings", value: widget.modelID)
-            })
-            .simultaneousGesture(TapGesture().onEnded {
-              if (geometry.size.width < 400 || geometry.size.height < 400) {
-                app?.openWindow(id: "widgetSettings", value: widget.modelID)
-              } else {
-                toggleSettings()
-              }
-            })
-            .buttonBorderShape(.circle)
-            .buttonStyle(.automatic)
-            .labelStyle(.iconOnly)
-            .glassBackgroundEffect(displayMode: showInfo ? .always : .never)
-            .background(.clear)
-            .transition(.move(edge: .top))
-            .hoverEffect()
-            .offset(y: showInfo || isLoading ? 0 : 40)
-            .padding(.bottom, 10)
-            .opacity((isLoading || showInfo) && !flipped && !wasBackgrounded && finishedFirstLoad ? 1.0 : 0.0)
-            .rotation3DEffect(.degrees(showInfo || isLoading ? 0.0 : 45), axis: (1, 0, 0),
-                              anchor: UnitPoint3D(x: 0.5, y: 1.0, z: 0))
-            .animation(.spring(), value: flipped)
-            .animation(.spring(), value: showInfo)
-            .animation(.spring(), value: isLoading)
-            .preferredSurroundingsEffect(widget.effect == "dim" ? .systemDark : nil)
-          }
+            } else {
+              toggleSettings()
+            }
+          })
+          .buttonBorderShape(.circle)
+          .buttonStyle(.automatic)
+          .labelStyle(.iconOnly)
+          .glassBackgroundEffect(displayMode: showInfo ? .always : .never)
+          .background(.clear)
+          .transition(.move(edge: .top))
+          .hoverEffect()
+          .offset(y: showInfo || isLoading ? 0 : 40)
+          .padding(.bottom, 10)
+          .opacity((isLoading || showInfo) && !flipped && !wasBackgrounded && finishedFirstLoad ? 1.0 : 0.0)
+          .rotation3DEffect(.degrees(showInfo || isLoading ? 0.0 : 45), axis: (1, 0, 0),
+                            anchor: UnitPoint3D(x: 0.5, y: 1.0, z: 0))
+          .animation(.spring(), value: flipped)
+          .animation(.spring(), value: showInfo)
+          .animation(.spring(), value: isLoading)
+          .preferredSurroundingsEffect(widget.effect == "dim" ? .systemDark : nil)
         }
-      } // MARK: Content view modifiers
+      }
+      // MARK: Content view modifiers
       .rotation3DEffect(.degrees(flipped ? -180.0 : 0.0), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
       .onChange(of: geometry.size) {
         widget.width = geometry.size.width
@@ -261,6 +263,8 @@ struct WidgetView: View {
     .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
     .windowGeometryPreferences(
       size: CGSize(width: widget.width, height: widget.height),
+      minimumSize: CGSize(width: widget.minWidth, height: widget.minHeight),
+      maximumSize: CGSize(width: widget.maxWidth, height: widget.maxHeight),
       resizingRestrictions:
         widget.resize == "uniform" ? .uniform :
         widget.resize == "none" ? .none :
@@ -283,6 +287,7 @@ struct WidgetView: View {
       console.log("❌ Closing Widget \(widget.name)")
     }
     .onChange(of: scenePhase) {
+      print("Phase \(scenePhase)")
       if (scenePhase == .active) {
         if (wasBackgrounded) {
           // We can't trust this alone - it's triggered by stuff like the camera
@@ -293,7 +298,7 @@ struct WidgetView: View {
       }
       if (scenePhase == .background) {
         print("💤 Backgrounding \(widget.name)")
-//        wasBackgrounded = true
+        //        wasBackgrounded = true
       }
       currentPhase = scenePhase
     }

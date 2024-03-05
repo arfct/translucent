@@ -320,6 +320,7 @@ struct WidgetSettingsView: View {
             
             Button {
               openWindow(id:"main")
+              callback()
             } label: {
               Label("List", systemImage: "rectangle.grid.2x2.fill")
             }

@@ -12,6 +12,7 @@ struct Activity {
 struct WidgetPickerView: View {
   @Environment(\.modelContext) private var modelContext
   @Environment(\.scenePhase) private var scenePhase
+  @Environment(\.dismiss) private var dismiss
   
   @Query(sort: [SortDescriptor(\Widget.favorite, order: .reverse),
                 SortDescriptor(\Widget.lastOpened, order: .reverse)])
@@ -27,6 +28,7 @@ struct WidgetPickerView: View {
   @Environment(\.openWindow) private var openWindow
   @Environment(\.dismissWindow) private var dismissWindow
   @State private var searchText: String = ""
+  @State var id = UUID().uuidString
   var app: WidgetApp?
   
   
@@ -340,12 +342,26 @@ struct WidgetPickerView: View {
       Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
         updateHue()
       }
+      
+      NotificationCenter.default.post(name: Notification.Name.mainWindowOpened, object: id)
+
+    }
+    .onReceive(NotificationCenter.default.publisher(for: Notification.Name.mainWindowOpened)) { notif in
+      if let otherID = notif.object as? String, otherID != id {
+        print("Other")
+        dismiss()
+      }
+      print("view \(notif.object) \(id)")
+       
     }
     
   }
   
 }
 
+extension Notification.Name {
+  static let mainWindowOpened = Notification.Name("mainWindowOpened")   
+}
 #Preview {
   WidgetPickerView(app:nil)
 }

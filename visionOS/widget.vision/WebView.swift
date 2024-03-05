@@ -97,7 +97,7 @@ struct WebView: UIViewRepresentable {
     
     if context.coordinator.lastPhase != phase {
       if phase == .background {
-        context.coordinator.open(location: "about:blank")
+//        context.coordinator.open(location: "about:blank")
         context.coordinator.lastPhase = phase;
       }
     }
