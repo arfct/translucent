@@ -8,10 +8,8 @@ minsize: 400x600
 description: Netflix desktop site
 tabs: |
   {"tabs":[
-    {"label": "Everything", "image":"rectangle.grid.2x2.fill", "url":"#"},
     {"label": "Widgets", "image":"rectangle.3.offgrid.fill", "url":"#widgets"},
-    {"label": "Websites", "image":"rectangle.fill", "url":"#websites"},
+    {"label": "Websites", "image":"globe", "url":"#websites"},
     {"label": "Experimental", "image":"testtube.2", "url":"#experimental"},
   ]}
 ---
-WidgetVision
