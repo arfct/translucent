@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C1B989F2B995F660003A023 /* ChromaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1B989E2B995F660003A023 /* ChromaView.swift */; };
 		2C23F8492B6D5B8C0099BA6D /* WidgetSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C23F8482B6D5B8C0099BA6D /* WidgetSettingsView.swift */; };
 		2C42D54A2B92EC4D007FCA7F /* Color+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C42D5492B92EC4D007FCA7F /* Color+Utils.swift */; };
 		2C42D54C2B92EC90007FCA7F /* URL+Directories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C42D54B2B92EC90007FCA7F /* URL+Directories.swift */; };
@@ -18,6 +19,7 @@
 		2C42D5582B92F7FE007FCA7F /* Widget+WebContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C42D5572B92F7FE007FCA7F /* Widget+WebContent.swift */; };
 		2C42D55A2B92FABA007FCA7F /* WebViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C42D5592B92FABA007FCA7F /* WebViewCoordinator.swift */; };
 		2C60D9A02B8FF13800494B8A /* View+WindowGeometryPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C60D99F2B8FF13800494B8A /* View+WindowGeometryPreferences.swift */; };
+		2C643BAA2B9820CF00768135 /* View+WindowReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C643BA92B9820CF00768135 /* View+WindowReader.swift */; };
 		2C832E0A2B7C0C800032FB06 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C832E092B7C0C800032FB06 /* ShareViewController.swift */; };
 		2C832E0E2B7C0C800032FB06 /* share.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2C832E072B7C0C800032FB06 /* share.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		2C8E78982B769C9F004DA40B /* Widget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8E78972B769C9F004DA40B /* Widget.swift */; };
@@ -58,6 +60,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2C1B989E2B995F660003A023 /* ChromaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChromaView.swift; sourceTree = "<group>"; };
 		2C23F8482B6D5B8C0099BA6D /* WidgetSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSettingsView.swift; sourceTree = "<group>"; };
 		2C42D5492B92EC4D007FCA7F /* Color+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Utils.swift"; sourceTree = "<group>"; };
 		2C42D54B2B92EC90007FCA7F /* URL+Directories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Directories.swift"; sourceTree = "<group>"; };
@@ -70,6 +73,7 @@
 		2C42D5592B92FABA007FCA7F /* WebViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewCoordinator.swift; sourceTree = "<group>"; };
 		2C51DA272B8DD566008ACA1A /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		2C60D99F2B8FF13800494B8A /* View+WindowGeometryPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "View+WindowGeometryPreferences.swift"; sourceTree = "<group>"; };
+		2C643BA92B9820CF00768135 /* View+WindowReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+WindowReader.swift"; sourceTree = "<group>"; };
 		2C832E072B7C0C800032FB06 /* share.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = share.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C832E092B7C0C800032FB06 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		2C832E0B2B7C0C800032FB06 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -110,6 +114,7 @@
 		2C42D5482B92EC3C007FCA7F /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				2C1B989E2B995F660003A023 /* ChromaView.swift */,
 				2CF253592B7847F900E57BF2 /* Utils.swift */,
 				2C42D5552B92F56A007FCA7F /* DownloadPanel.swift */,
 				2C42D5532B92EDA5007FCA7F /* Binding+Utils.swift */,
@@ -119,6 +124,7 @@
 				2C42D54B2B92EC90007FCA7F /* URL+Directories.swift */,
 				2C42D5492B92EC4D007FCA7F /* Color+Utils.swift */,
 				2C60D99F2B8FF13800494B8A /* View+WindowGeometryPreferences.swift */,
+				2C643BA92B9820CF00768135 /* View+WindowReader.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -301,12 +307,14 @@
 				2C8E78982B769C9F004DA40B /* Widget.swift in Sources */,
 				2C42D5542B92EDA5007FCA7F /* Binding+Utils.swift in Sources */,
 				2C9EE6A92B66844500D36BA6 /* WidgetView.swift in Sources */,
+				2C643BAA2B9820CF00768135 /* View+WindowReader.swift in Sources */,
 				2C42D54A2B92EC4D007FCA7F /* Color+Utils.swift in Sources */,
 				2C42D5562B92F56A007FCA7F /* DownloadPanel.swift in Sources */,
 				2C42D5522B92ED72007FCA7F /* Image+Utils.swift in Sources */,
 				2C60D9A02B8FF13800494B8A /* View+WindowGeometryPreferences.swift in Sources */,
 				2C42D54C2B92EC90007FCA7F /* URL+Directories.swift in Sources */,
 				2C23F8492B6D5B8C0099BA6D /* WidgetSettingsView.swift in Sources */,
+				2C1B989F2B995F660003A023 /* ChromaView.swift in Sources */,
 				2C42D54E2B92ED0A007FCA7F /* ModelContext+SQLite.swift in Sources */,
 				2C42D55A2B92FABA007FCA7F /* WebViewCoordinator.swift in Sources */,
 				2C8E789A2B769F94004DA40B /* WidgetPickerView.swift in Sources */,

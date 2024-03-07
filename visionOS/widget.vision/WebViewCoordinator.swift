@@ -110,7 +110,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     
     let url = navigationAction.request.url
     if url?.host() == "widget.vision" {
-      if let url = url, let context = container.widget.modelContext {
+      if let url = url, let context = WidgetApp.modelContext {
         do {
           let widget = Widget(url:url)
           context.insert(widget)

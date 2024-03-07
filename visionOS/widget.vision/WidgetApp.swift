@@ -12,7 +12,8 @@ struct WidgetApp: App {
   
   // MARK: - ModelContainer
   //  private var container: ModelContainer
-
+  static var modelContext: ModelContext?
+  
   var container: ModelContainer = {
     console.log("Loading ModelContainer")
     let path  = FileManager.default.urls(for: .applicationSupportDirectory,
@@ -22,7 +23,8 @@ struct WidgetApp: App {
     let modelConfiguration = ModelConfiguration(url: storePath)
     
     do {
-      return try ModelContainer(for: Widget.self, configurations: modelConfiguration)
+      let container = try ModelContainer(for: Widget.self, configurations: modelConfiguration)
+      return container;
     } catch {
 //      if SwiftDataError.loadIssueModelContainer == error as? SwiftDataError {
       console.error("Deleting old modelContainer due to \(error)")
@@ -40,6 +42,8 @@ struct WidgetApp: App {
       try FileManager.default.createDirectory(at: path
         .appendingPathComponent("thumbnails", isDirectory: true), withIntermediateDirectories: true)
       
+      WidgetApp.modelContext = container.mainContext
+
       // Create downloads directory
       try FileManager.default.createDirectory(at: path
         .appendingPathComponent("downloads", isDirectory: true), withIntermediateDirectories: true)
@@ -151,6 +155,20 @@ struct WidgetApp: App {
     .windowResizability(.contentSize)
     .defaultSize(width: 640, height: 640)
     
+    // MARK: Widget Windows
+    
+    WindowGroup("WebView", id: "webview", for: URL.self) { $url in
+      if let url = url {
+        WidgetView(widget:Widget(url:url), app:self)
+          .onOpenURL { showWindowForURL($0) }
+          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { showWindowForURL($0.webpageURL) }
+      }
+    }
+    .handlesExternalEvents(matching: [Activity.openWebView])
+    .modelContainer(container)
+    .windowStyle(.plain)
+    .windowResizability(.contentSize)
+    .defaultSize(width: 1024, height: 600)
     
     // MARK: Preview Window
     //    WindowGroup("Preview", id: "preview", for: URL.self) { $url in

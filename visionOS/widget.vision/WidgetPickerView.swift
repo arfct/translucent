@@ -7,6 +7,7 @@ struct Activity {
   static let openWidget = "vision.widget.open"
   static let openSettings = "vision.widget.settings"
   static let openPreview = "vision.widget.preview"
+  static let openWebView = "vision.widget.webview"
 }
 
 extension Notification.Name {
@@ -53,8 +54,9 @@ struct WidgetPickerView: View {
   ]
   
   func getMoreWidgets() {
-    openURL(URL(string: "https://www.widget.vision/list")!)
-    dismissWindow(id: "main")
+    guard let url = URL(string: "https://www.widget.vision/list") else { return }
+    openWindow(id: "webview", value: url)
+//    openURL(url)
   }
   
   func updateHue() {
@@ -226,29 +228,29 @@ struct WidgetPickerView: View {
           } // MARK: /grid modifiers
           .frame(minHeight: scrollView.size.height, alignment:.top)
           .padding(.top, 20)
-          .padding(.bottom, 100)
+          .padding(.bottom, 20)
         }   // MARK: /scroll modifiers
         .padding(.top, -20)
         .padding(.horizontal, 16)
         .frame(maxHeight:.infinity, alignment:.top)
-        .padding(.bottom, 40)
+        .padding(.bottom, 80)
         
         // MARK: Empty Placeholder
         .overlay(alignment: .bottom) {
           if widgets.isEmpty {
             ContentUnavailableView {
-              Label("Get Some Widgets", systemImage: "rectangle.3.offgrid.fill")
+              Label("Widgets & Websites", systemImage: "rectangle.3.offgrid.fill")
             } description: {
-              Text("Open a widget from the web to add it here.")
+              Text("Add something from the web\nto see it here.")
               Button {
                 getMoreWidgets()
               } label: {
-                Label("Add widget", systemImage: "plus")
+                Label("Get Widgets", systemImage: "")
               }
             }
             .padding()
             .padding(.bottom, -20)
-            .frame(maxWidth:320)
+            .frame(maxWidth:360)
             .glassBackgroundEffect()
             .padding(.bottom, 40)
             .offset(z: 50)
@@ -296,7 +298,7 @@ struct WidgetPickerView: View {
               }
             } label: {
               Label(draggedWidget == nil ?
-                    "Get Widgets" : "Delete Widget",
+                    "Get More" : "Delete Widget",
                     systemImage: draggedWidget == nil ? "plus" : "square.and.arrow.down")
               .padding(10)
             }.labelStyle(.titleAndIcon)

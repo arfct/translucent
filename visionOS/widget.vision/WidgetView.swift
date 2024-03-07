@@ -54,6 +54,8 @@ struct WidgetView: View {
   @State var downloads: [URL] = []
   @State var activeTab: Int = 0
   @State var browserState = BrowserState();
+  @State var window: UIWindow?
+  
   
   func toggleSettings() {
     withAnimation(.spring) {
@@ -72,6 +74,8 @@ struct WidgetView: View {
                           phase:$currentPhase,
                           attachment:$downloadAttachment,
                           browserState:$browserState)
+    
+    let isTransient = widget.modelContext == nil;
     
     GeometryReader { geometry in
       
@@ -121,9 +125,12 @@ struct WidgetView: View {
               downloadAttachment = download;
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(widget.effect == "chroma" ? ChromaView() : nil)
             .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
                                    displayMode: (widget.showGlassBackground ) ? .always : .never)
             .background(widget.backColor)
+            
+          
             .cornerRadius(widget.radius)
             .opacity(!finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
             .disabled(flipped)
@@ -241,9 +248,7 @@ struct WidgetView: View {
         widget.save()
       }
       .opacity(wasBackgrounded ? 0.0 : 1.0)
-      .onDisappear {
-//        widget.save()
-      }
+      // .onDisappear { widget.save() }
     }
     
     //    .sheet(isPresented:Binding<Bool>(
@@ -251,6 +256,7 @@ struct WidgetView: View {
     //      set: { _ in })) {
     //        DownloadPanel(downloadAttachment: $downloadAttachment)
     //      }
+    
     .quickLookPreview($downloadAttachment, in: downloads)
     
     // Clamp the size initially to set the base size, but then allow it to change later.
@@ -260,15 +266,15 @@ struct WidgetView: View {
            minHeight: clampInitialSize ? widget.height : widget.minHeight,
            idealHeight: widget.height,
            maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
-    .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
-    .windowGeometryPreferences(
-      size: CGSize(width: widget.width, height: widget.height),
-      minimumSize: CGSize(width: widget.minWidth, height: widget.minHeight),
-      maximumSize: CGSize(width: widget.maxWidth, height: widget.maxHeight),
-      resizingRestrictions:
-        widget.resize == "uniform" ? .uniform :
-        widget.resize == "none" ? .none :
-          .freeform)
+//    .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
+    //    .windowGeometryPreferences(
+    //      size: CGSize(width: widget.width, height: widget.height),
+    //      minimumSize: CGSize(width: widget.minWidth, height: widget.minHeight),
+    //      maximumSize: CGSize(width: widget.maxWidth, height: widget.maxHeight),
+    //      resizingRestrictions:
+    //        widget.resize == "uniform" ? .uniform :
+    //        widget.resize == "none" ? .none :
+    //          .freeform)
     .onReceive(NotificationCenter.default.publisher(for: Notification.Name.widgetDeleted)) { notif in
       if let anotherWidget = notif.object as? Widget, widget == anotherWidget {
         dismiss()
@@ -276,14 +282,19 @@ struct WidgetView: View {
     }
     .persistentSystemOverlays((flipped || showSystemOverlay) && !wasBackgrounded ? .automatic : .hidden)
     
+    .onWindowChange { window in
+      self.window = window
+    }
     .onAppear(){
+      let windowScenes = UIApplication.shared.connectedScenes
+      
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-        clampInitialSize = false
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-          withAnimation(.easeInOut(duration: 1.0)) {
-            loadedWindow = true;
-            
-          }
+        withAnimation(.easeInOut(duration: 1.0)) {
+          loadedWindow = true;
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+          clampInitialSize = false
+          
         }
       }
       
@@ -324,6 +335,6 @@ struct WidgetView: View {
 }
 
 
-//#Preview(windowStyle: .plain) {
-//    WidgetView(widget: Widget(name: "Test", location: "https://example.com", style: .glass))
-//}
+#Preview(windowStyle: .plain) {
+    WidgetView(widget: Widget(name: "Test", location: "https://example.com"))
+}

@@ -59,7 +59,7 @@ import SwiftData
   @MainActor
   func save() {
     do {
-      try modelContext!.save()
+      try modelContext?.save()
     } catch {
       console.log("Could not save ModelContainer: \(error)")
     }
@@ -144,6 +144,7 @@ import SwiftData
             self.resize = String(value)
           case "ms", "sz", "size":
             let size = sizeFor(dimensions: String(value))
+            print("size", size)
             self.width = size.width
             self.height = size.height
           case "minsize", "min":
