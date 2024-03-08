@@ -66,6 +66,17 @@ struct WidgetView: View {
     }
   }
   
+  var drag: some Gesture {
+    DragGesture(coordinateSpace: .global)
+      
+      .onChanged { value in
+        print(value)
+      }
+      .onEnded({ value in
+        
+        print("xvalue \(value.translation)")
+      })
+  }
   var body: some View {
     
     let webView = WebView(title: $widget.title,
@@ -76,10 +87,10 @@ struct WidgetView: View {
                           browserState:$browserState)
     
     let isTransient = widget.modelContext == nil;
+    let tilt = (widget.tilt ?? 0)
     
     GeometryReader { geometry in
-      
-      
+ 
       // MARK: Tab View
       ZStack(alignment: .center) {
         if let tabs = widget.tabs {
@@ -134,6 +145,13 @@ struct WidgetView: View {
             .cornerRadius(widget.radius)
             .opacity(!finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
             .disabled(flipped)
+            .rotation3DEffect(.degrees(90.0 * (tilt ?? 0)),
+                              axis: (x: 1, y: 0, z: 0),
+                              anchor: .center)
+            .offset(z: tilt > 0 
+                    ? (geometry.size.height/2 - 80) * tilt
+                    : (-geometry.size.height/2 + 80 ) * tilt
+            )
             .gesture(TapGesture().onEnded({ gesture in
               showInfo = true
               showSystemOverlay = true
@@ -149,8 +167,12 @@ struct WidgetView: View {
             }
         }
         
+//        VStack() {
+//          Text("HELLO").padding().gesture(drag)
+//        }
+
       }
-      
+
       .frame(maxWidth: .infinity, maxHeight: .infinity)
       
       .overlay(alignment: .center) {
@@ -178,6 +200,9 @@ struct WidgetView: View {
         }
       }
       
+      .ornament(attachmentAnchor: .scene(.topTrailing), ornament: {
+
+      })
       // MARK: Info Button
       .ornament(attachmentAnchor: .scene(.top), contentAlignment:.bottom) {
         if (widget.showBrowserBar) {
@@ -197,19 +222,34 @@ struct WidgetView: View {
                 .frame(width: 16, height: 16)
             }
           }
-          .onDrag {
-            let userActivity = NSUserActivity(activityType: Activity.openSettings)
-            userActivity.targetContentIdentifier = "settings"
-            try? userActivity.setTypedPayload(["modelId": widget.modelID])
-            let itemProvider = NSItemProvider(object: widget.id.uuidString as NSString)
-            itemProvider.registerObject(userActivity, visibility: .all)
-            return itemProvider
-          } preview: {
-            ZStack {
-              Text("Widget Settings")
-            }.frame(width:100, height: 100).fixedSize()
-              .background(.white.opacity(0.2))
-          }
+          .simultaneousGesture(
+            DragGesture(coordinateSpace: .global)
+              .onChanged { value in
+                cancelHide()
+                var tilt = CGFloat( -3 *  value.translation3D.z)
+                if (abs(tilt) < 60.0) { tilt = 0.0 }
+                widget.tilt = min(1.0, max(-1.0, (tilt / geometry.size.height)))
+              }
+              .onEnded { value in
+                scheduleHide()
+                  withAnimation(.spring()) {
+                      
+                  }
+              }
+          )
+//          .onDrag {
+//            let userActivity = NSUserActivity(activityType: Activity.openSettings)
+//            userActivity.targetContentIdentifier = "settings"
+//            try? userActivity.setTypedPayload(["modelId": widget.modelID])
+//            let itemProvider = NSItemProvider(object: widget.id.uuidString as NSString)
+//            itemProvider.registerObject(userActivity, visibility: .all)
+//            return itemProvider
+//          } preview: {
+//            ZStack {
+//              Text("Widget Settings")
+//            }.frame(width:100, height: 100).fixedSize()
+//              .background(.white.opacity(0.2))
+//          }
           .simultaneousGesture(LongPressGesture().onEnded { _ in
             //              openWindow(id:"main")
             app?.openWindow(id: "widgetSettings", value: widget.modelID)
@@ -289,9 +329,8 @@ struct WidgetView: View {
       let windowScenes = UIApplication.shared.connectedScenes
       
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-        withAnimation(.easeInOut(duration: 1.0)) {
-          loadedWindow = true;
-        }
+        loadedWindow = true;
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
           clampInitialSize = false
           
