@@ -70,13 +70,15 @@ struct WidgetApp: App {
       console.log("Error opening url \(error)")
     }
   }
-  
+  @State var launchComplete = true;
   var body: some Scene {
     
     // MARK: Main Window
     
     WindowGroup("Main", id: "main") { // value in // removed because it causes a crash in window restoration by reading PersistentIDs as strings
-      GeometryReader { mainWindow in
+      if (!launchComplete) {
+        LaunchView(completed: $launchComplete)
+      } else {
         WidgetPickerView(app: self)
           .onOpenURL {
             showWindowForURL($0)
@@ -91,15 +93,15 @@ struct WidgetApp: App {
               }
             }
             return true
-          }
+          }      
+          .frame(idealWidth: 600, idealHeight: 800, alignment: .center)
+          .fixedSize(horizontal: true, vertical:true)
       }
-      .frame(idealWidth: 600, idealHeight: 800, alignment: .center)
-      .fixedSize(horizontal: true, vertical:true)
-    } // defaultValue: { "main" }
+    }
+    .windowStyle(.plain)
       .modelContainer(container)
       .windowResizability(.contentSize)
       .defaultSize(width: 600, height: 800)
-      .windowStyle(.plain)
     
     
     // MARK: Widget Windows
@@ -159,7 +161,8 @@ struct WidgetApp: App {
     
     WindowGroup("WebView", id: "webview", for: URL.self) { $url in
       if let url = url {
-        WidgetView(widget:Widget(url:url), app:self)
+        let widget = Widget(url:url)
+        WidgetView(widget:widget, app:self)
           .onOpenURL { showWindowForURL($0) }
           .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { showWindowForURL($0.webpageURL) }
       }
@@ -168,7 +171,6 @@ struct WidgetApp: App {
     .modelContainer(container)
     .windowStyle(.plain)
     .windowResizability(.contentSize)
-    .defaultSize(width: 1024, height: 600)
     
     // MARK: Preview Window
     //    WindowGroup("Preview", id: "preview", for: URL.self) { $url in

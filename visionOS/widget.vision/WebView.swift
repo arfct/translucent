@@ -117,7 +117,7 @@ struct WebView: UIViewRepresentable {
   }
   
   func updateWebView(_ webView: WKWebView, context: Context) {
-    webView.pageZoom = widget.zoom
+
     webView.evaluateJavaScript(widget.jsSrc()) { object, error in
     }
     if (webView.customUserAgent != widget.userAgentString) {

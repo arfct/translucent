@@ -76,9 +76,8 @@ extension Widget {
         viewportTag.name = "viewport"
         document.head.appendChild(viewportTag);
       }
-      viewportTag.setAttribute('content', "width=\(viewport)")
+      viewportTag.setAttribute('content', "width=\(viewport), initial-scale=\(zoom), user-scalable=no")
       """)
-    
     
     
     if let fontName = self.fontName, fontName != "" && fontName != "-apple-system" {

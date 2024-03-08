@@ -217,7 +217,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     
     webView.evaluateJavaScript(fetchManifestJS, completionHandler: { value, error in
       if let queryString = value as? String {  
-        console.log("Found Value \(queryString)")
+        console.log("Found Meta Tag \(queryString)")
         self.container.widget.apply(options: queryString, fromSite:true)
       }
     })

@@ -21,8 +21,8 @@ import SwiftData
   var style: String = "glass"
   var radius: CGFloat = 30
   
-  var width: CGFloat = 360
-  var height: CGFloat = 480
+  var width: CGFloat = 400
+  var height: CGFloat = 400
   var minWidth: CGFloat = 320
   var minHeight: CGFloat = 180
   var maxWidth: CGFloat = CGFloat.infinity
@@ -30,6 +30,7 @@ import SwiftData
   
   var effect: String? // dark
   var resize: String? // nil [freeform], uniform, none, (fitwidth)
+  var tilt: CGFloat?
   
   // MARK: Theme Properties
   var backHex: String?

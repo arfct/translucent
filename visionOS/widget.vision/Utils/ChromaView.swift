@@ -20,8 +20,8 @@ struct ChromaView: View {
       
         .fill(RadialGradient(gradient: Gradient(
           colors: [
-            Color(hue:hue, saturation: 0.6, brightness: 1.0).opacity(0.2),
-            Color(hue:hue, saturation: 0.9, brightness: 0.2).opacity(0.67),
+            Color(hue:hue, saturation: 0.6, brightness: 1.0).opacity(0.1),
+            Color(hue:hue, saturation: 0.9, brightness: 0.2).opacity(0.57),
           ]),
                              center: .topLeading, startRadius:0, endRadius: 1000))
         .onAppear() {

@@ -54,7 +54,7 @@ struct WidgetPickerView: View {
   ]
   
   func getMoreWidgets() {
-    guard let url = URL(string: "https://www.widget.vision/list") else { return }
+    guard let url = URL(string: "https://www.widget.vision/list?format=widget&size=1024x600") else { return }
     openWindow(id: "webview", value: url)
 //    openURL(url)
   }
@@ -276,9 +276,10 @@ struct WidgetPickerView: View {
             .black.opacity(0.005),
             .clear]),
           center: .center,
-          startRadius: 230,
-          endRadius: 560.0 / 2
+          startRadius: 360.0 / 2,
+          endRadius: 600.0 / 2
         ).offset(z: -100)
+          .opacity(isVisible ? 1.0 : 0.0)
       )
       // MARK: Bottom Button
       
@@ -369,6 +370,6 @@ struct WidgetPickerView: View {
   
 }
 
-#Preview {
+#Preview(traits: .sizeThatFitsLayout) {
   WidgetPickerView(app:nil)
 }
