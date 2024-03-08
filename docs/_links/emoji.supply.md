@@ -1,6 +1,6 @@
 ---
 name: Emoji Kitchen
-tags: widget all
+tags: website
 order: 2
 icon: face.smiling
 href: https://emoji.supply/kitchen

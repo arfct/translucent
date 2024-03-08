@@ -1,11 +1,11 @@
 ---
 name: Pandora
-tags: website
+tags: experimental
 icon: music.note
+micon: music_note
 href: https://www.pandora.com/
 ua: desktop
 description: Pandora desktop site
-class: experimental
 zoom:
 # config: |
 #   {"tabs":[

@@ -228,20 +228,30 @@ a img {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 body {
-  gap: 8px;
-  align-items: center;
-  justify-content: center;
   margin: 0;
   padding: 0;
-  background-color: #222;
-  min-height: 100vh;
+
+}
+.container {
   box-sizing: border-box;
+  min-height: 100vh;
+  padding: 2vmin;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  align-items: space-around;
+  justify-content: center;
+  flex-direction: column;
+
   --iconWidth: 160px;
   --iconHeight: 160px;
 }
-
+.content {
+  max-width:100%;
+}
 .tiles {
-  padding: 10vmin 32px;
+  padding: 0 32px;
   display: grid;
   grid-template-columns: repeat(auto-fill, var(--iconWidth));
   column-gap:24px;
@@ -271,7 +281,7 @@ div.header {
   max-width: 720px;
   margin: auto ;
   padding: 2vmin 20px ;
-  margin-top:2vmin;
+  padding-bottom: 32px;
   box-sizing:border-box;
   left:0;
   right:0;
@@ -281,7 +291,6 @@ div.header {
 img.icon {
   max-width:40px;
   display:block;
-  
   z-index: 1;
   position:relative
 }

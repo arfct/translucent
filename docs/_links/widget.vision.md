@@ -2,7 +2,7 @@
 name: widget.vision
 icon: rectangle.grid.2x2
 href: https://www.widget.vision/list
-class: experimental
+class: hidden
 size: 1024x600
 minsize: 400x600
 description: Netflix desktop site

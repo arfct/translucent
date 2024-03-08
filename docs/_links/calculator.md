@@ -1,6 +1,6 @@
 ---
 name: Calculator (alpha)
-tags: widget experimental
+tags: experimental
 icon: av.remote
 class: experimental
 size: 420x640

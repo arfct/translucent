@@ -10,7 +10,8 @@ layout: default
   <a href="#website">Website</a>
 
 </div> -->
-<div class="content">
+<div class="container">
+  <div class="content">
 
   <div class="header">
     <img class="icon" src="assets/img/favicon.large.png">
@@ -74,19 +75,20 @@ layout: default
     {%- endif %}
   </ul>
 </div>
-{%- endif %}
 
+{%- endif %}
 {%- endif -%}
+
+</div>
+</div>
 
 <script>
   onhashchange = function() {
     var hash = window.location.hash;
     console.log("hash", hash)
+    window.location.hash = "";
     if (hash) {
       var el = document.body.className = hash.substring(1);
     }
   }
 </script>
-
-
-</div>
