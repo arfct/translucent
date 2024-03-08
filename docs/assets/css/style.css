@@ -1,6 +1,5 @@
 html {
   --hue: 0;
-
 }
 
 html.asWidget .hideInWidget {
@@ -8,25 +7,51 @@ html.asWidget .hideInWidget {
 }
 
 body {
+  background-color:black;
   background: linear-gradient(
     to bottom right,
-    hsla(var(--hue), 33%, 25%, 0.9),
-    hsla(var(--hue), 45%, 10%, 0.9),
-    
-    hsla(var(--hue), 95%, 3%, 0.5)
-    
+    hsla(var(--hue), 33%, 25%, 1.0),
+    hsla(var(--hue), 45%, 10%, 1.0),
+    hsla(var(--hue), 95%, 3%, 1.0)
   );
-
   background-attachment: fixed;
   color: white;
 }
 
 content {
   margin: auto;
+display:flex;
+  text-align: center;
+  justify-content: center;;
 }
 
 .site-header {
   border-top: none;
+}
+
+
+.nav {
+  display:flex;
+  justify-content: center;
+  align-items: center;;
+  margin-bottom:32px;
+  width:auto;
+  flex-basis: auto;
+  border-radius:100px;
+  padding:2px;
+}
+
+.nav a {
+  text-decoration: none;;
+  padding:10px;
+
+  border-radius:100px;
+}
+body.websites a[href$="websites"],
+body.websites a[href$="websites"],
+body.widgets a[href$="widgets"],
+body.experimental a[href$="experimental"] {
+  background-color: #fff2;
 }
 
 a.tile {
@@ -265,7 +290,6 @@ body {
   margin-bottom:100px;
 }
 
-
 .spacer {
   opacity: 0;
   height: 1px;
@@ -281,11 +305,10 @@ div.header {
   max-width: 720px;
   margin: auto ;
   padding: 2vmin 20px ;
-  padding-bottom: 32px;
+  padding-bottom: 24px;
   box-sizing:border-box;
   left:0;
   right:0;
-
 }
     
 img.icon {

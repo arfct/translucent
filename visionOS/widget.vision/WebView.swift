@@ -40,7 +40,8 @@ struct WebView: UIViewRepresentable {
   
   func makeUIView(context: Context) -> WKWebView {
     
-    let webView = context.coordinator.webView
+    let webView = WKWebView()
+    context.coordinator.webView = webView
     webView.navigationDelegate = context.coordinator
     webView.uiDelegate = context.coordinator
 

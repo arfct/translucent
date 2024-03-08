@@ -10,7 +10,7 @@ struct WidgetViewBrowserBar: View {
     var body: some View {
       HStack {
         Button {
-          browserState.coordinator?.webView.goBack()
+          browserState.coordinator?.webView?.goBack()
         } label: {
           Label("Back", systemImage: "chevron.left").labelStyle(.iconOnly)
         }.buttonBorderShape(.circle)
@@ -19,7 +19,7 @@ struct WidgetViewBrowserBar: View {
         
         if browserState.canGoForward {
           Button {
-            browserState.coordinator?.webView.goForward()
+            browserState.coordinator?.webView?.goForward()
 
           } label: {
             Label("Forward", systemImage: "chevron.right").labelStyle(.iconOnly)

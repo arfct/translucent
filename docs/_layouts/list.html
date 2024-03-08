@@ -2,14 +2,6 @@
 layout: default
 ---
 
-<!-- <div class="nav hideInWidget">
-
-  <a href="#">All</a>
-  <a href="#experimental">Experimental</a>
-  <a href="#widget">Widget</a>
-  <a href="#website">Website</a>
-
-</div> -->
 <div class="container">
   <div class="content">
 
@@ -17,6 +9,14 @@ layout: default
     <img class="icon" src="assets/img/favicon.large.png">
     {% include logo.html %}
   </div>
+
+<div class="nav hideInWidget">
+
+  <a href="#widgets">Widgets</a>
+  <a href="#websites">Websites</a>
+  <a href="#experimental">Experimental</a>
+
+</div>
 
   {% assign posts = site.links | sort: "order",  "last" %}
   {%- if posts.size > 0 -%} 

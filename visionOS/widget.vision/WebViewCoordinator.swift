@@ -8,13 +8,14 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   @Environment(\.openWindow) var openWindow
   
   let container: WebView
-  let webView: WKWebView = WKWebView()
+  weak var webView: WKWebView?
   let widget: Widget
   var lastSize: CGSize = .zero
   var updateWorkItem: DispatchWorkItem?
   var lastSetLocation: String?
   var lastPhase: ScenePhase?
   var currentDownload: URL?
+  
   
   
   init(_ container: WebView, widget: Widget) {
@@ -34,13 +35,13 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
       }
       if (saveValue) { lastSetLocation = urlString }
       
-      webView.load(URLRequest(url: url))
+      webView?.load(URLRequest(url: url))
     }
     
   }
   
   func loadURL(_ url: URL) {
-    webView.load(URLRequest(url: url))
+    webView?.load(URLRequest(url: url))
   }
   
   // MARK: WKUserContentController

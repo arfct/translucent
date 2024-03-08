@@ -55,8 +55,8 @@ struct WidgetPickerView: View {
   
   func getMoreWidgets() {
     guard let url = URL(string: "https://www.widget.vision/list?format=widget&size=1024x600") else { return }
-    openWindow(id: "webview", value: url)
-//    openURL(url)
+    //    openWindow(id: "webview", value: url)
+    openURL(url)
   }
   
   func updateHue() {
