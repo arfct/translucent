@@ -259,7 +259,7 @@ struct WidgetSettingsView: View {
               }
             }
             
-            Section(header: Text("Advanced")) {
+            Section {
               
               HStack(spacing:spacing) {
                 // MARK: Icon
@@ -314,7 +314,14 @@ struct WidgetSettingsView: View {
                 TextField("json ui configuration", text:$widget.configJSON ?? "", axis: .vertical)
                   .autocapitalization(.none)
                   .disableAutocorrection(true)
+                  .keyboardType(.asciiCapable)
                   .frame(maxWidth: .infinity)
+              }
+            } header: {
+              Text("Advanced")
+            } footer: {
+              if let error = widget.parseError {
+                Text(error)
               }
             }
           }
@@ -368,10 +375,8 @@ struct WidgetSettingsView: View {
         }
       }
       .padding(min(g.size.width/32, 0)) // Collapse small size padding
-      .frame(idealHeight:showAllOptions ? 640 : .zero)
-      .windowGeometryPreferences(minimumSize: showAllOptions ? .init(width:512, height:512) : .init(width:512, height:342))
-      
-    }
+    }      
+    .frame(minWidth:512, minHeight:showAllOptions ? 720 : .zero)
   }
 }
 

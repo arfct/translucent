@@ -35,9 +35,13 @@ extension Widget {
   @Transient
   var config: Config? {
     if let json = configJSON?.data(using: .utf8) {
+      if json.count < 1 { return nil }
       do {
-        return try JSONDecoder().decode(Config.self, from: json)
+        let value =  try JSONDecoder().decode(Config.self, from: json)
+        parseError = nil;
+        return value;
       } catch {
+        self.parseError = String(describing: error)
         console.log("Tabs parsing error\(error)")
       }
     }

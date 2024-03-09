@@ -57,15 +57,28 @@ struct WidgetView: View {
   @State var window: UIWindow?
   @State var showPopover = false
   @State var showTilt = false
+  @State var clampedSize: CGSize?
   
+  
+  init(widget: Widget, app: WidgetApp? = nil) {
+    self.widget = widget
+    self.app = app
+    
+  }
   
   func toggleSettings() {
-    
     flipped.toggle()
     if !flipped, let location = widget.location {
       browserState.location = location
     }
+  }
+  
+  func resizeTo(_ size: CGSize) {
+    clampedSize = size;
     
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+      clampedSize = nil
+    }
   }
   
   var drag: some Gesture {
@@ -314,36 +327,55 @@ struct WidgetView: View {
                   Spacer()
                   Menu {
                     Toggle(isOn: $widget.autohideControls) {
-                      Label("Autohide controls", systemImage:"eye.slash")
+                      Label("Autohide Controls", systemImage:"eye.slash")
                     }
                     Toggle(isOn: Binding<Bool>(
                       get: { widget.effect == "dim" },
                       set: { val in widget.effect = val ? "dim" : nil})) {
-                        Label("Dim environment", systemImage:"circle.lefthalf.filled.righthalf.striped.horizontal")
+                        Label("Dim Environment", systemImage:"circle.lefthalf.filled.righthalf.striped.horizontal")
                       }
                     Button { showPopover.toggle()
                       showTilt.toggle()
                       if showTilt { widget.tilt = nil }
                     } label: {
-                      Label("Adjust Tilt",systemImage:"rotate.3d")
+                      Label("Adjust Tilt (beta)",systemImage:"rotate.3d")
                     }
-#if DEBUG
+
                     Divider()
                     Button { showPopover.toggle()
-                      
+                      resizeTo(CGSize(width: geometry.size.height,
+                                      height: geometry.size.width))
+                    } label: {
+                      Label("Rotate", systemImage:
+                              geometry.size.height > geometry.size.width
+                            ? "rectangle.landscape.rotate"
+                            : "rectangle.portrait.rotate")
+                    }
+                    Button { showPopover.toggle()
+                      resizeTo(CGSize(width: geometry.size.height,
+                                      height: geometry.size.height))
                     } label: {
                       Label("Square",systemImage:"square")
                     }
                     Button { showPopover.toggle()
-                      
+                      resizeTo(CGSize(width: geometry.size.height / 3 * 4,
+                                      height: geometry.size.height))
                     } label: {
-                      Label("Widescreen (16:9)",systemImage:"rectangle.ratio.4.to.3")
+                      Label("Standard (4:3)",systemImage:"rectangle.ratio.4.to.3")
                     }
                     Button { showPopover.toggle()
+                      resizeTo(CGSize(width: geometry.size.height / 9 * 16,
+                                      height: geometry.size.height))
                     } label: {
-                      Label("Cinematic (21:9)",systemImage:"rectangle.ratio.16.to.9")
+                      Label("Widescreen (16:9)",systemImage:"rectangle.ratio.16.to.9")
                     }
-#endif 
+                    Button { showPopover.toggle()
+                      resizeTo(CGSize(width: geometry.size.height / 9 * 21,
+                                      height: geometry.size.height))
+                    } label: {
+                      Label("Cinematic (21:9)",systemImage:"pano")
+                    }
+                    
                   } label: {
                     Label("Settings",systemImage:"chevron.down")
                   }
@@ -380,44 +412,27 @@ struct WidgetView: View {
               .buttonBorderShape(.roundedRectangle)
             }.frame(minWidth:240).padding()
           })
-          
-          //          .onDrag {
-          //            let userActivity = NSUserActivity(activityType: Activity.openSettings)
-          //            userActivity.targetContentIdentifier = "settings"
-          //            try? userActivity.setTypedPayload(["modelId": widget.modelID])
-          //            let itemProvider = NSItemProvider(object: widget.id.uuidString as NSString)
-          //            itemProvider.registerObject(userActivity, visibility: .all)
-          //            return itemProvider
-          //          } preview: {
-          //            ZStack {
-          //              Text("Widget Settings")
-          //            }.frame(width:100, height: 100).fixedSize()
-          //              .background(.white.opacity(0.2))
-          //          }
           .simultaneousGesture(LongPressGesture().onEnded { _ in
-            //              openWindow(id:"main")
             app?.openWindow(id: "widgetSettings", value: widget.modelID)
           })
-          //          .simultaneousGesture(TapGesture().onEnded {
-          
-          //          })
-          
-          
-          
-          .preferredSurroundingsEffect(widget.effect == "dim" ? .systemDark : nil)
         }
       }
       // MARK: Content view modifiers
+      .preferredSurroundingsEffect(widget.effect == "dim" ? .systemDark : nil)
+
       .rotation3DEffect(.degrees(flipped ? -180.0 : 0.0), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
       .onChange(of: geometry.size) {
         widget.width = geometry.size.width
         widget.height = geometry.size.height
-        console.log("↔️ Widget size changed to \(widget.width)×\(widget.height)")
+        console.log("↔️ Widget size changed to \(Int(widget.width))×\(Int(widget.height))")
         widget.save()
       }
       .animation(.spring(), value: showPopover)
       .opacity(wasBackgrounded ? 0.0 : 1.0)
-      // .onDisappear { widget.save() }
+      .onDisappear {
+        console.log("Widget dissapeared \(widget.name)")
+        //widget.save()
+      }
     }
     
     //    .sheet(isPresented:Binding<Bool>(
@@ -429,12 +444,12 @@ struct WidgetView: View {
     .quickLookPreview($downloadAttachment, in: downloads)
     
     // Clamp the size initially to set the base size, but then allow it to change later.
-    .frame(minWidth: clampInitialSize ? widget.width : widget.minWidth,
-           idealWidth: widget.width,
-           maxWidth: clampInitialSize ? widget.width : widget.maxWidth,
-           minHeight: clampInitialSize ? widget.height : widget.minHeight,
-           idealHeight: widget.height,
-           maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
+    .frame(minWidth: clampedSize?.width ?? widget.minWidth,
+           idealWidth: clampedSize?.width ?? widget.width,
+           maxWidth: clampedSize?.width ??  widget.maxWidth,
+           minHeight: clampedSize?.height ??  widget.minHeight,
+           idealHeight: clampedSize?.height ?? widget.height,
+           maxHeight: clampedSize?.height ??  widget.maxHeight)
     //    .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
     //    .windowGeometryPreferences(
     //      size: CGSize(width: widget.width, height: widget.height),
@@ -456,14 +471,10 @@ struct WidgetView: View {
     }
     .onAppear(){
       let windowScenes = UIApplication.shared.connectedScenes
-      
+      resizeTo(CGSizeMake(widget.width, widget.height))
+
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
         loadedWindow = true;
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-          clampInitialSize = false
-          
-        }
       }
       
     }

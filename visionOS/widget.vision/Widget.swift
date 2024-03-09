@@ -53,6 +53,9 @@ import SwiftData
   
   var configJSON: String?
   
+  @Transient
+  var parseError: String?
+  
   // MARK: Transient Properties
   @Transient var originalLocation: String?
   @Transient var isLoading: Bool = false
