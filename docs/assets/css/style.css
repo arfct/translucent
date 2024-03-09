@@ -13,7 +13,7 @@ body {
     hsla(var(--hue), 33%, 25%, 1.0) -20%,
     hsla(var(--hue), 45%, 10%, 1.0) 25%,
     hsla(var(--hue), 95%, 3%, 1.0) 50%
-  );
+  ),   hsla(var(--hue), 95%, 3%, 1.0);
   /* background: linear-gradient(226.67deg,#005fe6 -38.52%,rgba(0,95,230,0) 50.26%), black; */
 
 
@@ -196,7 +196,7 @@ div.icon > div {
 }
 div.info {
   /* padding: 16px 16px 20px 16px; */
-  margin-top:16px;
+  margin-top:1em;
 text-align:center;
   bottom:0;
   width:100%;
@@ -256,29 +256,27 @@ body {
   justify-content: top;
   flex-direction: column;
 
-  max-width:100%;
+  width:100%;
   --iconWidth: 10em;
   --iconHeight: 10em;
   flex: 1 1 auto;
-  padding:2vh 10vmin;
-  box-sizing:border-box
+  padding:0vh 8vw;
+  box-sizing:border-box;
 }
 .content {
   width:100%;
 }
 .tiles {
-  padding: 0 32px;
   display: grid;
   grid-template-columns: repeat(auto-fill, var(--iconWidth));
-  column-gap:24px;
-  row-gap:56px;
+  column-gap:1.5em;
+  row-gap:4em;
   align-items: center;
   justify-content: center;
   width: 100%;
   margin: auto;
   box-sizing: border-box;
-  max-width:1000px;
-  margin-bottom:100px;
+  margin-bottom:2em;
 }
 
 .spacer {
@@ -294,7 +292,7 @@ div.header {
   gap:20px;
 
   margin: auto ;
-  padding-top: 4vh ;
+  padding-top: 8vh ;
   padding-bottom:2vh;
   box-sizing:border-box;
   flex: 0 0 auto;
@@ -308,7 +306,7 @@ div.header {
   flex-basis: auto;
   border-radius:100px;
   padding:2px;
-margin-bottom:2vh;
+margin-bottom:6vh;
   flex: 0 0 auto;
   gap:0.25em;
 width: 100%;;
