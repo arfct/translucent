@@ -2,21 +2,23 @@
 layout: default
 ---
 
-<div class="container">
-  <div class="content">
-
   <div class="header">
     <img class="icon" src="assets/img/favicon.large.png">
     {% include logo.html %}
   </div>
 
-<div class="nav hideInWidget">
 
+<div class="nav hideInWidget">
   <a href="#widgets">Widgets</a>
   <a href="#websites">Websites</a>
   <a href="#experimental">Experimental</a>
 
 </div>
+<div class="container">
+  <div class="content">
+
+
+
 
   {% assign posts = site.links | sort: "order",  "last" %}
   {%- if posts.size > 0 -%} 
@@ -37,7 +39,11 @@ layout: default
       background-color:#{{ widget.bg | replace: '#', '' }};
     ">
       <div class="icon">
+        {% if widget.micon contains 'http' %}
+        <img src="{{widget.micon}}">
+        {% else %}
         <div class="material-symbols-rounded">{{widget.micon}}</div>
+        {% endif %}
       </div>
     </div>
     <div class="info">
@@ -83,7 +89,7 @@ layout: default
 </div>
 
 <script>
-  onhashchange = function() {
+  const updateContent =  function() {
     var hash = window.location.hash;
     console.log("hash", hash)
     window.location.hash = "";
@@ -91,4 +97,6 @@ layout: default
       var el = document.body.className = hash.substring(1);
     }
   }
+  onhashchange = updateContent
+  updateContent()
 </script>

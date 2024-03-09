@@ -1,8 +1,8 @@
 ---
 name: Pandora
 tags: experimental
+class: borderless
 icon: music.note
-micon: music_note
 href: https://www.pandora.com/
 ua: desktop
 description: Pandora desktop site

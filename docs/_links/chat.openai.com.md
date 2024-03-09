@@ -1,9 +1,9 @@
 ---
 name: ChatGPT
-tags: website
+tags: experimental
 icon: bubble
 href: https://chat.openai.com
-class: experimental
+class: borderless
 clear: >
   #emoji-container,#mixmoji-container,#preview-container
 ---

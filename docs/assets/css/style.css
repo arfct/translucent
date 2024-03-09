@@ -9,20 +9,25 @@ html.asWidget .hideInWidget {
 body {
   background-color:black;
   background: linear-gradient(
-    to bottom right,
-    hsla(var(--hue), 33%, 25%, 1.0),
-    hsla(var(--hue), 45%, 10%, 1.0),
-    hsla(var(--hue), 95%, 3%, 1.0)
+    126.67deg,
+    hsla(var(--hue), 33%, 25%, 1.0) -20%,
+    hsla(var(--hue), 45%, 10%, 1.0) 25%,
+    hsla(var(--hue), 95%, 3%, 1.0) 50%
   );
+  /* background: linear-gradient(226.67deg,#005fe6 -38.52%,rgba(0,95,230,0) 50.26%), black; */
+
+
   background-attachment: fixed;
   color: white;
+  font-size: calc(max(1.5vmax, 2vmin, 16px));
 }
 
 content {
   margin: auto;
-display:flex;
+  display:flex;
   text-align: center;
-  justify-content: center;;
+  justify-content: center;
+  flex-grow:1;
 }
 
 .site-header {
@@ -30,29 +35,6 @@ display:flex;
 }
 
 
-.nav {
-  display:flex;
-  justify-content: center;
-  align-items: center;;
-  margin-bottom:32px;
-  width:auto;
-  flex-basis: auto;
-  border-radius:100px;
-  padding:2px;
-}
-
-.nav a {
-  text-decoration: none;;
-  padding:10px;
-
-  border-radius:100px;
-}
-body.websites a[href$="websites"],
-body.websites a[href$="websites"],
-body.widgets a[href$="widgets"],
-body.experimental a[href$="experimental"] {
-  background-color: #fff2;
-}
 
 a.tile {
 
@@ -62,7 +44,7 @@ a.tile {
   text-wrap: wrap;
   width: var(--iconWidth);
   height: var(--iconHeight);
-  gap: 16px;
+  gap: 1em;
   margin: 0;
   box-sizing: border-box;
   /* background: hsla(var(--hue), 20%, 50%, 0.2); */
@@ -76,7 +58,7 @@ a.tile {
 }
 
 #explainer::before,
-a.tile .thumbnail::before {
+a.tile:not(.borderless) .thumbnail::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -104,6 +86,7 @@ a.tile.wide .thumbnail {
   background-position: center;
   background-size:90%;
 }
+a.tile.borderless .thumbnail,
 a.tile.clear .thumbnail{
   background-color :transparent !important;
 }
@@ -256,24 +239,32 @@ body {
   margin: 0;
   padding: 0;
 
+  min-height: 100vh;
+  display:flex;
+  flex-direction: column;
+
+  justify-content: flex-start;
+  align-items: center;
+  gap:0;
 }
 .container {
   box-sizing: border-box;
-  min-height: 100vh;
-  padding: 2vmin;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  align-items: space-around;
-  justify-content: center;
+  justify-content: top;
   flex-direction: column;
 
-  --iconWidth: 160px;
-  --iconHeight: 160px;
+  max-width:100%;
+  --iconWidth: 10em;
+  --iconHeight: 10em;
+  flex: 1 1 auto;
+  padding:2vh 10vmin;
+  box-sizing:border-box
 }
 .content {
-  max-width:100%;
+  width:100%;
 }
 .tiles {
   padding: 0 32px;
@@ -302,14 +293,46 @@ div.header {
   align-items: center;
   gap:20px;
 
-  max-width: 720px;
   margin: auto ;
-  padding: 2vmin 20px ;
-  padding-bottom: 24px;
+  padding-top: 4vh ;
+  padding-bottom:2vh;
   box-sizing:border-box;
-  left:0;
-  right:0;
+  flex: 0 0 auto;
 }
+.nav {
+  display:flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width:auto;
+  flex-basis: auto;
+  border-radius:100px;
+  padding:2px;
+margin-bottom:2vh;
+  flex: 0 0 auto;
+  gap:0.25em;
+width: 100%;;
+}
+
+.nav a {
+  text-decoration: none;;
+  padding:10px 20px;
+
+  border-radius:100px;
+  color: hsl(var(--hue), 50%, 70%);
+}
+{
+
+}
+.nav a:hover,
+body.websites a[href$="websites"],
+body.websites a[href$="websites"],
+body.widgets a[href$="widgets"],
+body.experimental a[href$="experimental"] {
+  background-color: hsla(var(--hue), 50%, 70%, 0.2);
+  color: hsl(var(--hue), 50%, 90%);;
+}
+
     
 img.icon {
   max-width:40px;
