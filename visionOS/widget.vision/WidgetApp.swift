@@ -151,11 +151,11 @@ struct WidgetApp: App {
         }
       })
     }
+    .windowResizability(.contentMinSize)
     .handlesExternalEvents(matching: ["settings"])
     .modelContainer(container)
     .windowStyle(.automatic)
-    .windowResizability(.contentSize)
-    .defaultSize(width: 640, height: 640)
+    .defaultSize(width: 512, height: 512)
     
     // MARK: Widget Windows
     

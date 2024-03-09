@@ -16,6 +16,7 @@ import SwiftData
   var location: String?
   var lastOpened: Date?
   var favorite: Bool = false
+  var autohideControls: Bool = true
   
   // MARK: Window Properties
   var style: String = "glass"

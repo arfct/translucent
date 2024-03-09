@@ -104,10 +104,6 @@ struct WidgetSettingsView: View {
                 .buttonStyle(.borderless)
             }
             
-            //          }
-            //          Section() {
-            
-            
             HStack(spacing:spacing - 18) {
               Label("Style", systemImage: "ellipsis").labelStyle(.titleOnly)
                 .frame(maxWidth: labelWidth, alignment:.leading)
@@ -117,16 +113,94 @@ struct WidgetSettingsView: View {
                 set: { self.widget.style = $0 })) {
                   Text("Transparent").tag("transparent")
                   Text("Frosted Glass").tag("glass")
-//                  Text("Mini Browser").tag("browser")
+                  //                  Text("Mini Browser").tag("browser")
                 }
                 .pickerStyle(.menu)
                 .buttonStyle(.borderless)
                 .frame(alignment: .leading)
                 .labelsHidden()
             }
-  
+
             
-          
+            // MARK: Font
+            HStack(spacing:spacing) {
+              Text("Font")
+                .frame(maxWidth: labelWidth, alignment:.leading)
+              
+              
+              TextField("default font", text:$widget.fontName ?? "")
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                .frame(maxWidth: .infinity)
+              
+              TextField("normal", text:$widget.fontWeight ?? "")
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                .frame(maxWidth: .infinity)
+              
+              // MARK: Menu
+              Menu {
+                Picker("Font Override", selection: $fontMenu) {
+                  Text("Default").tag("")
+                  Text("System (San Francisco)").tag("-apple-system")
+                  Divider()
+                  Text("Archivo Narrow").tag("Archivo Narrow")
+                  Text("Bungee").tag("Bungee")
+                  Text("DM Sans").tag("DM Sans")
+                  Text("Space Mono").tag("Space Mono")
+                  Text("VF Semi Cond").tag("VF Semi Cond")
+                }
+                Divider()
+                
+                Button("More on Google Fonts…") {
+                  openURL(URL(string:"https://fonts.google.com")!)
+                }
+              } label: {
+                Label("Location", systemImage: "ellipsis")
+              }.onChange(of: fontMenu, {
+                widget.fontName = fontMenu;
+              })
+              .onAppear() {
+                fontMenu = widget.fontName ?? ""
+              }
+              .labelStyle(.iconOnly)
+              .buttonStyle(.borderless)
+            }
+            
+            // MARK: Colors
+            HStack(spacing:spacing - 16) {
+              Label("Colors", systemImage: "ellipsis").labelStyle(.titleOnly)
+                .frame(maxWidth: labelWidth, alignment:.leading)
+              
+              LazyVGrid(columns:columns) {
+                
+                HStack {
+                  ColorPicker(selection: $foreColor, supportsOpacity: true) {
+                    Image(systemName: "textformat.size.smaller")
+                  }.frame(maxWidth:56).onChange(of: foreColor) {
+                    if let hex = foreColor.toHex() { widget.foreHex = hex }
+                  }.labelsHidden().scaleEffect(1.0)
+                  Text("Text")
+                }
+                HStack {
+                  ColorPicker(selection: $tintColor, supportsOpacity: true) {
+                    Image(systemName: "a.square")
+                  }.frame(maxWidth:56).onChange(of: tintColor) {
+                    if let hex = tintColor.toHex() { widget.tintHex = hex }
+                  }.labelsHidden().scaleEffect(1.0)
+                  Text("Tint")
+                }
+                HStack {
+                  ColorPicker(selection: $backColor) {
+                    Image(systemName: "square.fill")
+                  }.frame(maxWidth:56).onChange(of: backColor) {
+                    if let hex = backColor.toHex() { widget.backHex = hex }
+                  }.labelsHidden().scaleEffect(1.0)
+                  Text("Back")
+                }
+                
+              }.frame(maxWidth:.infinity)
+            }
           } footer: { // MARK: Footer
             if (!showAllOptions) {
               HStack() {
@@ -145,89 +219,13 @@ struct WidgetSettingsView: View {
             }
           }.listRowBackground(Color.clear)
           
+          
+          
+          
           // MARK: Advanced Options
           if (showAllOptions) {
             Section(header: Text("CSS Tweaks")){
               
-              // MARK: Font
-              HStack(spacing:spacing) {
-                Text("Font")
-                  .frame(maxWidth: labelWidth, alignment:.leading)
-                
-                
-                TextField("default font", text:$widget.fontName ?? "")
-                  .autocapitalization(.none)
-                  .disableAutocorrection(true)
-                  .frame(maxWidth: .infinity)
-                
-                TextField("normal", text:$widget.fontWeight ?? "")
-                  .autocapitalization(.none)
-                  .disableAutocorrection(true)
-                  .frame(maxWidth: .infinity)
-                
-                // MARK: Menu
-                Menu {
-                  Picker("Font Override", selection: $fontMenu) {
-                    Text("Default").tag("")
-                    Text("System (San Francisco)").tag("-apple-system")
-                    Divider()
-                    Text("Archivo Narrow").tag("Archivo Narrow")
-                    Text("Bungee").tag("Bungee")
-                    Text("DM Sans").tag("DM Sans")
-                    Text("Space Mono").tag("Space Mono")
-                    Text("VF Semi Cond").tag("VF Semi Cond")
-                  }
-                  Divider()
-                  
-                  Button("More on Google Fonts…") {
-                    openURL(URL(string:"https://fonts.google.com")!)
-                  }
-                } label: {
-                  Label("Location", systemImage: "ellipsis")
-                }.onChange(of: fontMenu, {
-                  widget.fontName = fontMenu;
-                })
-                .onAppear() {
-                  fontMenu = widget.fontName ?? ""
-                }
-                .labelStyle(.iconOnly)
-                .buttonStyle(.borderless)
-              }
-              
-              // MARK: Colors
-              HStack(spacing:spacing - 16) {
-                Label("Colors", systemImage: "ellipsis").labelStyle(.titleOnly)
-                  .frame(maxWidth: labelWidth, alignment:.leading)
-                
-                LazyVGrid(columns:columns) {
-                  
-                  HStack {
-                    ColorPicker(selection: $foreColor, supportsOpacity: true) {
-                      Image(systemName: "textformat.size.smaller")
-                    }.frame(maxWidth:56).onChange(of: foreColor) {
-                      if let hex = foreColor.toHex() { widget.foreHex = hex }
-                    }.labelsHidden().scaleEffect(1.0)
-                    Text("Text")
-                  }
-                  HStack {
-                    ColorPicker(selection: $tintColor, supportsOpacity: true) {
-                      Image(systemName: "a.square")
-                    }.frame(maxWidth:56).onChange(of: tintColor) {
-                      if let hex = tintColor.toHex() { widget.tintHex = hex }
-                    }.labelsHidden().scaleEffect(1.0)
-                    Text("Tint")
-                  }
-                  HStack {
-                    ColorPicker(selection: $backColor) {
-                      Image(systemName: "square.fill")
-                    }.frame(maxWidth:56).onChange(of: backColor) {
-                      if let hex = backColor.toHex() { widget.backHex = hex }
-                    }.labelsHidden().scaleEffect(1.0)
-                    Text("Back")
-                  }
-                  
-                }.frame(maxWidth:.infinity)
-              }
               HStack(alignment: .top, spacing:spacing) {
                 Label("Clear", systemImage: "link")
                   .labelStyle(.titleOnly)
@@ -331,20 +329,21 @@ struct WidgetSettingsView: View {
         // MARK: Toolbar
         .toolbar {
           
-          ToolbarItemGroup(placement:.navigation) {
+          ToolbarItemGroup(placement:.topBarTrailing) {
             
             Button {
               openWindow(id:"main")
               callback()
             } label: {
-              Label("List", systemImage: "rectangle.grid.2x2.fill")
+              Label("List", systemImage: "rectangle.grid.2x2")
             }
             .labelStyle(.iconOnly)
             .buttonBorderShape(.circle)
+            .buttonStyle(.borderless)
             
           }
           
-          ToolbarItemGroup(placement: .navigation) {
+          ToolbarItemGroup(placement: .topBarTrailing) {
             ShareLink(
               item: widget,
               preview: SharePreview(
@@ -354,19 +353,23 @@ struct WidgetSettingsView: View {
               Image(systemName: "square.and.arrow.up")
             }
             .buttonBorderShape(.circle)
+            .buttonStyle(.borderless)
             
           }
-          ToolbarItemGroup(placement: .primaryAction) {
-            Button { 
+          ToolbarItemGroup(placement: .navigation) {
+            Button {
               DispatchQueue.main.async { widget.save() }
               self.callback()
             } label: {
-              Label("Done", systemImage: "chevron.left")
+              Label("Done", systemImage: "xmark")
             }
-            .labelStyle(.titleOnly)
+            .labelStyle(.iconOnly)
           }
         }
-      }        .padding(min(g.size.width/32, 0)) // Collapse small size padding
+      }
+      .padding(min(g.size.width/32, 0)) // Collapse small size padding
+      .frame(idealHeight:showAllOptions ? 640 : .zero)
+      .windowGeometryPreferences(minimumSize: showAllOptions ? .init(width:512, height:512) : .init(width:512, height:342))
       
     }
   }

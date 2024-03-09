@@ -55,20 +55,22 @@ struct WidgetView: View {
   @State var activeTab: Int = 0
   @State var browserState = BrowserState();
   @State var window: UIWindow?
+  @State var showPopover = false
+  @State var showTilt = false
   
   
   func toggleSettings() {
-    withAnimation(.spring) {
-      flipped.toggle()
-      if !flipped, let location = widget.location {
-        browserState.location = location
-      }
+    
+    flipped.toggle()
+    if !flipped, let location = widget.location {
+      browserState.location = location
     }
+    
   }
   
   var drag: some Gesture {
     DragGesture(coordinateSpace: .global)
-      
+    
       .onChanged { value in
         print(value)
       }
@@ -87,10 +89,10 @@ struct WidgetView: View {
                           browserState:$browserState)
     
     let isTransient = widget.modelContext == nil;
-    let tilt = (widget.tilt ?? 0)
+    let tilt = showPopover ? 0 : (widget.tilt ?? 0)
     
     GeometryReader { geometry in
- 
+      
       // MARK: Tab View
       ZStack(alignment: .center) {
         if let tabs = widget.tabs {
@@ -140,7 +142,7 @@ struct WidgetView: View {
             .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
                                    displayMode: (widget.showGlassBackground ) ? .always : .never)
             .background(widget.backColor)
-            
+          
           
             .cornerRadius(widget.radius)
             .opacity(!finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
@@ -148,7 +150,7 @@ struct WidgetView: View {
             .rotation3DEffect(.degrees(90.0 * (tilt ?? 0)),
                               axis: (x: 1, y: 0, z: 0),
                               anchor: .center)
-            .offset(z: tilt > 0 
+            .offset(z: tilt > 0
                     ? (geometry.size.height/2 - 80) * tilt
                     : (-geometry.size.height/2 + 80 ) * tilt
             )
@@ -167,12 +169,12 @@ struct WidgetView: View {
             }
         }
         
-//        VStack() {
-//          Text("HELLO").padding().gesture(drag)
-//        }
-
+        //        VStack() {
+        //          Text("HELLO").padding().gesture(drag)
+        //        }
+        
       }
-
+      
       .frame(maxWidth: .infinity, maxHeight: .infinity)
       
       .overlay(alignment: .center) {
@@ -200,82 +202,208 @@ struct WidgetView: View {
         }
       }
       
-      .ornament(attachmentAnchor: .scene(.topTrailing), ornament: {
-
+      // MARK: Tilt Ornament
+      .ornament(attachmentAnchor: .scene(.trailing), contentAlignment: .leading, ornament: {
+        if (showTilt) {
+          VStack(spacing:10) {
+            ZStack (alignment: .center) {
+              Circle()
+                .fill(.white.opacity(0.5))
+                .frame(width:30, height:140)
+                .offset(y: -tilt * 50)
+                .cornerRadius(15)
+            }.frame(width:40, height:140)
+              .glassBackgroundEffect()
+              .contentShape(RoundedRectangle(cornerRadius: 90))
+              .hoverEffect()
+              .gesture(
+                DragGesture(coordinateSpace: .global)
+                  .onChanged { value in
+                    cancelHide()
+                    var tilt = CGFloat( -2 *  value.translation3D.y)
+                    if (abs(tilt) < 60.0) { tilt = 0.0 }
+                    widget.tilt = min(1.0, max(-1.0, (tilt / geometry.size.height)))
+                  }
+                  .onEnded { value in
+                    scheduleHide()
+                    withAnimation(.spring()) {
+                    }
+                  }
+              )
+            
+            Button {
+              showTilt = false
+            } label: {
+              Label("Close", systemImage:"xmark")
+                .labelStyle(.iconOnly)
+            }
+            .frame(width:40, height:40)
+            .glassBackgroundEffect()
+            
+          }
+          
+          .padding(.leading, 10)
+          .padding(.top, 50)
+        }
+        
       })
-      // MARK: Info Button
+      
+      // MARK: Window Menu
       .ornament(attachmentAnchor: .scene(.top), contentAlignment:.bottom) {
         if (widget.showBrowserBar) {
           WidgetViewBrowserBar(widget: $widget, browserState: $browserState, infoCallback: toggleSettings)
             .frame(maxWidth:geometry.size.width - 10)
           
         } else {
-          Button { } label: {
-            if isLoading && finishedFirstLoad {
-              ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: .primary))
-                .scaleEffect(1.0, anchor: .center)
-            } else {
-              Image(systemName: "info")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 16, height: 16)
+          Button {
+            withAnimation {
+              showPopover = true;
+            }
+          } label: {
+              HStack() {
+                let dotSize = 10.0
+                Group {
+                  Circle().fill(showPopover ? .black : .white.opacity(0.67))
+                  Circle().fill(showPopover ? .black : .white.opacity(0.67))
+                  Circle().fill(showPopover ? .black : .white.opacity(0.67))
+                }
+                .frame(width: dotSize, height: dotSize)
             }
           }
-          .simultaneousGesture(
-            DragGesture(coordinateSpace: .global)
-              .onChanged { value in
-                cancelHide()
-                var tilt = CGFloat( -3 *  value.translation3D.z)
-                if (abs(tilt) < 60.0) { tilt = 0.0 }
-                widget.tilt = min(1.0, max(-1.0, (tilt / geometry.size.height)))
-              }
-              .onEnded { value in
-                scheduleHide()
-                  withAnimation(.spring()) {
-                      
-                  }
-              }
-          )
-//          .onDrag {
-//            let userActivity = NSUserActivity(activityType: Activity.openSettings)
-//            userActivity.targetContentIdentifier = "settings"
-//            try? userActivity.setTypedPayload(["modelId": widget.modelID])
-//            let itemProvider = NSItemProvider(object: widget.id.uuidString as NSString)
-//            itemProvider.registerObject(userActivity, visibility: .all)
-//            return itemProvider
-//          } preview: {
-//            ZStack {
-//              Text("Widget Settings")
-//            }.frame(width:100, height: 100).fixedSize()
-//              .background(.white.opacity(0.2))
-//          }
-          .simultaneousGesture(LongPressGesture().onEnded { _ in
-            //              openWindow(id:"main")
-            app?.openWindow(id: "widgetSettings", value: widget.modelID)
-          })
-          .simultaneousGesture(TapGesture().onEnded {
-            if (geometry.size.width < 400 || geometry.size.height < 400) {
-              app?.openWindow(id: "widgetSettings", value: widget.modelID)
-            } else {
-              toggleSettings()
-            }
-          })
-          .buttonBorderShape(.circle)
-          .buttonStyle(.automatic)
+          .buttonBorderShape(.capsule)
+          .buttonStyle(.bordered)
+          .tint(showPopover ? .white : .clear)
           .labelStyle(.iconOnly)
-          .glassBackgroundEffect(displayMode: showInfo ? .always : .never)
-          .background(.clear)
           .transition(.move(edge: .top))
           .hoverEffect()
-          .offset(y: showInfo || isLoading ? 0 : 40)
-          .padding(.bottom, 10)
-          .opacity((isLoading || showInfo) && !flipped && !wasBackgrounded && finishedFirstLoad ? 1.0 : 0.0)
-          .rotation3DEffect(.degrees(showInfo || isLoading ? 0.0 : 45), axis: (1, 0, 0),
+          .offset(y: showInfo || isLoading || showPopover ? 0 : 40)
+          .padding(.bottom, 4)
+          .opacity((isLoading || showInfo || showPopover) && !flipped && !wasBackgrounded && finishedFirstLoad ? 1.0 : 0.0)
+          .rotation3DEffect(.degrees(showInfo || isLoading || showPopover ? 0.0 : 45), axis: (1, 0, 0),
                             anchor: UnitPoint3D(x: 0.5, y: 1.0, z: 0))
           .animation(.spring(), value: flipped)
           .animation(.spring(), value: showInfo)
           .animation(.spring(), value: isLoading)
+          .animation(.spring(), value: showPopover)
+          .popover(isPresented: $showPopover, content: {
+            
+            VStack() {
+              HStack() {
+                Group {
+                  Menu {
+                  } label: {
+                    Label("Back",systemImage:"arrow.left")
+                  }primaryAction: {
+                    browserState.webView?.goBack()
+                  }.disabled(!browserState.canGoBack)
+                  if browserState.canGoForward {
+                    Spacer()
+                    Menu {
+                    } label: {
+                      Label("Forward",systemImage:"arrow.right")
+                    }primaryAction: {
+                      browserState.webView?.goForward()
+                    }.disabled(!browserState.canGoBack)
+                  }
+                  Spacer()
+                  Button {
+                    browserState.webView?.reload()
+                  } label: {
+                    Label("Reload",systemImage:"arrow.clockwise")
+                  }
+                  Spacer()
+                  Menu {
+                    Toggle(isOn: $widget.autohideControls) {
+                      Label("Autohide controls", systemImage:"eye.slash")
+                    }
+                    Toggle(isOn: Binding<Bool>(
+                      get: { widget.effect == "dim" },
+                      set: { val in widget.effect = val ? "dim" : nil})) {
+                        Label("Dim environment", systemImage:"circle.lefthalf.filled.righthalf.striped.horizontal")
+                      }
+                    Button { showPopover.toggle()
+                      showTilt.toggle()
+                      if showTilt { widget.tilt = nil }
+                    } label: {
+                      Label("Adjust Tilt",systemImage:"rotate.3d")
+                    }
+#if DEBUG
+                    Divider()
+                    Button { showPopover.toggle()
+                      
+                    } label: {
+                      Label("Square",systemImage:"square")
+                    }
+                    Button { showPopover.toggle()
+                      
+                    } label: {
+                      Label("Widescreen (16:9)",systemImage:"rectangle.ratio.4.to.3")
+                    }
+                    Button { showPopover.toggle()
+                    } label: {
+                      Label("Cinematic (21:9)",systemImage:"rectangle.ratio.16.to.9")
+                    }
+#endif 
+                  } label: {
+                    Label("Settings",systemImage:"chevron.down")
+                  }
+                }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.borderless)
+                .buttonBorderShape(.circle)
+              }.padding(.horizontal, 10)
+              Divider()
+              Group {
+                
+                Button { showPopover.toggle()
+                  app?.openWindow(id: "widgetSettings", value: widget.modelID)
+                } label: {
+                  HStack {
+                    Text("Customize…")
+                      .frame(maxWidth: .infinity, alignment: .leading)
+                    Image(systemName: "gear")
+                  }.padding(.vertical, 16)
+                }
+                Button {showPopover.toggle()
+                  openWindow(id:"main")
+                  
+                } label: {
+                  HStack {
+                    Text("Show Widget List")
+                      .frame(maxWidth: .infinity, alignment: .leading)
+                    Image(systemName: "rectangle.grid.2x2")
+                  }.padding(.vertical, 16)
+                }
+              }
+              .frame(maxWidth:.infinity)
+              .buttonStyle(.borderless)
+              .buttonBorderShape(.roundedRectangle)
+            }.frame(minWidth:240).padding()
+          })
+          
+          //          .onDrag {
+          //            let userActivity = NSUserActivity(activityType: Activity.openSettings)
+          //            userActivity.targetContentIdentifier = "settings"
+          //            try? userActivity.setTypedPayload(["modelId": widget.modelID])
+          //            let itemProvider = NSItemProvider(object: widget.id.uuidString as NSString)
+          //            itemProvider.registerObject(userActivity, visibility: .all)
+          //            return itemProvider
+          //          } preview: {
+          //            ZStack {
+          //              Text("Widget Settings")
+          //            }.frame(width:100, height: 100).fixedSize()
+          //              .background(.white.opacity(0.2))
+          //          }
+          .simultaneousGesture(LongPressGesture().onEnded { _ in
+            //              openWindow(id:"main")
+            app?.openWindow(id: "widgetSettings", value: widget.modelID)
+          })
+          //          .simultaneousGesture(TapGesture().onEnded {
+          
+          //          })
+          
+          
+          
           .preferredSurroundingsEffect(widget.effect == "dim" ? .systemDark : nil)
         }
       }
@@ -287,6 +415,7 @@ struct WidgetView: View {
         console.log("↔️ Widget size changed to \(widget.width)×\(widget.height)")
         widget.save()
       }
+      .animation(.spring(), value: showPopover)
       .opacity(wasBackgrounded ? 0.0 : 1.0)
       // .onDisappear { widget.save() }
     }
@@ -306,7 +435,7 @@ struct WidgetView: View {
            minHeight: clampInitialSize ? widget.height : widget.minHeight,
            idealHeight: widget.height,
            maxHeight: clampInitialSize ? widget.height : widget.maxHeight)
-//    .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
+    //    .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
     //    .windowGeometryPreferences(
     //      size: CGSize(width: widget.width, height: widget.height),
     //      minimumSize: CGSize(width: widget.minWidth, height: widget.minHeight),
@@ -330,7 +459,7 @@ struct WidgetView: View {
       
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
         loadedWindow = true;
-
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
           clampInitialSize = false
           
@@ -357,6 +486,14 @@ struct WidgetView: View {
       }
       currentPhase = scenePhase
     }
+    
+    .onChange(of: showPopover) {
+      if (showPopover) {
+        cancelHide()
+      } else {
+        scheduleHide()
+      }
+    }
   }
   
   func cancelHide() {
@@ -366,14 +503,16 @@ struct WidgetView: View {
   }
   func scheduleHide() {
     cancelHide()
-    ornamentTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false, block: { timer in
-      showSystemOverlay = false
-      showInfo = false
-    })
+    if (widget.autohideControls) {
+      ornamentTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false, block: { timer in
+        showSystemOverlay = false
+        showInfo = false
+      })
+    }
   }
 }
 
 
 #Preview(windowStyle: .plain) {
-    WidgetView(widget: Widget(name: "Test", location: "https://example.com"))
+  WidgetView(widget: Widget(name: "Test", location: "https://example.com"))
 }
