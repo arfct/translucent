@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,700&display=swap" rel="stylesheet">
+  <title>Digital Clock</title>
+  <style>
+    body {
+      margin:0;
+      padding:0;
+
+      background-color:var(--transparent, #88888888);
+      color:var(--fore-color, white);
+      text-align:center;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+
+      font-family: var(--font-family, -apple-system, BlinkMacSystemFont, sans-serif);
+      font-size:min(100vh, 25vw);
+      line-height:100vh;
+      min-height:100vh;
+      font-weight:600;
+      
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      touch-action: none;
+    }
+  </style>
+</head>
+<body>
+  <center>
+  <div id="clock"></div>
+  </center>
+  <script>
+    function updateClock() {
+      var now = new Date();
+      var options = { hour: 'numeric', minute: 'numeric' };
+      var localizedTime = now.toLocaleTimeString(undefined, options)
+      .replace(/ AM/, '').replace(/ PM/, '')
+      .replace(/ AM/, 'ᴀᴍ').replace(/ PM/, 'ᴘᴍ')
+      document.getElementById('clock').textContent = localizedTime;
+    }
+    
+    setTimeout(() => {
+      setInterval(updateClock, 60 * 1000);
+      updateClock();
+    }, 60 - new Date().getSeconds() * 1000);
+    updateClock();
+
+    
+  </script>
+</body>
+</html>

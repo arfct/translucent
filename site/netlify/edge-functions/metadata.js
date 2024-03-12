@@ -47,7 +47,7 @@ export default async (request, context) => {
     const ua = request.headers.get("user-agent");
     let url = new URL(request.url);
     let path = url.pathname.substring(1);
-    if (path.startsWith(".well-known") || path.length == 0) {
+    if (path.startsWith("assets") || path.startsWith("widgets") || path.startsWith(".well-known") || path.length == 0) {
       return;
     }
     

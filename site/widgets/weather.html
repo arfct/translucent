@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,700&display=swap" rel="stylesheet">
+  <title>Digital Clock</title>
+  <style>
+    body {
+      margin:0;
+      padding:0;
+      
+      background-color:var(--transparent, #88888888);
+      color:var(--fore-color, white);
+      text-align:center;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      
+      font-family: var(--font-family, -apple-system, BlinkMacSystemFont, sans-serif);
+      font-size:min(100vh, 5vw);
+      min-height:100vh;
+      font-weight:600;
+      
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      touch-action: none;
+    }
+    .day {
+      display:flex
+    }
+  </style>
+</head>
+<body>
+  <center>
+    <div id="clock"></div>
+  </center>
+  <script>
+    
+    const el = (selector, ...args) => {
+      var attrs = (args[0] && typeof args[0] === 'object' && !Array.isArray(args[0]) && !(args[0] instanceof HTMLElement)) ? args.shift() : {};
+      
+      let classes = selector.split(".");
+      if (classes.length > 0) selector = classes.shift();
+      if (classes.length) attrs.className = classes.join(" ")
+      
+      let id = selector.split("#");
+      if (id.length > 0) selector = id.shift();
+      if (id.length) attrs.id = id[0];
+      
+      var node = document.createElement(selector.length > 0 ? selector : "div");
+      for (let prop in attrs) {
+        if (attrs.hasOwnProperty(prop) && attrs[prop] != undefined) {
+          if (prop.indexOf("data-") == 0) {
+            let dataProp = prop.substring(5).replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+            node.dataset[dataProp] = attrs[prop];
+          } else {
+            node[prop] = attrs[prop];
+          }
+        }
+      }
+      
+      const append = (child) => {
+        if (Array.isArray(child)) return child.forEach(append);
+        if (typeof child == "string") child = document.createTextNode(child);
+        if (child) node.appendChild(child);
+      };
+      args.forEach(append);
+      
+      return node;
+    };
+    window.el = el;
+    
+    
+    function getGeolocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        console.log("Geolocation is not supported by this browser.");
+      }
+    }
+    
+    async function showPosition(position) {
+      var latitude = position.coords.latitude;
+      var longitude = position.coords.longitude;
+      let url = `https://api.lil.software/weather?latitude=${latitude}&longitude=${longitude}`
+      
+      let response = await fetch(url)
+      let json = await response.json();
+      
+      console.log (json)
+      let forecast = el(".forecast", 
+      json.forecast.map((f) => {
+        return el("div.day", 
+          el("div.name", f.name),
+          el("div.temp", "" + f.temperature),
+          el("div.description", f.description)
+        )
+      })
+      )
+      
+      document.getElementById('clock').appendChild(forecast);
+      console.log("Latitude: " + latitude + ", Longitude: " + longitude);
+    }
+    //{"forecast":[{"name":"Overnight","temperature":33,"unit":"F","description":"Mostly Cloudy"},{"name":"Thursday","temperature":43,"unit":"F","description":"Mostly Cloudy then Slight Chance Light Rain"},{"name":"Thursday Night","temperature":40,"unit":"F","description":"Chance Light Rain"},{"name":"Friday","temperature":48,"unit":"F","description":"Light Rain"},{"name":"Friday Night","temperature":30,"unit":"F","description":"Chance Light Rain then Partly Cloudy"},{"name":"Saturday","temperature":36,"unit":"F","description":"Mostly Sunny"},{"name":"Saturday Night","temperature":24,"unit":"F","description":"Mostly Clear"},{"name":"Sunday","temperature":41,"unit":"F","description":"Sunny"},{"name":"Sunday Night","temperature":36,"unit":"F","description":"Mostly Cloudy then Slight Chance Rain Showers"},{"name":"Monday","temperature":51,"unit":"F","description":"Slight Chance Rain Showers"},{"name":"Monday Night","temperature":39,"unit":"F","description":"Mostly Cloudy"},{"name":"Tuesday","temperature":52,"unit":"F","description":"Chance Light Rain"},{"name":"Tuesday Night","temperature":47,"unit":"F","description":"Chance Light Rain"},{"name":"Wednesday","temperature":59,"unit":"F","description":"Chance Light Rain"}]}
+    getGeolocation();
+    
+    
+    function updateWeather() {
+      let result =   getGeolocation();
+      
+    }
+    
+    setTimeout(() => {
+      setInterval(updateWeather, 10 * 60 * 1000);
+      updateWeather();
+    }, 60 - new Date().getSeconds() * 10 * 60 * 1000);
+    updateWeather();
+    
+    
+  </script>
+</body>
+</html>

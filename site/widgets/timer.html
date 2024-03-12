@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <title>Timer</title>
+  
+<style type="text/css">
+	body {
+  margin:0;
+  touch-action: none;
+  background-color: gray;
+}
+#content {
+  height:100vh;
+  font-size: 20px;
+  font-size: 2vw;
+  padding:1em;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  text-align:center;
+  top:50%;
+  height:100%;
+  height:100vh;
+}
+* {
+  font-family:"Courier", monospace;
+  color:white;
+}
+
+body.done {
+
+}
+
+input {
+  font-size:1000%;
+  text-align:center;
+  border:0;
+  padding:0;
+  background-color:transparent;
+  width:100%;
+}
+#underline {
+  border-bottom:1.5vmin solid rgba(0,0,0,0.0);
+}
+body.edit #underline {
+  border-bottom:1.5vmin solid white;
+}
+body.countdown input {
+  animation: pulse 500ms infinite;
+  animation-timing-function: ease-out;
+  animation-direction: alternate;
+}
+@keyframes pulse {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-2px); }
+}
+
+input:focus {
+  outline-color: transparent;
+  outline-style: none;
+}
+
+body.countdown .recent, 
+body.done .recent {
+  opacity:0.0;
+  pointer-events:none;
+}
+
+body.done input {
+	text-shadow: 0 0 1vmin white;
+}
+.recent {
+  font-size:4vw;
+  font-weight:bold;
+  display:inline-block;
+  padding:0.5vw;
+  cursor:pointer;
+  opacity:0.4;
+  transition: opacity 200ms;
+}
+
+body.recent:hover {
+  opacity:0.6;
+}
+</style>
+</head> 
+<body>
+
+<div id="content">
+<div id="hint"></div>
+<input id="countdown" type="text" placeholder="05m00s" autocomplete="off" value="">
+<div id="underline"></div>
+<div id="recents">
+  <span class="recent" onclick="preset(this);">5m</span>
+  <span class="recent" onclick="preset(this);">10m</span>
+  <span class="recent" onclick="preset(this);">15m</span>
+  <span class="recent" onclick="preset(this);">20m</span>
+  <span class="recent" onclick="preset(this);">30m</span>
+  <span class="recent" onclick="preset(this);">45m</span>
+  <span class="recent" onclick="preset(this);">60m</span>
+</div>
+</div>
+
+
+<script type="text/javascript">
+	
+var gifs = [
+	// "https://media.giphy.com/media/Emg9qPKR5hquI/200.gif",
+	// "http://www.reactiongifs.com/r/2014/01/observing.gif",
+	// "https://media.giphy.com/media/jBK8OrYIO1yTe/giphy.gif",
+	// "https://i.imgur.com/ekJ48.gif",
+	// "https://media.giphy.com/media/u5eXlkXWkrITm/giphy.gif",
+	// "https://media.giphy.com/media/3ofSBxH8H9n84yd6hi/giphy.gif",
+	// "https://media1.tenor.com/images/21c0e8dc0259f94a7aae44817bd24b1d/tenor.gif?itemid=5434959",
+	// "https://i.gifer.com/KDyT.gif"
+]
+
+var input = document.querySelector("input");
+input.onfocus = function() {
+  clear();
+  this.setSelectionRange(0, 9999);
+  document.body.className = "edit"
+  document.body.style.background = "";
+
+}
+
+
+
+input.onblur = function() {
+   document.body.className = "";
+}
+
+input.onkeypress = function (e) {
+  if (e.which === 13) {
+    e.target.blur();
+    countdown(e.target.value);
+  }
+}
+
+function preset(input) {
+  console.log(input);
+  countdown(input.innerText);
+}
+
+var interval;
+var timeout;
+var endTime;
+
+function clear() {
+  clearTimeout(timeout);
+  clearInterval(interval);
+  document.body.className = "";
+}
+
+var lastValue = ""
+function countdown(value) {
+	clear();
+  lastValue = value;
+    history.pushState(null, null, '#' + value);
+
+  var match = value.match(/^ *(?:([\d\.]+)|(?:([\d\.]*)[:m] *)?(?:(\d+)[s]?)?) *$/);
+  var showSeconds = match[3] != undefined;
+  var minutes = parseFloat(match[2]) || parseFloat(match[1]) || 0
+  
+  var seconds = parseFloat(match[3]) || 0
+  console.log("starting", minutes, seconds)
+  var duration = ((minutes * 60) + seconds) * 1000;
+  
+  if (duration == 0) duration = 5 * 60 * 1000;
+  
+  var timestamp = new Date().getTime() + duration; 
+  timeout = setTimeout(function() {
+    input.value = lastValue
+    clear();
+       document.body.style.background = ""
+	// var gif = gifs[Math.floor(Math.random() * gifs.length)];
+  //   document.body.style.background = "url(" + gif + ") center/cover no-repeat";
+
+    document.body.className = "done";
+  }, duration)
+  
+  var update = function() {
+    var now = new Date()
+    var remaining = (timestamp - now.getTime())
+    var seconds = Math.round(remaining / 1000) ;
+    var minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60
+    
+    var timeString = ""
+    
+ 
+    if (showSeconds) {
+    	if (minutes > 0) {
+    		timeString += minutes + "m";
+		    if (seconds < 10) seconds = "0" + seconds;
+    	}
+
+    	timeString += seconds + "s";
+    } else {
+    	if (minutes > 0) {
+    		if (seconds > 50) minutes += 1;
+    		timeString += minutes + "m";
+   		} else {
+   			if (seconds > 19) seconds = Math.floor(seconds / 10) * 10;
+    		timeString += seconds + "s";	
+   		}
+    }
+
+
+    input.value = timeString;
+    var startDeg = ((now.getSeconds() / 60 + now.getMinutes()) / 60) * 360;
+    var color = "#ffffff22";
+    var deg =  (remaining / 60 / 60 / 1000 * 360); 
+    var gradient = "conic-gradient(from " +startDeg + "deg, "+ color +" " + deg  + "deg, transparent " + deg + "deg)"
+    document.getElementById("content").style.background = gradient;
+  }
+  
+  document.body.className = "countdown";
+  interval = setInterval(update, 1000);
+  update();
+}
+
+
+
+startFromHash()
+window.onhashchange = startFromHash;
+
+function startFromHash() {
+  var hash = location.hash;
+  if (hash) {
+    console.log("using hash", hash)
+    countdown(hash.substring(1));
+
+  }
+}
+
+
+
+
+
+
+</script>
+</body>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Digital Orrery</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" style="width:100vw; height:100vh"></canvas>
+  
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+    var speedMultiplier = 1.0;
+    var frameRate = 24;
+    
+    function setSpeedMultiplier(value) {
+      speedMultiplier = Math.min(Math.max(value, -200), 200);
+      frameRate = Math.max(4, Math.min(96, 24 * Math.sqrt(Math.abs(speedMultiplier))));
+    }
+    
+    var time = 0;
+    
+    function updateSize() {
+      const ratio = window.devicePixelRatio || 2;
+      canvas.width = window.innerWidth * ratio;
+      canvas.height = window.innerHeight * ratio;
+      // console.log("canvas.width", canvas.width, "canvas.height", canvas.height)
+      animate();
+    }
+    // Get the canvas element
+    
+    window.addEventListener('resize', updateSize);
+    
+    let lastTheta = undefined;
+    let lastRadius = undefined;
+    canvas.addEventListener('pointerdown', (e) => {
+      const centerX = canvas.width / 2 / window.devicePixelRatio;
+      const centerY = canvas.height / 2 / window.devicePixelRatio;
+      const startX = e.clientX;
+      const startY = e.clientY;
+      let lastX = startX;
+      let lastY = startY;
+      
+      canvas.addEventListener('pointermove', handleDrag);
+      handleDrag(e);
+      
+      function handleDrag(e) {
+        const deltaX = e.clientX - lastX;
+        const deltaY = e.clientY - lastY;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        
+        const dragX = e.clientX - centerX;
+        const dragY = e.clientY - centerY;
+        const radius = Math.sqrt(dragX * dragX + dragY * dragY)*2;
+        const theta = Math.atan2(dragY, dragX);
+        
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        const angle = Math.atan2(deltaY, deltaX);
+        
+        if (lastTheta) {
+          let thetaDiff = theta - lastTheta;
+          
+          if (thetaDiff > Math.PI) { thetaDiff -= Math.PI * 2;
+          } else if (thetaDiff < -Math.PI) { thetaDiff += Math.PI * 2; }
+          setSpeedMultiplier(speedMultiplier + thetaDiff * 10);
+          console.log("speedMultiplier", speedMultiplier, frameRate);
+        }
+        lastRadius = radius;
+        lastTheta = theta;
+      } 
+      
+      canvas.addEventListener('pointerup', () => {
+        canvas.removeEventListener('pointermove', handleDrag);
+        lastTheta = undefined;
+        lastRadius = undefined;
+      });
+    });
+    
+    
+    
+    updateSize() 
+    
+    // Set the background color to transparent
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Animation loop
+    function animate() {
+      // Clear the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw your solar system model here
+      // Define the properties of the planets
+      const planets = [
+      { name: 'Sun', color: '#ffffffCC', orbitRadius: 0, speed: 0, planetRadius: 1392/8, yearLength: 1 },
+      { name: 'Mercury', color: '#CCCC88', orbitRadius: 0.387, speed: 0.241, planetRadius: 2.44, yearLength: 88 },
+      { name: 'Venus', color: '#e6e6e6', orbitRadius: 0.723, speed: 0.615, planetRadius: 6.052, yearLength: 225 },
+      { name: 'Earth', color: '#2F6AA9', orbitRadius: 1, speed: 1.0, planetRadius: 6.371, yearLength: 365 },
+      { name: 'Mars', color: '#993d00', orbitRadius: 1.524, speed: 1.881, planetRadius: 3.389, yearLength: 687 },
+      { name: 'Jupiter', color: '#b07f35', orbitRadius: 5.203, speed: 11.86, planetRadius: 69.911, yearLength: 4332 },
+      { name: 'Saturn', color: '#dbb88c', orbitRadius: 9.537, speed: 29.46, planetRadius: 58.232, yearLength: 10759 },
+      { name: 'Uranus', color: '#5580aa', orbitRadius: 19.191, speed: 84.01, planetRadius: 25.362, yearLength: 30688 },
+      { name: 'Neptune', color: '#366896', orbitRadius: 30.069, speed: 164.8, planetRadius: 24.622, yearLength: 60182 }
+      ];
+      
+      
+      // Draw the planets
+      function drawPlanets() {
+        const minRadius = Math.min(canvas.width, canvas.height) / 2;
+        const x = canvas.width / 2;
+        const y = canvas.height / 2;
+        
+        const lineWidth = minRadius / 500;
+        
+        const planetX = x + Math.cos(lastTheta) * lastRadius; // Calculate the x position of the planet
+        const planetY = y + Math.sin(lastTheta) * lastRadius; // Calculate the y position of the planet
+        
+        ctx.beginPath();
+        ctx.arc(planetX, planetY, lineWidth *  50, 0, 2 * Math.PI);
+        ctx.fillStyle = "#FFFFFF33";
+        ctx.fill();
+        ctx.closePath();
+        ctx.beginPath();
+        
+        ctx.arc(x, y, lastRadius, 0, 2 * Math.PI);
+        ctx.lineWidth = lineWidth * 3;
+        ctx.strokeStyle = "#FFFFFF33";
+        ctx.stroke();
+        ctx.closePath();
+        
+        // Draw the asteroids
+        ctx.beginPath();
+        ctx.arc(x, y, (minRadius / 6) * Math.sqrt(2.7), 0, 2 * Math.PI);
+        ctx.lineWidth = lineWidth * 3;
+        ctx.strokeStyle = "#FFFFFF33";
+        ctx.stroke();
+        ctx.closePath();
+        
+        // Draw the orbit paths
+        planets.forEach((planet, index) => {
+          
+          const angle = time / planet.yearLength % (Math.PI*2) - Math.PI/2
+          
+          const orbitRadius = (minRadius / 6) * Math.sqrt(planet.orbitRadius)
+          
+          ctx.beginPath();
+          ctx.arc(x, y, orbitRadius, 0, 2 * Math.PI);
+          
+          // Create a conic gradient from white to black
+          const gradient = ctx.createConicGradient((angle), x, y);
+          gradient.addColorStop(0.1, '#FFFFFF00');
+          gradient.addColorStop(0.95, '#FFFFFF66');
+          // gradient.addColorStop(0.99, planet.color);
+          gradient.addColorStop(1.0, '#FFFFFF00');
+          ctx.lineWidth = lineWidth * 3;
+          ctx.strokeStyle = gradient;
+          ctx.stroke();
+          ctx.closePath();
+          
+          const planetX = x + Math.cos(angle) * orbitRadius; // Calculate the x position of the planet
+          const planetY = y + Math.sin(angle) * orbitRadius; // Calculate the y position of the planet
+          
+          ctx.beginPath();
+          ctx.arc(planetX, planetY, lineWidth *  Math.sqrt(planet.planetRadius), 0, 2 * Math.PI);
+          ctx.fillStyle = planet.color;
+          ctx.fill();
+          ctx.closePath();
+        });
+      }
+      
+      let lastTime = Date.now()
+      // Animation loop
+      function animate(repeat = true) {
+        let now = Date.now();
+        time += speedMultiplier * (now - lastTime);
+        lastTime = now
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawPlanets();
+        
+        if (repeat) setTimeout(() => {
+          requestAnimationFrame(animate);
+        }, 1000 / frameRate);
+      }
+      // setInterval(() => {
+        //   requestAnimationFrame(animate);
+        // }, 1000 / 24);
+        
+        requestAnimationFrame(animate);
+      }
+      
+      // Start the animation
+      animate();
+    </script>
+  </body>
+  </html>
