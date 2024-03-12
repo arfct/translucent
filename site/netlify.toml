@@ -8,13 +8,20 @@
 # [[redirects]]
 #  from = "/"
 #  to = "https://www.widget.vision/"
-#  status = 301
+#  status = 302
 #  force = true
+
+
+[[redirects]]
+  from = "/list"
+  to = "https://www.widget.vision/list"
+  status = 302
+  force = true
 
 [[redirects]]
   from = "/x/*"
   to = "https://transparent.vision/:splat"
-  status = 301
+  status = 302
   force = true
   
 [[edge_functions]]
