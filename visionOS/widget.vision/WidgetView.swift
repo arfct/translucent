@@ -58,6 +58,7 @@ struct WidgetView: View {
   @State var showPopover = false
   @State var showTilt = false
   @State var clampedSize: CGSize?
+  @State var constrainRatio = false
   
   
   init(widget: Widget, app: WidgetApp? = nil) {
@@ -75,6 +76,8 @@ struct WidgetView: View {
   
   func resizeTo(_ size: CGSize) {
     clampedSize = size;
+    widget.width = size.width
+    widget.height = size.height
     
     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
       clampedSize = nil
@@ -108,7 +111,7 @@ struct WidgetView: View {
       
       // MARK: Tab View
       ZStack(alignment: .center) {
-        if let tabs = widget.tabs {
+        if let tabs = widget.tabs, showSystemOverlay {
           TabView(selection: $activeTab.onUpdate {
             if let tab = widget.tabs?[activeTab] {
               browserState.coordinator?.open(location:tab.url)
@@ -136,6 +139,7 @@ struct WidgetView: View {
           // MARK: Web View
           
           webView
+            
             .onLoadStatusChanged { content, loading, error in
               self.isLoading = loading
               if (!loading && !finishedFirstLoad) {
@@ -150,6 +154,7 @@ struct WidgetView: View {
               downloads.append(download)
               downloadAttachment = download;
             }
+            .allowsHitTesting(showSystemOverlay)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(widget.effect == "chroma" ? ChromaView() : nil)
             .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
@@ -334,13 +339,7 @@ struct WidgetView: View {
                       set: { val in widget.effect = val ? "dim" : nil})) {
                         Label("Dim Environment", systemImage:"circle.lefthalf.filled.righthalf.striped.horizontal")
                       }
-                    Button { showPopover.toggle()
-                      showTilt.toggle()
-                      if showTilt { widget.tilt = nil }
-                    } label: {
-                      Label("Adjust Tilt (beta)",systemImage:"rotate.3d")
-                    }
-
+                    
                     Divider()
                     Button { showPopover.toggle()
                       resizeTo(CGSize(width: geometry.size.height,
@@ -351,31 +350,41 @@ struct WidgetView: View {
                             ? "rectangle.landscape.rotate"
                             : "rectangle.portrait.rotate")
                     }
+//                    Button { showPopover.toggle()
+//                      resizeTo(CGSize(width: geometry.size.width,
+//                                      height: geometry.size.width))
+//                    } label: {
+//                      Label("Square",systemImage:"square")
+//                    }
                     Button { showPopover.toggle()
-                      resizeTo(CGSize(width: geometry.size.height,
-                                      height: geometry.size.height))
-                    } label: {
-                      Label("Square",systemImage:"square")
-                    }
-                    Button { showPopover.toggle()
-                      resizeTo(CGSize(width: geometry.size.height / 3 * 4,
-                                      height: geometry.size.height))
+                      resizeTo(CGSize(width: geometry.size.width,
+                                      height: geometry.size.width / 4 * 3))
                     } label: {
                       Label("Standard (4:3)",systemImage:"rectangle.ratio.4.to.3")
                     }
                     Button { showPopover.toggle()
-                      resizeTo(CGSize(width: geometry.size.height / 9 * 16,
-                                      height: geometry.size.height))
+                      resizeTo(CGSize(width: geometry.size.width,
+                                      height: geometry.size.width / 16 * 9))
                     } label: {
                       Label("Widescreen (16:9)",systemImage:"rectangle.ratio.16.to.9")
                     }
                     Button { showPopover.toggle()
-                      resizeTo(CGSize(width: geometry.size.height / 9 * 21,
-                                      height: geometry.size.height))
+                      resizeTo(CGSize(width: geometry.size.width,
+                                      height: geometry.size.width / 64 * 27))
                     } label: {
                       Label("Cinematic (21:9)",systemImage:"pano")
                     }
-                    
+#if DEBUG
+                    Divider()
+                    Label("Beta Options",systemImage:"")
+                    Button { showPopover.toggle()
+                      showTilt.toggle()
+                      if showTilt { widget.tilt = nil }
+                    } label: {
+                      Label("Adjust Tilt (beta)",systemImage:"rotate.3d")
+                    }
+#endif
+
                   } label: {
                     Label("Settings",systemImage:"chevron.down")
                   }
@@ -452,11 +461,10 @@ struct WidgetView: View {
            maxHeight: clampedSize?.height ??  widget.maxHeight)
     //    .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
     //    .windowGeometryPreferences(
-    //      size: CGSize(width: widget.width, height: widget.height),
-    //      minimumSize: CGSize(width: widget.minWidth, height: widget.minHeight),
-    //      maximumSize: CGSize(width: widget.maxWidth, height: widget.maxHeight),
+    //      size: CGSize(width: clampedSize?.width ?? widget.width,
+    //                   height: clampedSize?.height ?? widget.height),
     //      resizingRestrictions:
-    //        widget.resize == "uniform" ? .uniform :
+    //        widget.resize == "uniform"  || constrainRatio ? .uniform :
     //        widget.resize == "none" ? .none :
     //          .freeform)
     .onReceive(NotificationCenter.default.publisher(for: Notification.Name.widgetDeleted)) { notif in

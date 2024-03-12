@@ -19,7 +19,7 @@ body {
 
   background-attachment: fixed;
   color: white;
-  font-size: calc(max(1.5vmax, 2vmin, 16px));
+  font-size: calc(max(1.5vmax, 2vmin, 12px));
 }
 
 content {
@@ -297,6 +297,7 @@ div.header {
   box-sizing:border-box;
   flex: 0 0 auto;
 }
+
 .nav {
   display:flex;
   flex-wrap: wrap;
@@ -306,7 +307,7 @@ div.header {
   flex-basis: auto;
   border-radius:100px;
   padding:2px;
-margin-bottom:6vh;
+margin-bottom:2vh;
   flex: 0 0 auto;
   gap:0.25em;
 width: 100%;;

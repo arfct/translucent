@@ -1,10 +1,3 @@
-//
-//  Utils.swift
-//  widget.vision
-//
-//  Created by Nicholas Jitkoff on 2/10/24.
-//
-
 import SwiftUI
 
 extension Color {

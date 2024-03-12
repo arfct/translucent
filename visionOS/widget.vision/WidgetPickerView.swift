@@ -121,7 +121,7 @@ struct WidgetPickerView: View {
   // MARK: body
   var body: some View {
     VStack {
-      Image("widget.vision")
+      Image("translucent")
         .renderingMode(.template)
         .resizable()
         .foregroundColor(Color(hue: hue, saturation: 0.2, brightness: 1.0))
@@ -239,13 +239,14 @@ struct WidgetPickerView: View {
         .overlay(alignment: .bottom) {
           if widgets.isEmpty {
             ContentUnavailableView {
-              Label("Widgets & Websites", systemImage: "rectangle.3.offgrid.fill")
+              Label("Websites & Widgets", systemImage: "rectangle.3.offgrid.fill")
             } description: {
               Text("Add something from the web\nto see it here.")
               Button {
                 getMoreWidgets()
               } label: {
-                Label("Get Widgets", systemImage: "")
+                Label("Learn more", systemImage: "plus")
+                  .labelStyle(.iconOnly)
               }
             }
             .padding()

@@ -18,3 +18,4 @@
 {%- if page.resize %}&resize={{ page.resize }}{% endif -%}
 {%- if page.css %}&css={{ page.css | url_encode}}{% endif -%}
 {%- if page.config %}&config={{ page.config | url_encode}}{% endif -%}
+&manifest={{page.path | split: "/" | last | replace: ".md", ""}}

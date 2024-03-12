@@ -8,6 +8,9 @@
 	<array>
 		<string>applinks:widget.vision</string>
 		<string>applinks:www.widget.vision</string>
+		<string>applinks:translucent.site</string>
+		<string>applinks:translucent.vision</string>
+		<string>applinks:translucent.directory</string>
 	</array>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array/>

@@ -98,10 +98,17 @@ struct WidgetSettingsView: View {
                   Text("Mobile").tag("mobile")
                   Text("Desktop").tag("desktop")
                 }
+                Divider()
+                Button {
+                  widget.updateFromManifest()
+                } label: {
+                    Label("Reset configuration", systemImage: "arrow.down.circle")
+                }
               } label: {
                 Label("Location", systemImage: "ellipsis")
               }.labelStyle(.iconOnly)
                 .buttonStyle(.borderless)
+   
             }
             
             HStack(spacing:spacing - 18) {
@@ -307,6 +314,19 @@ struct WidgetSettingsView: View {
                   .disableAutocorrection(true)
                   .frame(maxWidth: .infinity)
               }
+              HStack(alignment: .center, spacing:spacing) {
+                Label("Manifest", systemImage: "link")
+                  .labelStyle(.titleOnly)
+                  .frame(maxWidth: labelWidth, alignment: .leading)
+                
+                TextField("url or directory id", text:Binding<String>(
+                  get: { self.widget.manifest ?? "" },
+                  set: { self.widget.manifest = $0 }))
+                  .autocapitalization(.none)
+                  .disableAutocorrection(true)
+                  .keyboardType(.asciiCapable)
+              }
+                
               HStack(alignment: .top, spacing:spacing) {
                 Label("Config", systemImage: "link")
                   .labelStyle(.titleOnly)

@@ -1,10 +1,3 @@
-//
-//  Widget+WebContent.swift
-//  widget.vision
-//
-//  Created by Nicholas Jitkoff on 3/1/24.
-//
-
 import Foundation
 
 extension Widget {

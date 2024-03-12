@@ -1,10 +1,3 @@
-//
-//  DownloadPanel.swift
-//  widget.vision
-//
-//  Created by Nicholas Jitkoff on 3/1/24.
-//
-
 import SwiftUI
 import RealityKit
 

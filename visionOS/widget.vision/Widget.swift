@@ -14,6 +14,7 @@ import SwiftData
   var image: String?
   var icon: String?
   var location: String?
+  var manifest: String? // source url or directory id for manifest information
   var lastOpened: Date?
   var favorite: Bool = false
   var autohideControls: Bool = true
@@ -125,14 +126,19 @@ import SwiftData
     
   }
   
-  func apply(options: String?, fromSite: Bool? = false) {
+  func apply(options: String?, fromSite: Bool? = false, origin: String? = nil) {
     
+    let isTrusted = fromSite == true || origin == nil || origin == "www.widget.vision" || origin == "translucent.site"
     if let options = options {
       console.log("Applying options: \(options)")
       options.split(separator: "&").forEach({ param in
         let kv = param.split(separator:"=")
         if let key = kv.first?.removingPercentEncoding, let value = kv.last?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding {
           switch key {
+          case "manifest":
+            self.manifest = String(value)
+          case "url":
+            self.location = String(value)
           case "style":
             self.style = String(value)
           case "name":
@@ -177,11 +183,11 @@ import SwiftData
               self.radius = Double(value)
             }
           case "js":
-            self.injectJS = String(value)
+            if isTrusted { self.injectJS = String(value) }
           case "css":
             self.injectCSS = String(value)
           case "config":
-            self.configJSON = String(value)
+            if isTrusted { self.configJSON = String(value) }
           case "icon":
             self.icon = String(value)
           default:
@@ -367,6 +373,34 @@ extension Widget {
     let urlString = "https://widget.vision/\(String(describing: encodedURL))\(suffix)"
     
     return URL(string: urlString)!
+  }
+  
+  @Transient
+  var manifestURL: URL? {
+    guard let location = manifest else { return nil }
+      
+    if location.starts(with: "https") {
+      return URL(string: location)
+    }
+    
+    if let hostName = hostName {
+      return URL(string: "https://www.widget.vision/links/\(hostName).html")
+    }
+    
+    
+    return nil;
+  }
+  
+  func updateFromManifest() {
+    if let url = manifestURL {
+      do {
+        let contents = try String(contentsOf: url)
+        console.log("Applying updated config: \(contents)")
+        apply(options: contents, fromSite: false, origin: url.host)
+      } catch {
+        console.log("Failed to fetch config \(error)")
+      }
+    }
   }
   
   @Transient

@@ -1,10 +1,3 @@
-//
-//  ChromaView.swift
-//  widget.vision
-//
-//  Created by Nicholas Jitkoff on 3/6/24.
-//
-
 import SwiftUI
 
 struct ChromaView: View {
