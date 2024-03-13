@@ -82,7 +82,7 @@ export default async (request, context) => {
     if (info.s) { content.push(mProp("og:site_name", url.hostname)) }
     if (description) { content.push(mProp("og:description", description), mName("description", description)) }
     
-    content.push(mProp("og:image", info.image || "https://www.widget.vision/assets/img/widget.vision.png")); 
+    content.push(mProp("og:image", info.image || "https://translucent.vision/assets/img/translucent.vision.png")); 
     
     let widgetURL = null;
     if (targetURL) {
@@ -106,7 +106,7 @@ export default async (request, context) => {
     
 <body>
     <div class="widget">
-    Opening <a href="${widgetURL}">${title}</a><br>in widget.vision...
+    Opening <a href="${widgetURL}">${title}</a><br>in Translucent...
     </div>
 </body>`);
 

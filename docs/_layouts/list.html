@@ -28,12 +28,12 @@ layout: default
     {%- for widget in posts -%}
     {% assign page = widget %}
 
-    {% if widget.name == "widget.vision" %} 
+    {% if widget.name == "Translucent Directory" %} 
     <meta name="widget" content="{% include queryparams.html content=page %}">
     {% endif %}
 
     <a class="tile{% if widget.class %} {{ widget.class }}{% endif %} {{widget.tags | join: ' '}} {{ widget.style }}" 
-       href="https://widget.vision/{{widget.href | replace: 'https://', '' | url_encode}}{%- include queryparams.html -%}">
+       href="https://translucent.site/{{widget.href | replace: 'https://', '' | url_encode}}{%- include queryparams.html -%}">
     <div class="thumbnail" style="
       background-image:url({{widget.url | replace: 'html', 'png' }});
       background-color:#{{ widget.bg | replace: '#', '' }};

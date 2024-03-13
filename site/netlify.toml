@@ -4,13 +4,6 @@
   status = 200
   force = true
 
-
-# [[redirects]]
-#  from = "/"
-#  to = "https://www.widget.vision/"
-#  status = 302
-#  force = true
-
 [[redirects]]
   from = "/list"
   to = "https://translucent.directory"

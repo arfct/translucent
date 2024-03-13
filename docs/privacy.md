@@ -5,7 +5,7 @@ layout: doc
 <b>PRIVACY POLICY</b>
 
 <div style="white-space:pre-wrap">
-Blacktree built widget.vision as a free app. This SERVICE is provided by Blacktree at no cost and is intended for use as is.
+Blacktree built Translucent as a free app. This SERVICE is provided by Blacktree at no cost and is intended for use as is.
 
 This page is used to inform visitors regarding our policies with the collection, use, and disclosure of Personal Information if anyone decided to use our Service.
 
@@ -59,7 +59,7 @@ We may update our Privacy Policy from time to time. Thus, you are advised to rev
 
 <b>Contact Us</b>
 
-If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at https://www.widget.vision/support.
+If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at https://translucent.directory/support.
 
 
 </div>

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#4285f4">
   <meta id="deeplink" name="apple-itunes-app" content="">
-  <title>widget.vision 404warder</title>
+  <title>translucent 404warder</title>
   <link rel="stylesheet" href="assets/css/style.css">
   <style>
     body {
@@ -54,18 +54,18 @@
 
   <div id="message" class="tiltableElement">
     <div>Opening <a id="forward" href="#"></a></div>
-    <div>in <a href="https://get.widget.vision">widget.vision</a></div>
+    <div>in <a href="https://translucent.vision">Translucent</a></div>
     <br>
     <button id="openButton">Open</button>
     </div>
   <script>
 
   // URL Format
-  // https://widget.vision/[https://url.plain]#fragment
+  // https://translucent.vision/[https://url.plain]#fragment
   // rewritten to 
-  // https://widget.vision/[https://url.encoded]?wv-queryparameters
+  // https://translucent.vision/[https://url.encoded]?wv-queryparameters
   // opened as:
-  // widget-https://[url.encoded]?wv-queryparameters
+  // widget-https://[url.encoded]?v=1&-queryparameters
 
     var forwardingURL = decodeURIComponent(location.pathname.slice(1)) + location.search + location.hash;
     
@@ -79,7 +79,7 @@
     let link = document.getElementById("forward");
 
     
-    document.getElementById("deeplink").setAttribute("content", "app-id=widget.vision, app-argument=" + forwardingURL);
+    document.getElementById("deeplink").setAttribute("content", "app-id=translucent.vision, app-argument=" + forwardingURL);
     open(widgetURL);
     let openWidget = () => {
       window.location.href = widgetURL; 

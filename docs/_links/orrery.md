@@ -4,7 +4,7 @@ tags: widget all
 icon: circle.circle
 
 order: 5
-href: https://www.widget.vision/widgets/orrery
+href: https://translucent.site/widgets/orrery
 size: 480x480
 radius: 9999
 resize: uniform
