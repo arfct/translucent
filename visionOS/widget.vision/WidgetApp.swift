@@ -48,9 +48,11 @@ struct WidgetApp: App {
       try FileManager.default.createDirectory(at: path
         .appendingPathComponent("downloads", isDirectory: true), withIntermediateDirectories: true)
       
-      //      try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+      // try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
+      // try AVAudioSession.sharedInstance().setIntendedSpatialExperience(.fixed(soundStageSize: .automatic))
       // try AVAudioSession.sharedInstance().setActive(true)
-      
+        
+  
     } catch {
       fatalError("Could not create directories: \(error)")
     }

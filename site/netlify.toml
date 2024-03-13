@@ -11,20 +11,13 @@
 #  status = 302
 #  force = true
 
-
 [[redirects]]
   from = "/list"
-  to = "https://www.widget.vision/list"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/x/*"
-  to = "https://transparent.vision/:splat"
+  to = "https://translucent.directory"
   status = 302
   force = true
   
 [[edge_functions]]
   path = "/*"
-  excludedPath = ["/widgets/*", "/.well-known/*", "/apple-app-site-association.json"]
+  excludedPath = ["/list", "/widgets/*", "/.well-known/*", "/apple-app-site-association.json"]
   function = "metadata"

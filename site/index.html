@@ -192,7 +192,7 @@
     const y = event.clientY;
     const tiltX = (window.innerWidth / 2 - x) / 20;
     const tiltY = (window.innerHeight / 2 - y) / 20;
-    console.log(1 - Math.sqrt(tiltX * tiltX + tiltY * tiltY) / 200)
+
     const distance = Math.max(0.9, Math.min(1.0, 1 - Math.sqrt(tiltX * tiltX + tiltY * tiltY) / 200)) ;
     tiltableElement.style.transform = `rotateX(${tiltY}deg) rotateY(${-tiltX}deg) scale(${distance})`;
   });

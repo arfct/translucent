@@ -20,116 +20,28 @@
     
     
     .illuminated {
-      /* background-color: yellow; 
-      outline:5px solid red; */
       user-select: none;
     }
     :not(.illuminated) {
-      /* filter: blur(1px); */
     }
     .enlightened {
-      /* background-color: lightgreen;
-      outline:5px solid green; */
       border-radius: 13px !important; 
     }
     .flex-row {
       flex-direction: row;
     }
-    .clippingmask {
-      position: fixed;
-      width: 100vw;
-      height: 100vh;
-      top: 0px;
-      left: 0px;
-      --rect-size: 75px;
-      clip-path: polygon( evenodd,
-      /* outer rect */
-      0 0, /* top - left */
-      100% 0, /* top - right */
-      100% 100%, /* bottom - right */
-      0% 100%, /* bottom - left */
-      0 0, /* and top - left again */
-      /* do the same with inner rect */
-      calc(50% - var(--rect-size) / 2) calc(50% - var(--rect-size) / 2),
-      calc(50% + var(--rect-size) / 2) calc(50% - var(--rect-size) / 2),
-      calc(50% + var(--rect-size) / 2) calc(50% + var(--rect-size) / 2),
-      calc(50% - var(--rect-size) / 2) calc(50% + var(--rect-size) / 2),
-      calc(50% - var(--rect-size) / 2) calc(50% - var(--rect-size) / 2)
-      );
-      background-color: #0008;
-      
-      backdrop-filter: blur(2px);
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      pointer-events: none;
-      display:none;
-    }
-    .shadow {
-      box-shadow: 
-      0 14px 28px rgba(0,0,0,0.25),
-      0 10px 10px rgba(0,0,0,0.22),
-      inset 1px 1px 0px 0px #fff8,
-      inset -1px -1px 0px 0px #fff4,
-      inset 0 0 50px 50px #fff4,
-      0 0 0 1px #0005,
-      
-      0 0 0 1000px #0003;
-      box-sizing:border-box;
-      border:1px solid #fff7;
-      top:100px;
-      left:100px;
-      width:100px;
-      height:100px;
-      position: fixed;
-      pointer-events: none;
-      border-radius:13px;
-    }
-    .translucentButton {
-      background-color: #fff8;
-      padding: 10px;
-      border-radius: 5px;
-      margin: 10px;
-      cursor: pointer;
-      
-    }
     
-    .TranslucentToolbar {
-      position: fixed;
-      bottom: 20px;
-      z-index: 1000;
-      margin:auto;
-      width:320px;
-      display:flex;
-      gap:8px;
-      justify-content: center;;
-      
-    }
     
-    .TranslucentToolbar button {
-      background-color: #fff9;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      border:none;
-      border-radius:100px;
-      font-size:18px;
-    }
-    
-    [data-webclip="true"] {
-      outline:10px solid red;
-    }
     
   </style>
+  
 </head>
 <body>
-  <div class="clippingmask">
+  <div class="WebClipShadow">
   </div>
-  <div class="shadow">
-  </div>
-  <div class="TranslucentToolbar">
-    <button id="TranslucentApply">Apply Clipping</button>
-    <button id="TranslucentCancel">Cancel</button>  
+  <div class="WebClipToolbar">
+    <button id="WebClipApply">Apply Clipping</button>
+    <button id="WebClipCancel">Cancel</button>  
   </div>
   <div class="container" id="container1" style="background-color: #f7a8b2; padding: 10px;">
     <h3>Container 1</h3>
@@ -143,7 +55,7 @@
         <h3>Container 3</h3>
         <div class="nested-element" style="background-color: #a8e6cf; padding: 4px;">Nested Element 1</div>
         <div class="nested-element" style="background-color: #ffd3b6; padding: 7px;">Nested Element 2</div>
-        <div data-webclip="true" class="container flex-row" id="container4" style="background-color: #f7a8b2; padding: 10px;">
+        <div class="container flex-row" id="container4" style="background-color: #f7a8b2; padding: 10px;">
           <h3>Container 4</h3>
           <div class="nested-element" style="background-color: #a8e6cf; padding: 2px;">Nested Element 1</div>
           <div class="nested-element" style="background-color: #ffd3b6; padding: 5px;">Nested Element 2</div>
@@ -163,21 +75,94 @@
       let currentAncestor = null; // Track the common ancestor
       let lastElement = null; // Track the last element dragged over
       
-      document.getElementById('TranslucentApply').addEventListener('click', function() {
-        const clippingmask = document.querySelector('.clippingmask');
-        clippingmask.style.display = 'none';
-        const shadow = document.querySelector('.shadow');
-        shadow.style.display = 'none';
-        
+      document.documentElement.classList.add('WebClipEdit');
+      let cssTag = document.createElement('style');
+      cssTag.id = "WebClipStyle"
+      cssTag.innerHTML = `
+      .WebClipToolbar {
+      position: fixed;
+      bottom: 20px;
+      z-index: 1000;
+      margin:auto;
+      width:320px;
+      display:flex;
+      gap:8px;
+      justify-content: center;;
+    }
+    
+    .WebClipToolbar button {
+      background-color: #fff9;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      border:none;
+      border-radius:100px;
+      font-size:18px;
+    }
+    
+    .WebClipShadow {
+      box-shadow: 
+      0 14px 28px rgba(0,0,0,0.25),
+      0 10px 10px rgba(0,0,0,0.22),
+      inset 1px 1px 0px 0px #fff8,
+      inset -1px -1px 0px 0px #fff4,
+      inset 0 0 50px 50px #fff4,
+      0 0 0 1px #0005,
+      0 0 0 4000px #0003;
+      box-sizing:border-box;
+      top:-100px;
+      left:-100px;
+      position: fixed;
+      pointer-events: none;
+      border-radius:13px;
+    }
+    
+    html:not(.WebClipEdit) .WebClipShadow,
+    html:not(.WebClipEdit) .WebClipToolbar {
+      display:none;
+    }
+    
+    
+    html.WebClip * { visibility:hidden; }
+    html.WebClip [data-webclip="true"] * { visibility: visible !important; }
+    html.WebClip [data-webclip="true"] {
+      position:fixed;
+      top:0;
+      left:0;
+      bottom:0;
+      right:0;
+      transform:none;
+      visibility:visible !important;
+      opacity:1.0 !important;
+      background:transparent !important;
+    }
+
+    
+      `
+      document.head.appendChild(cssTag);
+
+
+      document.getElementById('WebClipApply').addEventListener('click', function() {        
         currentAncestor.dataset.webclip = 'true'; 
+        document.documentElement.classList.add('WebClip');
+        document.documentElement.classList.remove('WebClipEdit');
+        const rect = currentAncestor.getBoundingClientRect();
+        window.widget?.postMessage(JSON.stringify({
+          type: 'webclip',
+          rect: {
+            selector: selector,
+            width: rect.width,
+            height: rect.height
+          }
+        }));
+        
       });
-      document.getElementById('TranslucentCancel').addEventListener('click', function() {
-        const clippingmask = document.querySelector('.clippingmask');
-        clippingmask.style.display = 'none';
-        const shadow = document.querySelector('.shadow');
-        shadow.style.display = 'none';
+      document.getElementById('WebClipCancel').addEventListener('click', function() {
+        document.documentElement.classList.remove('WebClipEdit');
       });
+      
       function onMouseDown(e) {
+        if (e.target.closest(".WebClipToolbar")) return; 
         isDragging = true;
         dragPath = [];
         document.addEventListener('mousemove', onMouseMove);
@@ -231,8 +216,6 @@
           commonAncestor = commonAncestor.parentElement;
         }
         
-        
-        
         if (currentAncestor !== commonAncestor) {
           if (currentAncestor) currentAncestor.classList.remove('enlightened');
           commonAncestor.classList.add('enlightened');
@@ -240,30 +223,11 @@
           
           if (currentAncestor) {
             const rect = currentAncestor.getBoundingClientRect();
-            
-            const clippingmask = document.querySelector('.clippingmask');
-            clippingmask.style.clipPath = `polygon(evenodd,
-            0 0, /* top - left */
-            100% 0, /* top - right */
-            100% 100%, /* bottom - right */
-            0% 100%, /* bottom - left */
-            0 0, /* and top - left again */
-            /* do the same with inner rect */
-            ${rect.left}px ${rect.top}px,
-            ${rect.right}px ${rect.top}px,
-            ${rect.right}px ${rect.bottom}px,
-            ${rect.left}px ${rect.bottom}px,
-            ${rect.left}px ${rect.top}px
-            )`
-            const shadow = document.querySelector('.shadow');
+            const shadow = document.querySelector('.WebClipShadow');
             shadow.style.left = rect.left + 'px';
             shadow.style.top = rect.top + 'px';
             shadow.style.width = rect.width + 'px';
             shadow.style.height = rect.height + 'px';
-            
-            
-            // `inset(${viewportRect.top}px ${viewportRect.right}px ${viewportRect.bottom}px ${viewportRect.left}px)`;
-            // Use the viewportRect object to access the dimensions and position of the current ancestor
           }
         }
       }

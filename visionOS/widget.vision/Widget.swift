@@ -88,7 +88,7 @@ import SwiftData
     console.log("🌐 Creating from URL: \(url.absoluteString)")
     var location = url.absoluteString
     var parameters: String?
-    if let regex = try? Regex(#"(?:\?)format=widget\&(.*)"#) {
+    if let regex = try? Regex(#"(?:\?)v=(.*)"#) {
       if let match = location.firstMatch(of: regex) {
         parameters = String(match[1].substring!)
         location = location.replacing(regex, with: "")
@@ -102,6 +102,8 @@ import SwiftData
     location = location
       .replacingOccurrences(of: "widget-http", with: "http")
       .replacingOccurrences(of: "widget://", with: "https://")
+      .replacingOccurrences(of: "https://translucent.site/http", with: "http")
+      .replacingOccurrences(of: "https://translucent.vision/http", with: "http")
       .replacingOccurrences(of: "https://widget.vision/http", with: "http")
       .replacingOccurrences(of: "https://www.widget.vision/http", with: "http")
       .replacingOccurrences(of: "https://widget.vision/", with: "https://")
@@ -365,12 +367,12 @@ extension Widget {
     
     guard var suffix = components.string else { return nil }
     suffix.removeFirst()
-    if (suffix.count > 0) { suffix = "?format=widget&" + suffix}
+    if (suffix.count > 0) { suffix = "?v=1&" + suffix}
     
     guard let encodedURL = location?.replacingOccurrences(of: "https://", with: "")
       .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else { return nil }
     
-    let urlString = "https://widget.vision/\(String(describing: encodedURL))\(suffix)"
+    let urlString = "https://translucent.site/\(String(describing: encodedURL))\(suffix)"
     
     return URL(string: urlString)!
   }

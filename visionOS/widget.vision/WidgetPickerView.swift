@@ -54,7 +54,7 @@ struct WidgetPickerView: View {
   ]
   
   func getMoreWidgets() {
-    guard let url = URL(string: "https://www.widget.vision/list?format=widget&size=1024x600") else { return }
+    guard let url = URL(string: "https://translucent.directory") else { return }
     //    openWindow(id: "webview", value: url)
     openURL(url)
   }
@@ -236,7 +236,7 @@ struct WidgetPickerView: View {
         .padding(.bottom, 80)
         
         // MARK: Empty Placeholder
-        .overlay(alignment: .bottom) {
+        .overlay(alignment: .center) {
           if widgets.isEmpty {
             ContentUnavailableView {
               Label("Websites & Widgets", systemImage: "rectangle.3.offgrid.fill")
@@ -245,16 +245,16 @@ struct WidgetPickerView: View {
               Button {
                 getMoreWidgets()
               } label: {
-                Label("Learn more", systemImage: "plus")
-                  .labelStyle(.iconOnly)
+                Label("Browse for More", systemImage: "plus")
+              
               }
             }
             .padding()
             .padding(.bottom, -20)
             .frame(maxWidth:360)
             .glassBackgroundEffect()
-            .padding(.bottom, 40)
-            .offset(z: 50)
+            .padding(.bottom, 110)
+            .offset(z: 60)
             .offset(z: isVisible ? 0 : 200)
             .opacity(isVisible ? 1.0 : 0.0)
           }
@@ -300,7 +300,7 @@ struct WidgetPickerView: View {
               }
             } label: {
               Label(draggedWidget == nil ?
-                    "Get More" : "Delete Widget",
+                    "Browse for More" : "Delete Bookmark",
                     systemImage: draggedWidget == nil ? "plus" : "square.and.arrow.down")
               .padding(10)
             }.labelStyle(.titleAndIcon)

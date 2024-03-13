@@ -47,7 +47,7 @@ export default async (request, context) => {
     const ua = request.headers.get("user-agent");
     let url = new URL(request.url);
     let path = url.pathname.substring(1);
-    if (path.startsWith("assets") || path.startsWith("widgets") || path.startsWith(".well-known") || path.length == 0) {
+    if (path.startsWith("list") || path.startsWith("assets") || path.startsWith("widgets") || path.startsWith(".well-known") || path.length == 0) {
       return;
     }
     
@@ -58,10 +58,9 @@ export default async (request, context) => {
     let uaMatch = uaArray.some(a => ua?.indexOf(a) != -1);
     if (uaMatch) { return new Response('', { status: 401 }); }
     
-    //https://widget.vision/www.widget.vision/widgets/orrery%3Fformat=widget&name=Digital+Orrery&icon=circle.circle&style=transparent&size=480x480?format=widget&name=widget.vision&back=1001DC98&radius=9999.0&size=360.0x360.0
     let info = {}
-    if (request.url.indexOf('?format=widget') > 0) {
-      let wvQuery = request.url.substring(request.url.indexOf('?format=widget'));
+    if (request.url.indexOf('?v=') > 0) {
+      let wvQuery = request.url.substring(request.url.indexOf('?v='));
       let params = new URLSearchParams(wvQuery);
       info = Object.fromEntries(params.entries());
       console.log(info);
