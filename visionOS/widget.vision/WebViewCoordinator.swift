@@ -17,7 +17,6 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   var currentDownload: URL?
   
   
-  
   init(_ container: WebView, widget: Widget) {
     self.container = container
     self.widget = widget
@@ -44,6 +43,11 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     webView?.load(URLRequest(url: url))
   }
   
+  
+  func webClipJS() -> String?{
+    guard let path = Bundle.main.path(forResource: "WebClip", ofType: "js") else { return nil }
+            return try? String(contentsOfFile: path, encoding: .utf8)
+  }
   // MARK: WKUserContentController
   
   func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
