@@ -88,7 +88,7 @@ import SwiftData
     console.log("🌐 Creating from URL: \(url.absoluteString)")
     var location = url.absoluteString
     var parameters: String?
-    if let regex = try? Regex(#"(?:\?)v=(.*)"#) {
+    if let regex = try? Regex(#"(?:\?)v=\d(.*)"#) {
       if let match = location.firstMatch(of: regex) {
         parameters = String(match[1].substring!)
         location = location.replacing(regex, with: "")
@@ -107,6 +107,7 @@ import SwiftData
       .replacingOccurrences(of: "https://widget.vision/http", with: "http")
       .replacingOccurrences(of: "https://www.widget.vision/http", with: "http")
       .replacingOccurrences(of: "https://widget.vision/", with: "https://")
+      .replacingOccurrences(of: "https://translucent.site/", with: "https://")
     
     self.init( name: name ?? url.host() ??
                url.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "_", with: " "),
