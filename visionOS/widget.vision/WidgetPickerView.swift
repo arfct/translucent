@@ -3,13 +3,6 @@ import SwiftData
 import RealityKit
 import OSLog
 
-struct Activity {
-  static let openWidget = "vision.widget.open"
-  static let openSettings = "vision.widget.settings"
-  static let openPreview = "vision.widget.preview"
-  static let openWebView = "vision.widget.webview"
-}
-
 extension Notification.Name {
   static let mainWindowOpened = Notification.Name("mainWindowOpened")
   static let widgetDeleted = Notification.Name("widgetDeleted")
@@ -33,7 +26,9 @@ struct WidgetPickerView: View {
   @Environment(\.openWindow) private var openWindow
   @Environment(\.dismissWindow) private var dismissWindow
   @State private var searchText: String = ""
-  @State var id = UUID().uuidString
+  @State var uuid: UUID = {
+    UUID()
+  }()
   var app: WidgetApp?
   
   
@@ -355,15 +350,17 @@ struct WidgetPickerView: View {
         updateHue()
       }
       
-      NotificationCenter.default.post(name: Notification.Name.mainWindowOpened, object: id)
+      NotificationCenter.default.post(name: Notification.Name.mainWindowOpened, object: self.uuid.uuidString)
 
     }
     .onReceive(NotificationCenter.default.publisher(for: Notification.Name.mainWindowOpened)) { notif in
-      if let otherID = notif.object as? String, otherID != id {
+      guard let otherID = notif.object as? String else { return }
+      
+      if (otherID != self.uuid.uuidString) {
         print("Other")
         dismiss()
       }
-      print("view \(notif.object) \(id)")
+      print("view \(otherID) \(self.uuid.uuidString)")
        
     }
     

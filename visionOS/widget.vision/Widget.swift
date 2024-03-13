@@ -60,6 +60,7 @@ import SwiftData
   // MARK: Transient Properties
   @Transient var originalLocation: String?
   @Transient var isLoading: Bool = false
+  @Transient var isTemporaryWidget: Bool = false
   
   // MARK: Model Functions
   @MainActor
@@ -84,7 +85,7 @@ import SwiftData
   
   
   // MARK: init()
-  convenience init(url: URL, name: String? = nil) {
+  convenience init(url: URL, name: String? = nil, overrides: WebViewSetup? = nil) {
     console.log("🌐 Creating from URL: \(url.absoluteString)")
     var location = url.absoluteString
     var parameters: String?
@@ -113,6 +114,12 @@ import SwiftData
                url.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "_", with: " "),
                location: location,
                options:parameters)
+    
+    if let overrides = overrides {
+      if let w = overrides.windowFeatures.width?.floatValue {  width = CGFloat(w) }
+      if let h = overrides.windowFeatures.height?.floatValue {  height = CGFloat(h) }
+      isTemporaryWidget = true;
+    }
     
     if (url.pathExtension == "usdz") {
       type = "usdz"

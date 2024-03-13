@@ -386,13 +386,14 @@ struct WidgetView: View {
 #endif
 
                   } label: {
-                    Label("Settings",systemImage:"chevron.down")
+                    Label("Settings",systemImage:"line.horizontal.3")
                   }
                 }
                 .labelStyle(.iconOnly)
                 .buttonStyle(.borderless)
                 .buttonBorderShape(.circle)
               }.padding(.horizontal, 10)
+                .padding(.bottom, 4)
               Divider()
               Group {
                 
@@ -406,7 +407,7 @@ struct WidgetView: View {
                   }.padding(.vertical, 16)
                 }
                 Button {showPopover.toggle()
-                  openWindow(id:"main")
+                  openWindow(id:WindowID.main)
                   
                 } label: {
                   HStack {

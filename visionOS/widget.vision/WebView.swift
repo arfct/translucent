@@ -11,6 +11,8 @@ import OSLog
 
 struct WebView: UIViewRepresentable {
   @Environment(\.openWindow) var openWindow
+  @Environment(\.dismiss) var dismiss
+  static var newWebViewOverride: WebViewSetup?
   
   @Binding var title: String?
   @Binding var location: String?
@@ -34,39 +36,51 @@ struct WebView: UIViewRepresentable {
     return copy
   }
   
+  func closeWindow() {
+    dismiss()
+  }
   func makeCoordinator() -> WebViewCoordinator { WebViewCoordinator(self, widget: widget) }
   
   // MARK: makeUIView
   
   func makeUIView(context: Context) -> WKWebView {
     
-    let webView = WKWebView()
+    let premadeWebView = WebView.newWebViewOverride?.webView
+    let isOverride = premadeWebView != nil
+    WebView.newWebViewOverride = nil;
+
+    let webView = premadeWebView ?? WKWebView()
     context.coordinator.webView = webView
     webView.navigationDelegate = context.coordinator
     webView.uiDelegate = context.coordinator
+    print("delegate \(webView.uiDelegate)")
 
     browserState.coordinator = context.coordinator
     browserState.webView = webView
 
-    webView.isOpaque = false
-    webView.backgroundColor = UIColor.clear
-    webView.scrollView.backgroundColor = UIColor.clear
     webView.overrideUserInterfaceStyle = .dark
-    webView.customUserAgent = widget.userAgentString
-
+    
+    
 #if DEBUG
     webView.isInspectable = true
 #endif
     
     UIDevice.current.isBatteryMonitoringEnabled = true
     
-    // MARK: Configuration
+    if (!isOverride) {
+      
+      webView.isOpaque = false
+      webView.backgroundColor = UIColor.clear
+      webView.scrollView.backgroundColor = UIColor.clear
+      webView.customUserAgent = widget.userAgentString
+
+      // MARK: Configuration
     let config = webView.configuration
   
-    config.userContentController.addScriptMessageHandler(context.coordinator, contentWorld: .page, name: "widget")
-    
-    config.userContentController.addUserScript(WKUserScript(
-      source:"""
+      config.userContentController.addScriptMessageHandler(context.coordinator, contentWorld: .page, name: "widget")
+      
+      config.userContentController.addUserScript(WKUserScript(
+        source:"""
       document.documentElement.classList.add("asWidget")
       window.widget = window.webkit.messageHandlers.widget
       window.widgetproxy = new Proxy(window.widget, {
@@ -75,19 +89,19 @@ struct WebView: UIViewRepresentable {
         }
       })
       console.log("window.widget", window.widget)
-
+      
       """,
-      injectionTime: .atDocumentStart,
-      forMainFrameOnly: false))
-
-    var js =  widget.jsSrc()
-    js += "window.widget?.postMessage({'event':'loaded'})\n"
-    
-    let script = WKUserScript(source:js, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
-    config.userContentController.addUserScript(script)
-    
-    context.coordinator.open(location: location, saveValue: true)
-    
+        injectionTime: .atDocumentStart,
+        forMainFrameOnly: false))
+      
+      var js =  widget.jsSrc()
+      js += "window.widget?.postMessage({'event':'loaded'})\n"
+      
+      let script = WKUserScript(source:js, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+      config.userContentController.addUserScript(script)
+      
+      context.coordinator.open(location: location, saveValue: true)
+    }
     updateSnapshot(webView)
     return webView
   }
@@ -98,7 +112,6 @@ struct WebView: UIViewRepresentable {
     
     if context.coordinator.lastPhase != phase {
       if phase == .background {
-//        context.coordinator.open(location: "about:blank")
         context.coordinator.lastPhase = phase;
       }
     }
@@ -119,6 +132,8 @@ struct WebView: UIViewRepresentable {
   
   func updateWebView(_ webView: WKWebView, context: Context) {
 
+    if widget.isTemporaryWidget { return }
+    
     webView.evaluateJavaScript(widget.jsSrc()) { object, error in
     }
     if (webView.customUserAgent != widget.userAgentString) {

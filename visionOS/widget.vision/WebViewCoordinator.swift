@@ -3,6 +3,13 @@ import WebKit
 import QuickLook
 import OSLog
 
+struct WebViewSetup {
+  var configuration: WKWebViewConfiguration
+  var navigationAction: WKNavigationAction
+  var windowFeatures: WKWindowFeatures
+  var webView: WKWebView
+}
+
 // MARK: Coordinator
 class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler, WKScriptMessageHandlerWithReply, WKDownloadDelegate, QLPreviewControllerDataSource {
   @Environment(\.openWindow) var openWindow
@@ -75,20 +82,41 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     return (nil, nil)
   }
   
-  
   // MARK: WKUIDelegate
   
   func webView(_ webView: WKWebView,
                createWebViewWith configuration: WKWebViewConfiguration,
                for navigationAction: WKNavigationAction,
                windowFeatures: WKWindowFeatures) -> WKWebView? {
+    
     guard let url = navigationAction.request.url else { return nil}
-    console.log("Opening in browser \(url)")
-    UIApplication.shared.open(url)
-    return nil;
+    
+    
+    let frame = CGRectMake(0, 0, 
+                           CGFloat(windowFeatures.width?.floatValue ?? 0),
+                           CGFloat(windowFeatures.height?.floatValue ?? 0))
+    let newWebView = WKWebView(frame:frame,
+                               configuration: configuration)
+    
+    WebView.newWebViewOverride = WebViewSetup(configuration: configuration,
+                                               navigationAction: navigationAction,
+                                               windowFeatures: windowFeatures,
+                                               webView: newWebView)
+    
+    let openInBrowser = false
+    if (openInBrowser) {
+      console.log("Opening in browser \(url) \(String(describing:navigationAction))")
+      UIApplication.shared.open(url)
+    } else {
+      openWindow(id: "webview", value: url)
+    }
+    return newWebView;
   }
   
-  func webView(_ webView: WKWebView, 
+  func webViewDidClose(_ webView: WKWebView) {
+    container.closeWindow()
+  }
+  func webView(_ webView: WKWebView,
                runJavaScriptAlertPanelWithMessage message: String,
                initiatedByFrame frame: WKFrameInfo) async {
     console.log("Javascript Alert: \(message)")
