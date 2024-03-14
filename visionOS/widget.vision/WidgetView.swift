@@ -91,8 +91,6 @@ struct WidgetView: View {
         print(value)
       }
       .onEnded({ value in
-        
-        print("xvalue \(value.translation)")
       })
   }
   var body: some View {
@@ -324,12 +322,7 @@ struct WidgetView: View {
                     }.disabled(!browserState.canGoBack)
                   }
                   Spacer()
-                  Button {
-                    browserState.webView?.reload()
-                  } label: {
-                    Label("Reload",systemImage:"arrow.clockwise")
-                  }
-                  Spacer()
+
                   Menu {
                     Toggle(isOn: $widget.autohideControls) {
                       Label("Autohide Controls", systemImage:"eye.slash")
@@ -341,38 +334,43 @@ struct WidgetView: View {
                       }
                     
                     Divider()
-                    Button { showPopover.toggle()
-                      resizeTo(CGSize(width: geometry.size.height,
-                                      height: geometry.size.width))
+                    Menu {
+                      Button { showPopover.toggle()
+                        resizeTo(CGSize(width: geometry.size.height,
+                                        height: geometry.size.width))
+                      } label: {
+                        Label("Rotate", systemImage:
+                                geometry.size.height > geometry.size.width
+                              ? "rectangle.landscape.rotate"
+                              : "rectangle.portrait.rotate")
+                      }
+                      //                    Button { showPopover.toggle()
+                      //                      resizeTo(CGSize(width: geometry.size.width,
+                      //                                      height: geometry.size.width))
+                      //                    } label: {
+                      //                      Label("Square",systemImage:"square")
+                      //                    }
+                      Button { showPopover.toggle()
+                        resizeTo(CGSize(width: geometry.size.width,
+                                        height: geometry.size.width / 4 * 3))
+                      } label: {
+                        Label("Standard (4:3)",systemImage:"rectangle.ratio.4.to.3")
+                      }
+                      Button { showPopover.toggle()
+                        resizeTo(CGSize(width: geometry.size.width,
+                                        height: geometry.size.width / 16 * 9))
+                      } label: {
+                        Label("Widescreen (16:9)",systemImage:"rectangle.ratio.16.to.9")
+                      }
+                      Button { showPopover.toggle()
+                        resizeTo(CGSize(width: geometry.size.width,
+                                        height: geometry.size.width / 64 * 27))
+                      } label: {
+                        Label("Cinematic (21:9)",systemImage:"pano")
+                      }
                     } label: {
-                      Label("Rotate", systemImage:
-                              geometry.size.height > geometry.size.width
-                            ? "rectangle.landscape.rotate"
-                            : "rectangle.portrait.rotate")
-                    }
-//                    Button { showPopover.toggle()
-//                      resizeTo(CGSize(width: geometry.size.width,
-//                                      height: geometry.size.width))
-//                    } label: {
-//                      Label("Square",systemImage:"square")
-//                    }
-                    Button { showPopover.toggle()
-                      resizeTo(CGSize(width: geometry.size.width,
-                                      height: geometry.size.width / 4 * 3))
-                    } label: {
-                      Label("Standard (4:3)",systemImage:"rectangle.ratio.4.to.3")
-                    }
-                    Button { showPopover.toggle()
-                      resizeTo(CGSize(width: geometry.size.width,
-                                      height: geometry.size.width / 16 * 9))
-                    } label: {
-                      Label("Widescreen (16:9)",systemImage:"rectangle.ratio.16.to.9")
-                    }
-                    Button { showPopover.toggle()
-                      resizeTo(CGSize(width: geometry.size.width,
-                                      height: geometry.size.width / 64 * 27))
-                    } label: {
-                      Label("Cinematic (21:9)",systemImage:"pano")
+                      
+                        Label("Aspect Ratio",systemImage:"aspectratio")
                     }
 #if DEBUG
                     Divider()
@@ -388,17 +386,28 @@ struct WidgetView: View {
                   } label: {
                     Label("Settings",systemImage:"line.horizontal.3")
                   }
+                  
+                  Spacer()
+
+                  Button {
+                    browserState.webView?.reload()
+                  } label: {
+                    Label("Reload",systemImage:"arrow.clockwise")
+                  }
                 }
                 .labelStyle(.iconOnly)
                 .buttonStyle(.borderless)
                 .buttonBorderShape(.circle)
+                
+                
+                
               }.padding(.horizontal, 10)
                 .padding(.bottom, 4)
               Divider()
               Group {
                 
                 Button { showPopover.toggle()
-                  app?.openWindow(id: WindowTypeID.widgetSettings, value: widget.modelID)
+                  openWindow(id: WindowTypeID.widgetSettings, value: "settings:\(widget.wid)")
                 } label: {
                   HStack {
                     Text("Customize…")
@@ -407,22 +416,22 @@ struct WidgetView: View {
                   }.padding(.vertical, 16)
                 }
                 Button {showPopover.toggle()
-                  openWindow(id:WindowTypeID.main)
+                  openWindow(id:WindowTypeID.main)//, value:WindowTypeID.main)
                 } label: {
                   HStack {
-                    Text("Show Widget List")
+                    Text("Show Dashboard")
                       .frame(maxWidth: .infinity, alignment: .leading)
-                    Image(systemName: "rectangle.grid.2x2")
+                    Image(systemName: "square.grid.3x3.fill")
                   }.padding(.vertical, 16)
                 }
               }
               .frame(maxWidth:.infinity)
               .buttonStyle(.borderless)
               .buttonBorderShape(.roundedRectangle)
-            }.frame(minWidth:240).padding()
+            }.frame(minWidth:260).padding()
           })
           .simultaneousGesture(LongPressGesture().onEnded { _ in
-            app?.openWindow(id: "widgetSettings", value: widget.modelID)
+        
           })
         }
       }
@@ -490,7 +499,6 @@ struct WidgetView: View {
       console.log("❌ Closing Widget \(widget.name)")
     }
     .onChange(of: scenePhase) {
-      print("Phase \(scenePhase)")
       if (scenePhase == .active) {
         if (wasBackgrounded) {
           // We can't trust this alone - it's triggered by stuff like the camera
@@ -500,7 +508,7 @@ struct WidgetView: View {
         }
       }
       if (scenePhase == .background) {
-        print("💤 Backgrounding \(widget.name)")
+        console.log("💤 Backgrounding \(widget.name)")
         //        wasBackgrounded = true
       }
       currentPhase = scenePhase

@@ -14,7 +14,7 @@ struct WidgetPickerItem: View {
     VStack(alignment: .center) {
       // MARK: icon
       Button {
-        openWindow(id: "widget", value: widget.persistentModelID)
+        openWindow(id: WindowTypeID.widget, value: widget.wid)
       } label: {
         
         ZStack() {

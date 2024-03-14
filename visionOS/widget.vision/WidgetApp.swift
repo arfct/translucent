@@ -17,7 +17,6 @@ struct WindowTypeID {
   static let widget = "widget"
   static let widgetSettings = "widgetSettings"
   static let webview = "webview"
-  
 }
 
 
@@ -42,15 +41,15 @@ struct WidgetApp: App {
       let container = try ModelContainer(for: Widget.self, configurations: modelConfiguration)
       return container;
     } catch {
-//      if SwiftDataError.loadIssueModelContainer == error as? SwiftDataError {
+      //      if SwiftDataError.loadIssueModelContainer == error as? SwiftDataError {
       console.error("Deleting old modelContainer due to \(error)")
       try? FileManager.default.removeItem(at: storePath)
-    
+      
       fatalError("Could not create ModelContainer: \(error)")
     }
   }()
   
-   init() {
+  init() {
     do {
       let path = URL.applicationSupportDirectory
       console.log("Creating directories in \(path)")
@@ -58,8 +57,8 @@ struct WidgetApp: App {
       try FileManager.default.createDirectory(at: path
         .appendingPathComponent("thumbnails", isDirectory: true), withIntermediateDirectories: true)
       
-      WidgetApp.modelContext = container.mainContext
-
+      Widget.modelContext = container.mainContext
+      
       // Create downloads directory
       try FileManager.default.createDirectory(at: path
         .appendingPathComponent("downloads", isDirectory: true), withIntermediateDirectories: true)
@@ -67,14 +66,14 @@ struct WidgetApp: App {
       // try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
       // try AVAudioSession.sharedInstance().setIntendedSpatialExperience(.fixed(soundStageSize: .automatic))
       // try AVAudioSession.sharedInstance().setActive(true)
-        
-  
+      
+      
     } catch {
       fatalError("Could not create directories: \(error)")
     }
-     
-     
-     
+    
+    
+    
   }
   
   @MainActor func showWindowForURL(_ url: URL?) {
@@ -83,7 +82,7 @@ struct WidgetApp: App {
       let widget = Widget(url:url)
       container.mainContext.insert(widget)
       try container.mainContext.save()
-      openWindow(id: "widget", value: widget.persistentModelID)
+      openWindow(id: WindowTypeID.widget, value: widget.wid)
     } catch {
       console.log("Error opening url \(error)")
     }
@@ -93,29 +92,30 @@ struct WidgetApp: App {
     
     // MARK: Main Window
     
-    WindowGroup("Main", id: WindowTypeID.main) { // value in // removed because it causes a crash in window restoration by reading PersistentIDs as strings
-      if (!launchComplete) {
-        LaunchView(completed: $launchComplete)
-      } else {
-        WidgetPickerView(app: self)
-          .onOpenURL {
-            showWindowForURL($0)
-          }
-          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
-            showWindowForURL($0.webpageURL)
-          }
-          .onDrop(of: [.url], isTargeted: nil) { providers, point in
-            for provider in providers {
-              _ = provider.loadObject(ofClass: URL.self) { url,arg  in
-                DispatchQueue.main.async { showWindowForURL(url) }
-              }
+    WindowGroup("Main", id: WindowTypeID.main) { //, for: String.self) { value in // this may cause a crash in window restoration by reading PersistentIDs as strings
+      //      if (!launchComplete) {
+      //        LaunchView(completed: $launchComplete)
+      //      } else {
+      WidgetPickerView(app: self)
+        .onOpenURL {
+          showWindowForURL($0)
+        }
+        .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
+          showWindowForURL($0.webpageURL)
+        }
+        .onDrop(of: [.url], isTargeted: nil) { providers, point in
+          for provider in providers {
+            _ = provider.loadObject(ofClass: URL.self) { url,arg  in
+              DispatchQueue.main.async { showWindowForURL(url) }
             }
-            return true
-          }      
-          .frame(idealWidth: 600, idealHeight: 800, alignment: .center)
-          .fixedSize(horizontal: true, vertical:true)
-      }
+          }
+          return true
+        }
+        .frame(idealWidth: 600, idealHeight: 800, alignment: .center)
+        .fixedSize(horizontal: true, vertical:true)
+      //      }
     }
+    //  defaultValue: {  WindowTypeID.main }
     .windowStyle(.plain)
     .modelContainer(container)
     .windowResizability(.contentSize)
@@ -124,10 +124,11 @@ struct WidgetApp: App {
     
     // MARK: Widget Windows
     
-    WindowGroup("Widget", id: WindowTypeID.widget, for: PersistentIdentifier.self) { $id in
+    WindowGroup("Widget", id: WindowTypeID.widget, for: String.self) { $widgetId in
       ZStack {
-        if let id = id, let widget = container.mainContext.model(for: id) as? Widget {
+        if let widget = Widget.find(id:widgetId) {
           WidgetView(widget:widget, app:self)
+            .environment(widget)
             .onAppear() { widget.lastOpened = .now }
         }
       }
@@ -135,9 +136,8 @@ struct WidgetApp: App {
       .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { showWindowForURL($0.webpageURL) }
       .onContinueUserActivity(Activity.openWidget, perform: { activity in
         if let info = activity.userInfo,
-           let data = info["modelId"] as? Data,
-           let modelID = try? JSONDecoder().decode(PersistentIdentifier.self, from: data) {
-          id = modelID
+           let data = info["wid"] as? String {
+          widgetId = data
         }
       })
     }
@@ -152,20 +152,19 @@ struct WidgetApp: App {
     // MARK: Widget Settings Windows
     // TODO: These don't work with dragging for some reason?
     
-    WindowGroup("Settings", id: WindowTypeID.widgetSettings, for: Foundation.Data.self) { $data in
+    WindowGroup("Settings", id: WindowTypeID.widgetSettings, for: String.self) { $widgetId in
       ZStack {
-        if let data = data,
-           let modelID = try? JSONDecoder().decode(PersistentIdentifier.self, from: data ),
-           let widget = container.mainContext.model(for: modelID) as? Widget{
+        if let widget = Widget.find(id:widgetId?.replacingOccurrences(of: "settings:", with: "")) {
           WidgetSettingsView(widget:widget, callback: {
-            dismissWindow(id: "widgetSettings")
+            dismissWindow(id: WindowTypeID.widgetSettings)
           })
+          .environment(widget)
         }
       }
       .onContinueUserActivity(Activity.openSettings, perform: { activity in
         if let info = activity.userInfo,
-           let modelData = info["modelId"] as? Data {
-          data = modelData
+           let data = info["wid"] as? String {
+          widgetId = data
         }
       })
     }
@@ -177,8 +176,8 @@ struct WidgetApp: App {
     
     // MARK: Widget Windows
     
-    WindowGroup("WebView", id:WindowTypeID.webview, for: URL.self) { $url in
-      if let url = url {
+    WindowGroup("WebView", id:WindowTypeID.webview, for: String.self) { $urlString in
+      if let urlString = urlString, let url = URL(string:urlString) {
         let widget = Widget(url:url, overrides: WebView.newWebViewOverride)
         WidgetView(widget:widget, app:self)
           .onOpenURL { showWindowForURL($0) }

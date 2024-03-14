@@ -26,11 +26,14 @@ struct WidgetPickerView: View {
   @Environment(\.openWindow) private var openWindow
   @Environment(\.dismissWindow) private var dismissWindow
   @State private var searchText: String = ""
-  @State var uuid: UUID = {
-    UUID()
-  }()
+  @State var uuid: UUID
+  
   var app: WidgetApp?
   
+  init(app: WidgetApp? = nil) {
+    self.app = app
+    self.uuid = UUID()
+  }
   
   let columns = [GridItem(.adaptive(minimum: 160, maximum: 160),
                           spacing:40,
@@ -178,7 +181,6 @@ struct WidgetPickerView: View {
                       }
                       .frame(maxWidth:iconSize.width, maxHeight:iconSize.height)
                     } else {   // MARK: Widget
-
                       WidgetPickerItem(widget: widget)
                         .onDrag {
                           draggedWidget = widget
@@ -188,7 +190,7 @@ struct WidgetPickerView: View {
                           let modelID = widget.modelID
                           let userActivity = NSUserActivity(activityType: Activity.openWidget)
                           userActivity.targetContentIdentifier = Activity.openWidget
-                          try? userActivity.setTypedPayload(["modelId": modelID])
+                          try? userActivity.setTypedPayload(["wid": widget.wid])
                           let itemProvider = NSItemProvider(object: "" as NSString)
                           itemProvider.registerObject(userActivity, visibility: .all)
                           return itemProvider
@@ -339,6 +341,11 @@ struct WidgetPickerView: View {
     }
     .windowGeometryPreferences(resizingRestrictions: .none)
     .onAppear() {
+      widgets.forEach { widget in
+        if widget.wid.count < 1 {
+          widget.wid = widget.id.uuidString
+        }
+      }
       updateHue()
       DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
         withAnimation(.easeOut) {
@@ -357,10 +364,9 @@ struct WidgetPickerView: View {
       guard let otherID = notif.object as? String else { return }
       
       if (otherID != self.uuid.uuidString) {
-        print("Other")
         dismiss()
       }
-      print("view \(otherID) \(self.uuid.uuidString)")
+      
        
     }
     

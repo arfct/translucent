@@ -48,16 +48,15 @@ struct WebView: UIViewRepresentable {
     let premadeWebView = WebView.newWebViewOverride?.webView
     let isOverride = premadeWebView != nil
     WebView.newWebViewOverride = nil;
-
+    
     let webView = premadeWebView ?? WKWebView()
     context.coordinator.webView = webView
     webView.navigationDelegate = context.coordinator
     webView.uiDelegate = context.coordinator
-    print("delegate \(webView.uiDelegate)")
-
+    
     browserState.coordinator = context.coordinator
     browserState.webView = webView
-
+    
     webView.overrideUserInterfaceStyle = .dark
     
     
@@ -73,10 +72,10 @@ struct WebView: UIViewRepresentable {
       webView.backgroundColor = UIColor.clear
       webView.scrollView.backgroundColor = UIColor.clear
       webView.customUserAgent = widget.userAgentString
-
+      
       // MARK: Configuration
-    let config = webView.configuration
-  
+      let config = webView.configuration
+      
       config.userContentController.addScriptMessageHandler(context.coordinator, contentWorld: .page, name: "widget")
       
       config.userContentController.addUserScript(WKUserScript(
@@ -126,12 +125,12 @@ struct WebView: UIViewRepresentable {
     } else {
       updateWebView(webView, context: context)
     }
-  
+    
     updateSnapshot(webView)
   }
   
   func updateWebView(_ webView: WKWebView, context: Context) {
-
+    
     if widget.isTemporaryWidget { return }
     
     webView.evaluateJavaScript(widget.jsSrc()) { object, error in
@@ -152,10 +151,6 @@ struct WebView: UIViewRepresentable {
     webView.configuration.userContentController.removeScriptMessageHandler(forName: "widget")
     webView.removeFromSuperview()
   }
-  
-  //  func sizeThatFits( _ proposal: ProposedViewSize, uiView: WebView, context: Context) -> CGSize? {
-  //    return CGSizeMake(360, 640)
-  //  }
   
   
   // MARK: snapshotting

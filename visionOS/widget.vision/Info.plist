@@ -36,8 +36,6 @@
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>LSHasLocalizedDisplayName</key>
-	<true/>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>vision.widget.open</string>

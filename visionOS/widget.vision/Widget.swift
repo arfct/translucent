@@ -6,8 +6,11 @@ import SwiftData
 
 @Model final class Widget: Transferable, ObservableObject {
   
+  static var modelContext: ModelContext?
   // MARK: Core Properties
-  var id: UUID
+  
+  var id: UUID = UUID()
+  var wid: String = ""
   var name: String = ""
   var title: String?
   var type: String?
@@ -62,6 +65,16 @@ import SwiftData
   @Transient var isLoading: Bool = false
   @Transient var isTemporaryWidget: Bool = false
   
+  
+  static func find(id: String?) -> Widget? {
+    if let wid = id {
+      let fetchDescriptor = FetchDescriptor<Widget>(
+        predicate: #Predicate<Widget> { $0.wid == wid })
+      return try? modelContext?.fetch(fetchDescriptor).first
+    }
+    return nil
+  }
+    
   // MARK: Model Functions
   @MainActor
   func save() {
@@ -126,13 +139,12 @@ import SwiftData
     }
   }
   
-  init(id: UUID = UUID(), name: String, location: String, options: String? = nil) {
-
-      self.id = id
-      self.name = name
-      self.location = location
-      self.originalLocation = location
-      apply(options: options)
+  init(wid: String = UUID().uuidString, name: String, location: String, options: String? = nil) {
+    self.wid = wid
+    self.name = name
+    self.location = location
+    self.originalLocation = location
+    apply(options: options)
     
   }
   
@@ -299,7 +311,7 @@ extension Widget {
     if let path = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
       let filename = path
         .appendingPathComponent("thumbnails", isDirectory: true)
-        .appendingPathComponent(self.id.uuidString + ".png")
+        .appendingPathComponent(self.wid + ".png")
       return filename
     }
     return nil

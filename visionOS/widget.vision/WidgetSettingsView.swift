@@ -356,19 +356,6 @@ struct WidgetSettingsView: View {
         // MARK: Toolbar
         .toolbar {
           
-          ToolbarItemGroup(placement:.topBarTrailing) {
-            
-            Button {
-              openWindow(id:WindowTypeID.main)
-              callback()
-            } label: {
-              Label("List", systemImage: "rectangle.grid.2x2")
-            }
-            .labelStyle(.iconOnly)
-            .buttonBorderShape(.circle)
-            .buttonStyle(.borderless)
-            
-          }
           
           ToolbarItemGroup(placement: .topBarTrailing) {
             ShareLink(
