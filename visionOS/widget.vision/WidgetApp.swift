@@ -12,7 +12,7 @@ struct Activity {
   static let openWebView = "vision.widget.webview"
 }
 
-struct WindowID {
+struct WindowTypeID {
   static let main = "main"
   static let widget = "widget"
   static let widgetSettings = "widgetSettings"
@@ -93,7 +93,7 @@ struct WidgetApp: App {
     
     // MARK: Main Window
     
-    WindowGroup("Main", id: WindowID.main) { // value in // removed because it causes a crash in window restoration by reading PersistentIDs as strings
+    WindowGroup("Main", id: WindowTypeID.main) { // value in // removed because it causes a crash in window restoration by reading PersistentIDs as strings
       if (!launchComplete) {
         LaunchView(completed: $launchComplete)
       } else {
@@ -117,14 +117,14 @@ struct WidgetApp: App {
       }
     }
     .windowStyle(.plain)
-      .modelContainer(container)
-      .windowResizability(.contentSize)
-      .defaultSize(width: 600, height: 800)
+    .modelContainer(container)
+    .windowResizability(.contentSize)
+    .defaultSize(width: 600, height: 800)
     
     
     // MARK: Widget Windows
     
-    WindowGroup("Widget", id: WindowID.widget, for: PersistentIdentifier.self) { $id in
+    WindowGroup("Widget", id: WindowTypeID.widget, for: PersistentIdentifier.self) { $id in
       ZStack {
         if let id = id, let widget = container.mainContext.model(for: id) as? Widget {
           WidgetView(widget:widget, app:self)
@@ -152,7 +152,7 @@ struct WidgetApp: App {
     // MARK: Widget Settings Windows
     // TODO: These don't work with dragging for some reason?
     
-    WindowGroup("Settings", id: WindowID.widgetSettings, for: Foundation.Data.self) { $data in
+    WindowGroup("Settings", id: WindowTypeID.widgetSettings, for: Foundation.Data.self) { $data in
       ZStack {
         if let data = data,
            let modelID = try? JSONDecoder().decode(PersistentIdentifier.self, from: data ),
@@ -177,7 +177,7 @@ struct WidgetApp: App {
     
     // MARK: Widget Windows
     
-    WindowGroup("WebView", id:WindowID.webview, for: URL.self) { $url in
+    WindowGroup("WebView", id:WindowTypeID.webview, for: URL.self) { $url in
       if let url = url {
         let widget = Widget(url:url, overrides: WebView.newWebViewOverride)
         WidgetView(widget:widget, app:self)

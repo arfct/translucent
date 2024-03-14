@@ -398,7 +398,7 @@ struct WidgetView: View {
               Group {
                 
                 Button { showPopover.toggle()
-                  app?.openWindow(id: "widgetSettings", value: widget.modelID)
+                  app?.openWindow(id: WindowTypeID.widgetSettings, value: widget.modelID)
                 } label: {
                   HStack {
                     Text("Customize…")
@@ -407,8 +407,7 @@ struct WidgetView: View {
                   }.padding(.vertical, 16)
                 }
                 Button {showPopover.toggle()
-                  openWindow(id:WindowID.main)
-                  
+                  openWindow(id:WindowTypeID.main)
                 } label: {
                   HStack {
                     Text("Show Widget List")

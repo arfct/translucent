@@ -359,7 +359,7 @@ struct WidgetSettingsView: View {
           ToolbarItemGroup(placement:.topBarTrailing) {
             
             Button {
-              openWindow(id:WindowID.main)
+              openWindow(id:WindowTypeID.main)
               callback()
             } label: {
               Label("List", systemImage: "rectangle.grid.2x2")
