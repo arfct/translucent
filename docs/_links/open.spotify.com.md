@@ -1,7 +1,6 @@
 ---
 name: Spotify Desktop
 tags: experimental
-class: borderless
 order: 9
 icon: music.note.list
 href: https://open.spotify.com

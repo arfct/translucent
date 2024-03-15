@@ -1,7 +1,6 @@
 ---
 name: Google News
 tags: website
-class: borderless
 icon: newspaper
 href: https://news.google.com
 size: 430x640

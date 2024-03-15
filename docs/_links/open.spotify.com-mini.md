@@ -1,7 +1,6 @@
 ---
 name: Spotify Mini Player
 tags: website
-class: borderless
 order: 9
 icon: music.note.list
 href: https://open.spotify.com

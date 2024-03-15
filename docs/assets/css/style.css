@@ -53,7 +53,7 @@ a.tile {
   position: relative;
 
   justify-content: flex-end;
-  --radius: 24px;
+  --radius: 2.5em;
 
 }
 
@@ -62,7 +62,7 @@ a.tile:not(.borderless) .thumbnail::before {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 24px;
+  border-radius: var(--radius);
   padding: 1px;
   background: conic-gradient(
     from -60deg,

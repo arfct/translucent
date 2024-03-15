@@ -2,12 +2,10 @@
 name: Netflix
 description: Netflix desktop site
 tags: experimental
-class: borderless
 icon: movieclapper
 href: https://www.netflix.com
 ua: desktop
 size: 640x400
-class: borderless
 effect: dim
 config: |
   {"tabs":[

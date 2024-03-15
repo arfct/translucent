@@ -1,11 +1,11 @@
 ---
-name: Figma
+name: Figma Mirror
 tags: experimental
 icon: square.and.pencil
-href: https://www.figma.com/
-size: 1280x800
+href: https://www.figma.com/mirror
+size: 640x640
 ua: desktop
-description: Figma desktop site
+description: Figma mirror
 radius: 21
 css: |
   * {

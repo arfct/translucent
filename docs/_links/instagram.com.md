@@ -1,7 +1,6 @@
 ---
 name: Instagram
-tags: hidden
-micon: photo_camera
+tags: experimental
 icon: camera
 href: https://www.instagram.com
 size: 400x600

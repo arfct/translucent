@@ -1,7 +1,6 @@
 ---
 name: Discord
 tags: website
-class: borderless
 order: 2
 icon: bubble.left.and.bubble.right
 href: https://discord.com/channels/@me

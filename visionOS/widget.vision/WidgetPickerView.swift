@@ -132,6 +132,7 @@ struct WidgetPickerView: View {
         .frame(width: 400)
         .opacity(isVisible ? 1.0 : 0.0)
         .offset(z: isVisible ? 0 : 200)
+
       GeometryReader { scrollView in
         ScrollView() {
           
