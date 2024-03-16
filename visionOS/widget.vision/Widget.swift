@@ -3,6 +3,14 @@ import SwiftUI
 import SwiftData
 
 
+struct Host {
+  static let site = "translucent.site"
+  static let directory = "translucent.directory"
+  static let widget = "widget.vision"
+  static let wwwidget = "www.widget.vision"
+}
+
+
 
 @Model final class Widget: Transferable, ObservableObject {
   
@@ -70,6 +78,14 @@ import SwiftData
     if let wid = id {
       let fetchDescriptor = FetchDescriptor<Widget>(
         predicate: #Predicate<Widget> { $0.wid == wid })
+      return try? modelContext?.fetch(fetchDescriptor).first
+    }
+    return nil
+  }
+  static func find(location: String?) -> Widget? {
+    if let location = location {
+      let fetchDescriptor = FetchDescriptor<Widget>(
+        predicate: #Predicate<Widget> { $0.location == location })
       return try? modelContext?.fetch(fetchDescriptor).first
     }
     return nil
@@ -150,7 +166,7 @@ import SwiftData
   
   func apply(options: String?, fromSite: Bool? = false, origin: String? = nil) {
     
-    let isTrusted = fromSite == true || origin == nil || origin == "www.widget.vision" || origin == "translucent.site"
+    let isTrusted = fromSite == true || origin == nil || origin == Host.wwwidget || origin == Host.site
     if let options = options {
       console.log("Applying options: \(options)")
       options.split(separator: "&").forEach({ param in
@@ -392,7 +408,7 @@ extension Widget {
     guard let encodedURL = location?.replacingOccurrences(of: "https://", with: "")
       .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else { return nil }
     
-    let urlString = "https://translucent.site/\(String(describing: encodedURL))\(suffix)"
+    let urlString = "https://\(Host.site)/\(String(describing: encodedURL))\(suffix)"
     
     return URL(string: urlString)!
   }
@@ -406,7 +422,7 @@ extension Widget {
     }
     
     if let hostName = hostName {
-      return URL(string: "https://www.widget.vision/links/\(hostName).html")
+      return URL(string: "https://\(Host.site)/links/\(hostName).html")
     }
     
     

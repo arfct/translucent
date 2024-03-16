@@ -124,7 +124,7 @@ struct WidgetView: View {
         
         
         if (flipped) {
-          WidgetSettingsView(widget:widget, callback: toggleSettings)
+          WidgetSettingsView(widget:widget)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(widget.backColor.opacity(0.2))
             .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
@@ -407,7 +407,7 @@ struct WidgetView: View {
               Group {
                 
                 Button { showPopover.toggle()
-                  openWindow(id: WindowTypeID.widgetSettings, value: "settings:\(widget.wid)")
+                  openWindow(id: WindowTypeID.main, value: "settings:\(widget.wid)")
                 } label: {
                   HStack {
                     Text("Customize…")
@@ -416,7 +416,7 @@ struct WidgetView: View {
                   }.padding(.vertical, 16)
                 }
                 Button {showPopover.toggle()
-                  openWindow(id:WindowTypeID.main)//, value:WindowTypeID.main)
+                  openWindow(id:WindowTypeID.main, value:WindowID.main)
                 } label: {
                   HStack {
                     Text("Show Dashboard")
@@ -494,6 +494,7 @@ struct WidgetView: View {
         loadedWindow = true;
       }
       
+    widget.lastOpened = .now
     }
     .onDisappear {
       console.log("❌ Closing Widget \(widget.name)")

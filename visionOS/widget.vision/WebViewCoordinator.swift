@@ -108,7 +108,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
       console.log("Opening in browser \(url) \(String(describing:navigationAction))")
       UIApplication.shared.open(url)
     } else {
-      openWindow(id: WindowTypeID.webview, value: url.absoluteString)
+      openWindow(id: WindowTypeID.widget, value: url.absoluteString)
     }
     return newWebView;
   }
@@ -139,7 +139,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
                preferences: WKWebpagePreferences,
                decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
     
-    console.log("Navigating to \(String(describing:navigationAction.request.url))")
+//    console.log("Navigating to \(String(describing:navigationAction.request.url))")
     
     let url = navigationAction.request.url
     if url?.host() == "transparent.site" {

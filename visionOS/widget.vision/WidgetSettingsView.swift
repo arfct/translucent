@@ -3,9 +3,9 @@ import SwiftUI
 struct WidgetSettingsView: View {
   @Environment(\.openWindow) private var openWindow
   @Environment(\.openURL) private var openURL
+  @Environment(\.dismiss) private var dismiss
   
   @State var widget: Widget
-  var callback: () -> Void
   
   @State var foreColor: Color = .white
   @State var backColor: Color = .clear
@@ -350,7 +350,8 @@ struct WidgetSettingsView: View {
         
         .onReceive(NotificationCenter.default.publisher(for: Notification.Name.widgetDeleted)) { notif in
           if let anotherWidget = notif.object as? Widget, widget == anotherWidget {
-            callback()
+//            callback()
+            dismiss()
           }
         }
         // MARK: Toolbar
@@ -373,7 +374,7 @@ struct WidgetSettingsView: View {
           ToolbarItemGroup(placement: .navigation) {
             Button {
               DispatchQueue.main.async { widget.save() }
-              self.callback()
+              self.dismiss()
             } label: {
               Label("Done", systemImage: "xmark")
             }
@@ -388,5 +389,5 @@ struct WidgetSettingsView: View {
 }
 
 #Preview(windowStyle: .automatic) {
-  WidgetSettingsView(widget:Widget.preview, callback: {})
+  WidgetSettingsView(widget:Widget.preview)
 }

@@ -190,7 +190,6 @@ struct WidgetPickerView: View {
                           }
                           let modelID = widget.modelID
                           let userActivity = NSUserActivity(activityType: Activity.openWidget)
-                          userActivity.targetContentIdentifier = Activity.openWidget
                           try? userActivity.setTypedPayload(["wid": widget.wid])
                           let itemProvider = NSItemProvider(object: "" as NSString)
                           itemProvider.registerObject(userActivity, visibility: .all)
@@ -340,7 +339,8 @@ struct WidgetPickerView: View {
         }
       }
     }
-    .windowGeometryPreferences(resizingRestrictions: .none)
+//    .windowGeometryPreferences(resizingRestrictions: .none)
+
     .onAppear() {
       widgets.forEach { widget in
         if widget.wid.count < 1 {
@@ -348,6 +348,13 @@ struct WidgetPickerView: View {
         }
       }
       updateHue()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        print("Close others, ", isVisible)
+        if (isVisible) {
+          NotificationCenter.default.post(name: Notification.Name.mainWindowOpened, object: self.uuid.uuidString)
+        }
+      }
+      
       DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
         withAnimation(.easeOut) {
           isVisible = true
@@ -358,8 +365,11 @@ struct WidgetPickerView: View {
         updateHue()
       }
       
-      NotificationCenter.default.post(name: Notification.Name.mainWindowOpened, object: self.uuid.uuidString)
 
+    }
+    .onDisappear() {
+      isVisible = false;
+      print("ondissapear", isVisible)
     }
     .onReceive(NotificationCenter.default.publisher(for: Notification.Name.mainWindowOpened)) { notif in
       guard let otherID = notif.object as? String else { return }

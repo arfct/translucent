@@ -12,13 +12,16 @@ struct Activity {
   static let openWebView = "vision.widget.webview"
 }
 
-struct WindowTypeID {
+struct WindowID {
   static let main = "main"
-  static let widget = "widget"
-  static let widgetSettings = "widgetSettings"
-  static let webview = "webview"
 }
 
+struct WindowTypeID {
+  static let main = "default"
+  static let widget = "default"
+  static let widgetSettings = "default"
+  static let webview = "default"
+}
 
 @main
 struct WidgetApp: App {
@@ -41,38 +44,31 @@ struct WidgetApp: App {
       let container = try ModelContainer(for: Widget.self, configurations: modelConfiguration)
       return container;
     } catch {
-      //      if SwiftDataError.loadIssueModelContainer == error as? SwiftDataError {
       console.error("Deleting old modelContainer due to \(error)")
       try? FileManager.default.removeItem(at: storePath)
-      
       fatalError("Could not create ModelContainer: \(error)")
     }
   }()
   
   init() {
     do {
+      let fm = FileManager.default
       let path = URL.applicationSupportDirectory
       console.log("Creating directories in \(path)")
+
       // Create thumbnails directory
-      try FileManager.default.createDirectory(at: path
+      try fm.createDirectory(at: path
         .appendingPathComponent("thumbnails", isDirectory: true), withIntermediateDirectories: true)
       
-      Widget.modelContext = container.mainContext
-      
       // Create downloads directory
-      try FileManager.default.createDirectory(at: path
+      try fm.createDirectory(at: path
         .appendingPathComponent("downloads", isDirectory: true), withIntermediateDirectories: true)
-      
-      // try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
-      // try AVAudioSession.sharedInstance().setIntendedSpatialExperience(.fixed(soundStageSize: .automatic))
-      // try AVAudioSession.sharedInstance().setActive(true)
-      
-      
+ 
     } catch {
       fatalError("Could not create directories: \(error)")
     }
     
-    
+    Widget.modelContext = container.mainContext
     
   }
   
@@ -87,121 +83,72 @@ struct WidgetApp: App {
       console.log("Error opening url \(error)")
     }
   }
-  @State var launchComplete = true;
+
+  @State var windowLoaded: Bool = false;
+  
   var body: some Scene {
     
-    // MARK: Main Window
+    // MARK: Generic Window
     
-    WindowGroup("Main", id: WindowTypeID.main) { //, for: String.self) { value in // this may cause a crash in window restoration by reading PersistentIDs as strings
-      //      if (!launchComplete) {
-      //        LaunchView(completed: $launchComplete)
-      //      } else {
-      WidgetPickerView(app: self)
-        .onOpenURL {
-          showWindowForURL($0)
-        }
-        .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) {
-          showWindowForURL($0.webpageURL)
-        }
-        .onDrop(of: [.url], isTargeted: nil) { providers, point in
-          for provider in providers {
-            _ = provider.loadObject(ofClass: URL.self) { url,arg  in
-              DispatchQueue.main.async { showWindowForURL(url) }
+    WindowGroup("Main", id: WindowTypeID.main, for: String.self) { $windowID in
+      
+      let _ = console.log("🪟 Opening \(windowID)");
+      Group { // All windows are clustered in this group due to a bug in relaunching any non-main window
+        if windowID == WindowID.main {
+          if (windowLoaded) {
+            WidgetPickerView(app: self)
+              .frame(idealWidth: 600, idealHeight: 800, alignment: .center)
+              .fixedSize(horizontal: true, vertical:true)
+          } else {
+            ZStack() {
+              
+            }.onAppear() {
+              print("loaded")
+              windowLoaded = true
             }
           }
-          return true
         }
-        .frame(idealWidth: 600, idealHeight: 800, alignment: .center)
-        .fixedSize(horizontal: true, vertical:true)
-      //      }
-    }
-    //  defaultValue: {  WindowTypeID.main }
-    .windowStyle(.plain)
-    .modelContainer(container)
-    .windowResizability(.contentSize)
-    .defaultSize(width: 600, height: 800)
-    
-    
-    // MARK: Widget Windows
-    
-    WindowGroup("Widget", id: WindowTypeID.widget, for: String.self) { $widgetId in
-      ZStack {
-        if let widget = Widget.find(id:widgetId) {
+        
+        // Settings window
+        else if windowID.starts(with:"settings:"), let widget = Widget.find(id:windowID.replacingOccurrences(of: "settings:", with: ""))  {
+          let _ = print("window", widget)
+          WidgetSettingsView(widget:widget)
+        }
+        
+        // Widget window
+        else if let widget = Widget.find(id:windowID) {
           WidgetView(widget:widget, app:self)
-            .environment(widget)
-            .onAppear() { widget.lastOpened = .now }
+        }
+        
+        // WebView window
+        else if let url = URL(string:windowID) {
+          let widget = Widget(url:url, overrides: WebView.newWebViewOverride)
+          WidgetView(widget:widget, app:self)
+            .onOpenURL { showWindowForURL($0) }
+            .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { showWindowForURL($0.webpageURL) }
         }
       }
       .onOpenURL { showWindowForURL($0) }
       .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { showWindowForURL($0.webpageURL) }
       .onContinueUserActivity(Activity.openWidget, perform: { activity in
-        if let info = activity.userInfo,
-           let data = info["wid"] as? String {
-          widgetId = data
-        }
+        if let info = activity.userInfo, let id = info["wid"] as? String { windowID = id }
       })
-    }
-    .handlesExternalEvents(matching: [Activity.openWidget])
-    .modelContainer(container)
-    .windowStyle(.plain)
-    .windowResizability(.contentSize)
-    .defaultSize(width: 320, height: 320)
-    
-    
-    
-    // MARK: Widget Settings Windows
-    // TODO: These don't work with dragging for some reason?
-    
-    WindowGroup("Settings", id: WindowTypeID.widgetSettings, for: String.self) { $widgetId in
-      ZStack {
-        if let widget = Widget.find(id:widgetId?.replacingOccurrences(of: "settings:", with: "")) {
-          WidgetSettingsView(widget:widget, callback: {
-            dismissWindow(id: WindowTypeID.widgetSettings)
-          })
-          .environment(widget)
-        }
+      .onDrop(of: [.url], isTargeted: nil) { providers, point in
+        for provider in providers { _ = provider.loadObject(ofClass: URL.self) { url,arg  in
+          DispatchQueue.main.async { showWindowForURL(url) }
+        }}
+        return true
       }
-      .onContinueUserActivity(Activity.openSettings, perform: { activity in
-        if let info = activity.userInfo,
-           let data = info["wid"] as? String {
-          widgetId = data
-        }
-      })
-    }
-    .windowResizability(.contentMinSize)
-    .handlesExternalEvents(matching: ["settings"])
-    .modelContainer(container)
-    .windowStyle(.automatic)
-    .defaultSize(width: 512, height: 512)
-    
-    // MARK: Widget Windows
-    
-    WindowGroup("WebView", id:WindowTypeID.webview, for: String.self) { $urlString in
-      if let urlString = urlString, let url = URL(string:urlString) {
-        let widget = Widget(url:url, overrides: WebView.newWebViewOverride)
-        WidgetView(widget:widget, app:self)
-          .onOpenURL { showWindowForURL($0) }
-          .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { showWindowForURL($0.webpageURL) }
-      }
-    }
-    .handlesExternalEvents(matching: [Activity.openWebView])
-    .modelContainer(container)
-    .windowStyle(.plain)
-    .windowResizability(.contentSize)
-    
-    // MARK: Preview Window
-    //    WindowGroup("Preview", id: "preview", for: URL.self) { $url in
-    //      PreviewView(url:url)
-    //      .onContinueUserActivity(Activity.openPreview, perform: { activity in
-    //        if let info = activity.userInfo,
-    //           let modelData = info["url"] as? URL {
-    //          url = modelData
-    //        }
-    //      })
-    //    }
-    //    .handlesExternalEvents(matching: [Activity.openPreview])
-    //    .windowStyle(.volumetric)
-    
+      
+      
+    } defaultValue: {  WindowID.main }
+      .windowStyle(.plain)
+      .windowResizability(.contentSize)
+      .handlesExternalEvents(matching: [Activity.openWidget])
+      .modelContainer(container)
+      .windowStyle(.plain)
+      
+      .defaultSize(width: 600, height: 800)
     
   }
 }
