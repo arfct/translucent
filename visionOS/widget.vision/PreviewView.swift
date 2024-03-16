@@ -100,7 +100,7 @@ struct PreviewView: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                   dismiss()
                 }
-                openWindow(id:WindowID.main)
+              
               }
             }
             if (scenePhase == .background) {
