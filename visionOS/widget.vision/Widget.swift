@@ -10,7 +10,17 @@ struct Host {
   static let wwwidget = "www.widget.vision"
 }
 
+enum WindowStyle:String {
+  case transparent, glass
+}
 
+enum ControlStyle:String {
+  case hide, show, supress, toolbar
+}
+
+enum IconStyle:String {
+  case fetch, thumbnail, http, symbol
+}
 
 @Model final class Widget: Transferable, ObservableObject {
   
@@ -22,17 +32,16 @@ struct Host {
   var name: String = ""
   var title: String?
   var type: String?
-  var image: String?
+  var symbol: String?
   var icon: String?
   var location: String?
   var manifest: String? // source url or directory id for manifest information
   var lastOpened: Date?
   var favorite: Bool = false
-  var autohideControls: Bool = true
-  var useThumbnail: Bool = false
   
   // MARK: Window Properties
-  var style: String = "glass"
+  var style: String = WindowStyle.glass.rawValue
+  var controls: String?
   var radius: CGFloat = 30
   
   var width: CGFloat = 400
@@ -236,14 +245,8 @@ struct Host {
             if let value = Double(value) {
               self.radius = value
             }
-          case "autohide":
-            if let value = Bool(value) {
-              self.autohideControls = value
-            }
-          case "thumbnail":
-            if let value = Bool(value) {
-              self.useThumbnail = value
-            }
+          case "controls":
+            self.controls = String(value)
           case "js":
             if isTrusted { self.injectJS = String(value) }
           case "css":
@@ -252,6 +255,8 @@ struct Host {
             if isTrusted { self.configJSON = String(value) }
           case "icon":
             self.icon = String(value)
+          case "symbol":
+            self.symbol = String(value)
           default:
             break
           }
@@ -274,6 +279,31 @@ struct Host {
 // MARK: Transient Properties
 
 extension Widget {
+  
+  @Transient
+  var supressFirstClick: Bool {
+    controls == ControlStyle.supress.rawValue
+  }
+  
+  @Transient
+  var autohideControls: Bool {
+    controls == ControlStyle.hide.rawValue
+    || controls == ControlStyle.supress.rawValue
+  }
+  
+  @Transient
+  var shouldCacheThumbnail: Bool {
+    return !shouldCacheIcon
+    //    icon == nil || icon == IconStyle.thumbnail.rawValue
+  }
+  
+  @Transient
+  var shouldCacheIcon: Bool {
+    icon == IconStyle.fetch.rawValue
+  }
+  
+  
+  
   @Transient
   var backColor: Color? {
     if let hex = backHex { return Color.withHex(hex) }
@@ -487,9 +517,6 @@ extension Widget {
         if let path = self.thumbnailFile, let data = try? Data(contentsOf: url) {
           DispatchQueue.main.async {
             print("data", data, path, url)
-            if (data.count > 0) {
-              self.useThumbnail = false
-            }
             try? data.write(to: path)
             self.thumbnailChanged()
           }

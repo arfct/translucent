@@ -151,7 +151,7 @@ struct WidgetView: View {
               downloads.append(download)
               downloadAttachment = download;
             }
-            .allowsHitTesting(showSystemOverlay || !widget.showGlassBackground)
+            .allowsHitTesting(showSystemOverlay || widget.supressFirstClick)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(widget.effect == "chroma" ? ChromaView() : nil)
             .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
@@ -323,7 +323,10 @@ struct WidgetView: View {
                   Spacer()
 
                   Menu {
-                    Toggle(isOn: $widget.autohideControls) {
+                    Toggle(isOn: Binding<Bool>(
+                      get: { widget.autohideControls },
+                      set: { val in widget.controls = val ? ControlStyle.hide.rawValue : nil}))
+                     {
                       Label("Autohide Controls", systemImage:"eye.slash")
                     }
                     Toggle(isOn: Binding<Bool>(
@@ -485,8 +488,8 @@ struct WidgetView: View {
         loadedWindow = true;
       }
       
-    widget.lastOpened = .now
-      widget.fetchIcon()
+      widget.lastOpened = .now
+      if (widget.shouldCacheIcon) { widget.fetchIcon() }
     }
 
     .onChange(of: scenePhase) {

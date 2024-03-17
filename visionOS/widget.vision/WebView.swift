@@ -157,7 +157,7 @@ struct WebView: UIViewRepresentable {
   
   func updateSnapshot(_ webView: WKWebView) {
     NSObject.cancelPreviousPerformRequests(withTarget: webView)
-    if (widget.useThumbnail) {
+    if (widget.shouldCacheThumbnail) {
       webView.perform(#selector(WKWebView.saveSnapshot(_:)), with:Wrapper(widget), afterDelay: 1.0)
     }
   }
