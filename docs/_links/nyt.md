@@ -2,7 +2,8 @@
 name: NYT Front Page
 tags: widget all
 order: 1
-icon: newspaper
+icon: fetch 
+symbol: newspaper
 class: cover
 href: https://nytfrontpage.glitch.me
 size: 440x400

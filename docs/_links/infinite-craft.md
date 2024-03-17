@@ -3,7 +3,6 @@ name: Infinite Craft
 author: Neal Agarwal
 author-link: https://neal.fun/
 tags: website
-class: borderless
 href: https://neal.fun/infinite-craft
 size: 828x512
 minsize: 801x400

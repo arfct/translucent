@@ -1,7 +1,8 @@
 ---
 name: Figma
 tags: experimental
-icon: square.and.pencil
+icon: fetch 
+symbol: square.and.pencil
 href: https://www.figma.com/
 size: 1280x800
 ua: desktop

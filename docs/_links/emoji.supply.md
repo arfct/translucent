@@ -1,8 +1,9 @@
 ---
 name: Emoji Kitchen
-tags: website
+tags: website all
 order: 2
-icon: face.smiling
+icon: fetch 
+symbol: face.smiling
 href: https://emoji.supply/kitchen
 description: Mix and match emoji
 size: 360x480

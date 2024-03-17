@@ -2,7 +2,8 @@
 name: Netflix
 description: Netflix desktop site
 tags: experimental
-icon: movieclapper
+icon: fetch 
+symbol: movieclapper
 href: https://www.netflix.com
 ua: desktop
 size: 640x400

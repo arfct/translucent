@@ -1,7 +1,8 @@
 ---
 name: Simple Digital
 tags: widget all
-icon: clock
+icon: fetch 
+symbol: clock
 order: 6
 href: https://widget.vision/widgets/clock
 size: 320x198

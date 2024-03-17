@@ -1,14 +1,17 @@
 ---
-name: Translucent Directory
-icon: rectangle.grid.2x2
+name: Directory
+icon: fetch 
+tags: experimental
+symbol: rectangle.grid.2x2
 href: https://translucent.directory
-class: hidden
 size: 1024x600
 minsize: 400x600
 description: Translucent directory
 effect: chroma
+order: 0
 config: |
   {"tabs":[
+    {"label": "Examples", "image":"star", "url":"#all"},
     {"label": "Websites", "image":"globe", "url":"#websites"},
     {"label": "Widgets", "image":"rectangle.3.offgrid.fill", "url":"#widgets"},
     {"label": "Experimental", "image":"testtube.2", "url":"#experimental"}

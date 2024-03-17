@@ -1,7 +1,8 @@
 ---
 name: Instagram
 tags: experimental
-icon: camera
+icon: fetch 
+symbol: camera
 href: https://www.instagram.com
 size: 400x600
 bg: FFFFFF44

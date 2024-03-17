@@ -1,6 +1,6 @@
 ---
 name: mmm.page
-tags: experimental
+tags: website
 href: https://mmm.page
 size: 800x1280
 ua: desktop

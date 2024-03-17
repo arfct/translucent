@@ -1,6 +1,7 @@
 ---
 name: Timer
-icon: clock
+icon: fetch 
+symbol: clock
 href: https://widget.vision/widgets/timer
 size: 360x270
 description: Simple timer

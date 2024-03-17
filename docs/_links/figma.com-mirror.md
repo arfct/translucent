@@ -1,7 +1,8 @@
 ---
 name: Figma Mirror
-tags: experimental
-icon: square.and.pencil
+tags: website
+icon: fetch 
+symbol: square.and.pencil
 href: https://www.figma.com/mirror
 size: 640x640
 ua: desktop

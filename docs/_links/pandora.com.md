@@ -1,7 +1,8 @@
 ---
 name: Pandora
 tags: experimental
-icon: music.note
+icon: fetch 
+symbol: music.note
 href: https://www.pandora.com/
 ua: desktop
 description: Pandora desktop site

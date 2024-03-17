@@ -2,7 +2,8 @@
 name: Spotify Desktop
 tags: experimental
 order: 9
-icon: music.note.list
+icon: fetch 
+symbol: fetch
 href: https://open.spotify.com
 size: 800x600
 bg: "#00000044"
