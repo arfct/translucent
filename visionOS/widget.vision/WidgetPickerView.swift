@@ -297,7 +297,7 @@ struct WidgetPickerView: View {
               }
             } label: {
               Label(draggedWidget == nil ?
-                    "Browse for More" : "Delete Bookmark",
+                    "Get More" : "Remove",
                     systemImage: draggedWidget == nil ? "plus" : "square.and.arrow.down")
               .padding(10)
             }.labelStyle(.titleAndIcon)

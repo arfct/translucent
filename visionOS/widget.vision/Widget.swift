@@ -29,6 +29,7 @@ struct Host {
   var lastOpened: Date?
   var favorite: Bool = false
   var autohideControls: Bool = true
+  var useThumbnail: Bool = false
   
   // MARK: Window Properties
   var style: String = "glass"
@@ -233,7 +234,15 @@ struct Host {
             self.clearSelectors = String(value)
           case "radius":
             if let value = Double(value) {
-              self.radius = Double(value)
+              self.radius = value
+            }
+          case "autohide":
+            if let value = Bool(value) {
+              self.autohideControls = value
+            }
+          case "thumbnail":
+            if let value = Bool(value) {
+              self.useThumbnail = value
             }
           case "js":
             if isTrusted { self.injectJS = String(value) }
@@ -430,16 +439,31 @@ extension Widget {
   
   @Transient
   var manifestURL: URL? {
-    guard let location = manifest else { return nil }
+    
+    if let manifest = manifest {
+      if manifest.starts(with: "https") {
+        return URL(string: manifest)
+      }
+      return URL(string: "https://\(Host.directory)/links/\(manifest).html")
       
-    if location.starts(with: "https") {
-      return URL(string: location)
+    } else if let hostName = hostName {
+      return URL(string: "https://\(Host.directory)/links/\(hostName).html")
     }
     
-    if let hostName = hostName {
-      return URL(string: "https://\(Host.site)/links/\(hostName).html")
+    return nil;
+  }
+  
+  @Transient
+  var iconURL: URL? {
+    if let manifest = manifest {
+      if manifest.starts(with: "https") {
+        return nil; //URL(string: manifest)
+      }
+      return URL(string: "https://\(Host.directory)/links/\(manifest).png")
+      
+    } else if let hostName = hostName {
+      return URL(string: "https://\(Host.directory)/links/\(hostName).png")
     }
-    
     
     return nil;
   }
@@ -453,6 +477,26 @@ extension Widget {
       } catch {
         console.log("Failed to fetch config \(error)")
       }
+    }
+  }
+  
+  func fetchIcon() {
+    if let url = iconURL {
+
+      DispatchQueue.global().async {
+        if let path = self.thumbnailFile, let data = try? Data(contentsOf: url) {
+          DispatchQueue.main.async {
+            print("data", data, path, url)
+            if (data.count > 0) {
+              self.useThumbnail = false
+            }
+            try? data.write(to: path)
+            self.thumbnailChanged()
+          }
+
+        }//make sure your image in this url does exist, otherwise unwrap in a if let check / try-catch
+      }
+
     }
   }
   

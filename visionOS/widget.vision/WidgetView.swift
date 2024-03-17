@@ -486,6 +486,7 @@ struct WidgetView: View {
       }
       
     widget.lastOpened = .now
+      widget.fetchIcon()
     }
 
     .onChange(of: scenePhase) {

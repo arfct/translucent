@@ -142,7 +142,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
 //    console.log("Navigating to \(String(describing:navigationAction.request.url))")
     
     let url = navigationAction.request.url
-    if url?.host() == Host.site {
+    if url?.host() == Host.site && navigationAction.navigationType == .linkActivated {
       if let url = url, let context = Widget.modelContext {
         if let widget = Widget.findOrCreate(location: url.absoluteString) {
           openWindow(id: WindowTypeID.widget, value: widget.wid)
