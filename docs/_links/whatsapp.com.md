@@ -6,5 +6,5 @@ icon: fetch
 symbol: chat
 href: https://web.whatsapp.com/
 ua: desktop
-size: 640x400
+size: 1024x600
 ---

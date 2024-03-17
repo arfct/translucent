@@ -6,5 +6,7 @@ icon: fetch
 symbol: chat
 href: https://twitter.com/home
 ua: desktop
-size: 640x400
+size: 688x800
+css: |
+  [data-testid="primaryColumn"] { background-color:#0004; }
 ---

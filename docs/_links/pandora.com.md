@@ -3,7 +3,7 @@ name: Pandora
 tags: experimental
 icon: fetch 
 symbol: music.note
-href: https://www.pandora.com/
+href: https://www.pandora.com/account/sign-in
 ua: desktop
 description: Pandora desktop site
 zoom:
