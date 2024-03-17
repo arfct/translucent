@@ -83,6 +83,7 @@ struct Host {
     return nil
   }
   static func find(location: String?) -> Widget? {
+    print("Searching for \(location)")
     if let location = location {
       let fetchDescriptor = FetchDescriptor<Widget>(
         predicate: #Predicate<Widget> { $0.location == location })
@@ -90,7 +91,23 @@ struct Host {
     }
     return nil
   }
+  
+  static func findOrCreate(location: String?) -> Widget? {
+    guard let location = location,
+          let url = URL(string:location)
+          else {return nil}
+
+    let widget = Widget(url:url)
     
+    if let match =  Widget.find(location: widget.location) {
+      return match
+    }
+    
+    self.modelContext?.insert(widget)
+    try? self.modelContext?.save()
+    return widget
+  }
+  
   // MARK: Model Functions
   @MainActor
   func save() {

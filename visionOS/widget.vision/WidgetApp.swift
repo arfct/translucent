@@ -75,10 +75,9 @@ struct WidgetApp: App {
   @MainActor func showWindowForURL(_ url: URL?) {
     guard let url = url else { return }
     do {
-      let widget = Widget(url:url)
-      container.mainContext.insert(widget)
-      try container.mainContext.save()
-      openWindow(id: WindowTypeID.widget, value: widget.wid)
+      if let widget = Widget.findOrCreate(location:url.absoluteString) {
+        openWindow(id: WindowTypeID.widget, value: widget.wid)
+      }
     } catch {
       console.log("Error opening url \(error)")
     }
