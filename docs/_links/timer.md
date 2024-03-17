@@ -1,7 +1,7 @@
 ---
 name: Timer
 icon: clock
-href: https://translucent.site/widgets/clock
+href: https://widget.vision/widgets/timer
 size: 360x270
 description: Simple timer
 class: borderless 
