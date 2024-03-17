@@ -151,7 +151,7 @@ struct WidgetView: View {
               downloads.append(download)
               downloadAttachment = download;
             }
-            .allowsHitTesting(showSystemOverlay || widget.supressFirstClick)
+            .allowsHitTesting(showSystemOverlay || widget.suppressFirstClick)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(widget.effect == "chroma" ? ChromaView() : nil)
             .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
@@ -293,7 +293,7 @@ struct WidgetView: View {
           .hoverEffect()
           .offset(y: showInfo || isLoading || showPopover ? 0 : 40)
           .padding(.bottom, 4)
-          .opacity((isLoading || showInfo || showPopover) && !flipped && !wasBackgrounded && finishedFirstLoad ? 1.0 : 0.0)
+          .opacity((isLoading || showInfo || showPopover) && !flipped && !wasBackgrounded ? 1.0 : 0.0)
           .rotation3DEffect(.degrees(showInfo || isLoading || showPopover ? 0.0 : 45), axis: (1, 0, 0),
                             anchor: UnitPoint3D(x: 0.5, y: 1.0, z: 0))
           .animation(.spring(), value: flipped)
@@ -322,7 +322,16 @@ struct WidgetView: View {
                   }
                   Spacer()
 
+                  Button {
+                    browserState.webView?.reload()
+                  } label: {
+                    Label("Reload",systemImage:"arrow.clockwise")
+                  }
+                  Spacer()
+
                   Menu {
+                    Label("View Options",systemImage:"")
+
                     Toggle(isOn: Binding<Bool>(
                       get: { widget.autohideControls },
                       set: { val in widget.controls = val ? ControlStyle.hide.rawValue : nil}))
@@ -335,7 +344,7 @@ struct WidgetView: View {
                         Label("Dim Environment", systemImage:"circle.lefthalf.filled.righthalf.striped.horizontal")
                       }
                     
-                    Divider()
+                    
                     Menu {
                       Button { showPopover.toggle()
                         resizeTo(CGSize(width: geometry.size.height,
@@ -372,30 +381,30 @@ struct WidgetView: View {
                       }
                     } label: {
                       
-                        Label("Aspect Ratio",systemImage:"aspectratio")
+                        Label("Resize Window",systemImage:"aspectratio")
                     }
 #if DEBUG
                     Divider()
-                    Label("Beta Options",systemImage:"")
-                    Button { showPopover.toggle()
-                      showTilt.toggle()
-                      if showTilt { widget.tilt = nil }
+                    Menu {
+                      
+                      Label("Experimental Options",systemImage:"")
+                      Button { showPopover.toggle()
+                        showTilt.toggle()
+                        if showTilt { widget.tilt = nil }
+                      } label: {
+                        Label("Adjust Tilt",systemImage:"rotate.3d")
+                      }
                     } label: {
-                      Label("Adjust Tilt (beta)",systemImage:"rotate.3d")
+                      
+                      Label("Experimental",systemImage:"testtube.2")
                     }
 #endif
 
                   } label: {
-                    Label("Settings",systemImage:"line.horizontal.3")
+                    Label("Settings",systemImage:"slider.horizontal.3")
                   }
                   
-                  Spacer()
-
-                  Button {
-                    browserState.webView?.reload()
-                  } label: {
-                    Label("Reload",systemImage:"arrow.clockwise")
-                  }
+      
                 }
                 .labelStyle(.iconOnly)
                 .buttonStyle(.borderless)
@@ -412,9 +421,9 @@ struct WidgetView: View {
                   openWindow(id: WindowTypeID.main, value: "settings:\(widget.wid)")
                 } label: {
                   HStack {
-                    Text("Customize…")
+                    Text("Customize site…")
                       .frame(maxWidth: .infinity, alignment: .leading)
-                    Image(systemName: "gear")
+                    Image(systemName: "square.and.pencil")
                   }.padding(.vertical, 16)
                 }
                 Button {showPopover.toggle()

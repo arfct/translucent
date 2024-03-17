@@ -15,7 +15,7 @@ enum WindowStyle:String {
 }
 
 enum ControlStyle:String {
-  case hide, show, supress, toolbar
+  case hide, show, suppress, toolbar
 }
 
 enum IconStyle:String {
@@ -281,14 +281,14 @@ enum IconStyle:String {
 extension Widget {
   
   @Transient
-  var supressFirstClick: Bool {
-    controls == ControlStyle.supress.rawValue
+  var suppressFirstClick: Bool {
+    controls == ControlStyle.suppress.rawValue
   }
   
   @Transient
   var autohideControls: Bool {
     controls == ControlStyle.hide.rawValue
-    || controls == ControlStyle.supress.rawValue
+    || controls == ControlStyle.suppress.rawValue
   }
   
   @Transient
