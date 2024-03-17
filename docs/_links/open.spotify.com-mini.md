@@ -10,7 +10,7 @@ bg: "#00000044"
 description: Spotify mobile web site as a widget
 remove: >
   [data-testid="home-banner"],[data-testid="download-button"],[href="/download"],[href="/search/recent"],[href="/search"]+a
-ua: desktop
+ua: mobile
 ---
 
 Spotify Widget
