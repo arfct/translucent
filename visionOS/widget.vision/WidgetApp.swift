@@ -102,7 +102,6 @@ struct WidgetApp: App {
             ZStack() {
               
             }.onAppear() {
-              print("loaded")
               windowLoaded = true
             }
           }
@@ -110,7 +109,6 @@ struct WidgetApp: App {
         
         // Settings window
         else if windowID.starts(with:"settings:"), let widget = Widget.find(id:windowID.replacingOccurrences(of: "settings:", with: ""))  {
-          let _ = print("window", widget)
           WidgetSettingsView(widget:widget)
         }
         

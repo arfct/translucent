@@ -54,7 +54,6 @@ struct WidgetView: View {
   @State var downloads: [URL] = []
   @State var activeTab: Int = 0
   @State var browserState = BrowserState();
-  @State var window: UIWindow?
   @State var showPopover = false
   @State var showTilt = false
   @State var clampedSize: CGSize?
@@ -484,7 +483,7 @@ struct WidgetView: View {
     .persistentSystemOverlays((flipped || showSystemOverlay) && !wasBackgrounded ? .automatic : .hidden)
     
     .onWindowChange { window in
-      self.window = window
+      
     }
     .onAppear(){
       let windowScenes = UIApplication.shared.connectedScenes

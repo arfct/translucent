@@ -83,7 +83,6 @@ struct Host {
     return nil
   }
   static func find(location: String?) -> Widget? {
-    print("Searching for \(location)")
     if let location = location {
       let fetchDescriptor = FetchDescriptor<Widget>(
         predicate: #Predicate<Widget> { $0.location == location })
@@ -210,7 +209,6 @@ struct Host {
             self.resize = String(value)
           case "ms", "sz", "size":
             let size = sizeFor(dimensions: String(value))
-            print("size", size)
             self.width = size.width
             self.height = size.height
           case "minsize", "min":

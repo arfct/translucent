@@ -171,7 +171,7 @@ extension WKWebView {
     if (image.isBlank()) { return }
     
     if let data = image.pngData(){
-      console.debug("🖼️ Saved Snapshot, \(url.absoluteString)")
+//      console.debug("🖼️ Saved Snapshot, \(url.absoluteString)")
       try? data.write(to: path)
       wrapper.widget.thumbnailChanged()
     } else {

@@ -330,9 +330,9 @@ struct WidgetPickerView: View {
 
     } // MARK: /Main View modifiers
     .onChange(of: scenePhase) {
-      Logger.console.log("MainWindow \(String(describing:scenePhase))")
-      if (scenePhase == .background) { isVisible = false }
-      
+      if (scenePhase == .background) {
+        isVisible = false
+      }
       if (scenePhase == .active) {
         withAnimation(.easeOut) {
           isVisible = true
@@ -349,7 +349,6 @@ struct WidgetPickerView: View {
       }
       updateHue()
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-        print("Close others, ", isVisible)
         if (isVisible) {
           NotificationCenter.default.post(name: Notification.Name.mainWindowOpened, object: self.uuid.uuidString)
         }
@@ -369,7 +368,6 @@ struct WidgetPickerView: View {
     }
     .onDisappear() {
       isVisible = false;
-      print("ondissapear", isVisible)
     }
     .onReceive(NotificationCenter.default.publisher(for: Notification.Name.mainWindowOpened)) { notif in
       guard let otherID = notif.object as? String else { return }
