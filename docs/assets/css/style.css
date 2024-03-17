@@ -284,6 +284,7 @@ body {
   margin: auto;
   box-sizing: border-box;
   margin-bottom:2em;
+  margin-top:2vh;
 }
 
 .spacer {
@@ -299,8 +300,8 @@ div.header {
   gap:20px;
   
   margin: auto ;
-  padding-top: 8vh ;
-  padding-bottom:2vh;
+  padding-top: 4vh ;
+  padding-bottom:3vh;
   box-sizing:border-box;
   flex: 0 0 auto;
 }
@@ -331,7 +332,9 @@ div.header {
   
 }
 .nav a:hover,
-body.websites a[href$="websites"],
+body.all a[href$="all"],
+
+body:not(.widgets):not(.websites):not(.experimental)  a[href$="all"],
 body.websites a[href$="websites"],
 body.widgets a[href$="widgets"],
 body.experimental a[href$="experimental"] {
