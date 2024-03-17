@@ -447,16 +447,9 @@ struct WidgetView: View {
       .animation(.spring(), value: showPopover)
       .opacity(wasBackgrounded ? 0.0 : 1.0)
       .onDisappear {
-        console.log("Widget dissapeared \(widget.name)")
-        //widget.save()
+        console.log("❌ Closing Widget \(widget.name)")
       }
     }
-    
-    //    .sheet(isPresented:Binding<Bool>(
-    //      get: { self.downloadAttachment != nil },
-    //      set: { _ in })) {
-    //        DownloadPanel(downloadAttachment: $downloadAttachment)
-    //      }
     
     .quickLookPreview($downloadAttachment, in: downloads)
     
@@ -483,7 +476,6 @@ struct WidgetView: View {
     .persistentSystemOverlays((flipped || showSystemOverlay) && !wasBackgrounded ? .automatic : .hidden)
     
     .onWindowChange { window in
-      
     }
     .onAppear(){
       let windowScenes = UIApplication.shared.connectedScenes
@@ -495,9 +487,7 @@ struct WidgetView: View {
       
     widget.lastOpened = .now
     }
-    .onDisappear {
-      console.log("❌ Closing Widget \(widget.name)")
-    }
+
     .onChange(of: scenePhase) {
       if (scenePhase == .active) {
         if (wasBackgrounded) {
