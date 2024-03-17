@@ -151,7 +151,7 @@ struct WidgetView: View {
               downloads.append(download)
               downloadAttachment = download;
             }
-            .allowsHitTesting(showSystemOverlay || widget.suppressFirstClick)
+            .allowsHitTesting(showSystemOverlay || !widget.suppressFirstClick )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(widget.effect == "chroma" ? ChromaView() : nil)
             .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
