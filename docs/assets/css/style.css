@@ -53,7 +53,6 @@ a.tile {
   position: relative;
 
   justify-content: flex-end;
-  --radius: 2.5em;
 
 }
 
@@ -257,8 +256,10 @@ body {
   flex-direction: column;
 
   width:100%;
-  --iconWidth: 10em;
-  --iconHeight: 10em;
+  --iconWidth: 6em;
+  --iconHeight: 6em;
+
+  --radius: 1.5em;
   flex: 1 1 auto;
   padding:0vh 8vw;
   box-sizing:border-box;
