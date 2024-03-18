@@ -486,8 +486,8 @@ extension Widget {
   @Transient
   var iconURL: URL? {
     if let manifest = manifest {
-      if manifest.starts(with: "https") {
-        return nil; //URL(string: manifest)
+      if manifest.starts(with: "https"), let url = URL(string: manifest) {
+        return url
       }
       return URL(string: "https://\(Host.directory)/links/\(manifest).png")
       

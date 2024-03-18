@@ -270,16 +270,16 @@ struct WidgetSettingsView: View {
               
               HStack(spacing:spacing) {
                 // MARK: Icon
-//                HStack(spacing:spacing) {
-//                  Label("Icon", systemImage: "link")
-//                    .labelStyle(.titleOnly)
-//                    .frame(maxWidth: labelWidth, alignment: .leading)
-//                  TextField("icon name", text:$widget.icon ?? "globe")
-//                  
-//                    .autocapitalization(.none)
-//                    .disableAutocorrection(true)
-//                    .frame(maxWidth: .infinity)
-//                }
+                HStack(spacing:spacing) {
+                  Label("Icon", systemImage: "link")
+                    .labelStyle(.titleOnly)
+                    .frame(maxWidth: labelWidth, alignment: .leading)
+                  TextField("icon name", text:$widget.icon ?? "globe")
+                  
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .frame(maxWidth: .infinity)
+                }
                 HStack(spacing:spacing) {
                   Label("Radius", systemImage: "link")
                     .labelStyle(.titleOnly)
