@@ -1,6 +1,6 @@
 ---
 name: YouTube
-icon: fetch 
+icon: download 
 tags: experimental
 href: https://youtube.com
 ua: desktop

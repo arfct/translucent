@@ -1,7 +1,7 @@
 ---
 name: Pandora
 tags: experimental
-icon: fetch 
+icon: download 
 symbol: music.note
 href: https://www.pandora.com/account/sign-in
 ua: desktop

@@ -1,7 +1,7 @@
 ---
 name: Instagram
 tags: experimental
-icon: fetch 
+icon: download 
 symbol: camera
 href: https://www.instagram.com
 size: 400x600

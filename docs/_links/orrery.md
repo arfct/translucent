@@ -1,8 +1,8 @@
 ---
 name: Digital Orrery
 tags: widget all
-icon: fetch 
-symbol: fetch
+icon: download 
+symbol: download
 order: 5
 href: https://widget.vision/widgets/orrery
 size: 480x480

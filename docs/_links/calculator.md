@@ -1,7 +1,7 @@
 ---
 name: Calculator (alpha)
 tags: widgets
-icon: fetch 
+icon: download 
 symbol: av.remote
 size: 420x640
 description: Simple, themable calculator

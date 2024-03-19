@@ -2,7 +2,7 @@
 name: WhatsApp
 description: Whatsapp desktop site
 tags: experimental
-icon: fetch 
+icon: download 
 symbol: chat
 href: https://web.whatsapp.com/
 ua: desktop

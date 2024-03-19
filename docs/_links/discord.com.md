@@ -2,7 +2,7 @@
 name: Discord
 tags: website
 order: 2
-icon: fetch 
+icon: download 
 symbol: bubble.left.and.bubble.right
 href: https://discord.com/channels/@me
 description: Mix and match emoji

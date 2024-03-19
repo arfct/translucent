@@ -1,7 +1,7 @@
 ---
 name: Block Clock
 tags: widget all
-icon: fetch 
+icon: download 
 symbol: clock
 order: 7
 href: https://widget.vision/widgets/blockclock

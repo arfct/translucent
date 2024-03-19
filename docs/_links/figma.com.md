@@ -1,7 +1,7 @@
 ---
 name: Figma
 tags: experimental
-icon: fetch 
+icon: download 
 symbol: square.and.pencil
 href: https://www.figma.com/
 size: 1280x800

@@ -1,6 +1,6 @@
 ---
 name: VSCode
-icon: fetch 
+icon: download 
 tags: experimental
 href: https://vscode.dev
 ua: desktop

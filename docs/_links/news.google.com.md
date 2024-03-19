@@ -1,7 +1,7 @@
 ---
 name: Google News
 tags: website
-icon: fetch 
+icon: download 
 symbol: newspaper
 href: https://news.google.com
 size: 430x640

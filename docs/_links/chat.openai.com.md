@@ -1,7 +1,7 @@
 ---
 name: ChatGPT
 tags: widget
-icon: fetch 
+icon: download 
 symbol: bubble
 href: https://chat.openai.com
 clear: >

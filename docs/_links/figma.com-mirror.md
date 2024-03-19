@@ -1,7 +1,7 @@
 ---
 name: Figma Mirror
 tags: website
-icon: fetch 
+icon: download 
 symbol: square.and.pencil
 href: https://www.figma.com/mirror
 size: 640x640

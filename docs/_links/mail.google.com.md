@@ -1,7 +1,7 @@
 ---
 name: Gmail
 tags: hidden
-icon: fetch 
+icon: download 
 symbol: envelope
 href: https://mail.google.com
 size: 430x640

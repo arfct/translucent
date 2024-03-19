@@ -1,6 +1,6 @@
 ---
 name: mmm.page
-icon: fetch
+icon: download
 tags: website
 href: https://mmm.page
 size: 800x1280

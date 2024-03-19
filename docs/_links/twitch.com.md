@@ -1,6 +1,6 @@
 ---
 name: Twitch
-icon: fetch 
+icon: download 
 tags: experimental
 href: https://twitch.com
 ua: desktop

@@ -2,7 +2,7 @@
 name: Infinite Craft
 author: Neal Agarwal
 author-link: https://neal.fun/
-icon: fetch
+icon: download
 tags: website
 href: https://neal.fun/infinite-craft
 size: 828x512

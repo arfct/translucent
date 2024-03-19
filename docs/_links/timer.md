@@ -1,6 +1,6 @@
 ---
 name: Timer
-icon: fetch 
+icon: download 
 symbol: clock
 href: https://widget.vision/widgets/timer
 size: 360x270

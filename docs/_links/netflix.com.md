@@ -2,7 +2,7 @@
 name: Netflix
 description: Netflix desktop site
 tags: experimental
-icon: fetch 
+icon: download 
 symbol: movieclapper
 href: https://www.netflix.com
 ua: desktop

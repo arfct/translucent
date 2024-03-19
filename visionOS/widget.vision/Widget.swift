@@ -19,7 +19,7 @@ enum ControlStyle:String {
 }
 
 enum IconStyle:String {
-  case fetch, thumbnail, http, symbol
+  case fetch, download, thumbnail, http, symbol
 }
 
 @Model final class Widget: Transferable, ObservableObject {
@@ -299,7 +299,8 @@ extension Widget {
   
   @Transient
   var shouldCacheIcon: Bool {
-    icon == IconStyle.fetch.rawValue
+    icon == IconStyle.fetch.rawValue ||
+    icon == IconStyle.download.rawValue
   }
   
   

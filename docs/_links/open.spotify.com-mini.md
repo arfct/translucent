@@ -2,7 +2,7 @@
 name: Spotify Mini Player
 tags: website
 order: 9
-icon: fetch 
+icon: download 
 symbol: music.note.list
 href: https://open.spotify.com
 size: 400x600

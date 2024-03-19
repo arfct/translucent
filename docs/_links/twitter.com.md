@@ -2,7 +2,7 @@
 name: Twitter
 description: Twitter desktop site
 tags: experimental
-icon: fetch 
+icon: download 
 symbol: chat
 href: https://twitter.com/home
 ua: desktop

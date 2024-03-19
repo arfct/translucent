@@ -1,6 +1,6 @@
 ---
 name: Directory
-icon: fetch 
+icon: download 
 tags: experimental
 symbol: rectangle.grid.2x2
 href: https://translucent.directory

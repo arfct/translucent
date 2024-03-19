@@ -1,7 +1,7 @@
 ---
 name: Simple Digital
 tags: widget all
-icon: fetch 
+icon: download 
 symbol: clock
 order: 6
 href: https://widget.vision/widgets/clock

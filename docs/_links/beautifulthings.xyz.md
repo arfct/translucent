@@ -1,7 +1,7 @@
 ---
 name: Beautiful Things
 tags: website all
-icon: fetch 
+icon: download 
 symbol: ipod
 href: https://beautifulthings.xyz
 size: 400x600

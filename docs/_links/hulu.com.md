@@ -1,6 +1,6 @@
 ---
 name: hulu
-icon: fetch 
+icon: download 
 tags: experimental
 href: https://hulu.com
 ua: desktop
