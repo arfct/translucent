@@ -3,7 +3,7 @@ name: NYT Front Page
 tags: widget all
 order: 1
 icon: thumbnail 
-controls: supress
+controls: suppress
 symbol: newspaper
 class: cover
 href: https://nytfrontpage.glitch.me

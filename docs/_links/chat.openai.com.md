@@ -1,6 +1,6 @@
 ---
 name: ChatGPT
-tags: widget
+tags: experimental
 icon: download 
 symbol: bubble
 href: https://chat.openai.com

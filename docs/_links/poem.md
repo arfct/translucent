@@ -7,7 +7,7 @@ symbol: clock
 href: https://poem.town/special/widget.vision
 size: 400x280
 style: transparent
-autohide: true
+controls: hide
 class: wide clear
 description: AI rhyming clock by Matt Webb
 clear: main
