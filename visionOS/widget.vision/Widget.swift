@@ -19,7 +19,7 @@ enum ControlStyle:String {
 }
 
 enum IconStyle:String {
-  case fetch, download, thumbnail, http, symbol
+  case fetch, download, thumbnail // , http…, [symbol]
 }
 
 @Model final class Widget: Transferable, ObservableObject {
@@ -408,6 +408,10 @@ extension Widget {
     if name.count > 0  {
       items.append(URLQueryItem(name: "name", value: name))
     }
+    if let value = manifest, value.count > 0  {
+      items.append(URLQueryItem(name: "manifest", value: value))
+    }
+    
     if backHex != nil {
       items.append(URLQueryItem(name: "back", value: backHex))
     }
@@ -425,6 +429,9 @@ extension Widget {
     }
     if let value = viewport {
       items.append(URLQueryItem(name: "vw", value: value))
+    }
+    if let value = controls, value.count > 0 {
+      items.append(URLQueryItem(name: "controls", value: value))
     }
     if let string = injectJS, string.count > 0 {
       items.append(URLQueryItem(name: "js", value: string))
