@@ -238,9 +238,9 @@ struct WidgetSettingsView: View {
                   .labelStyle(.titleOnly)
                   .frame(maxWidth: labelWidth, alignment: .leading)
                 TextField("transparent elements", text:$widget.clearSelectors ?? "", axis: .vertical)
-                
                   .autocapitalization(.none)
                   .disableAutocorrection(true)
+                  .keyboardType(.asciiCapable)
                   .frame(maxWidth: .infinity)
               }
               HStack(alignment: .top, spacing:spacing) {
@@ -253,6 +253,7 @@ struct WidgetSettingsView: View {
                 
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
+                .keyboardType(.asciiCapable)
                 .frame(maxWidth: .infinity)
               }
               HStack(alignment: .top, spacing:spacing) {
@@ -262,6 +263,7 @@ struct WidgetSettingsView: View {
                 TextField("custom css", text:$widget.injectCSS ?? "", axis: .vertical)
                   .autocapitalization(.none)
                   .disableAutocorrection(true)
+                  .keyboardType(.asciiCapable)
                   .frame(maxWidth: .infinity)
               }
             }
@@ -314,8 +316,9 @@ struct WidgetSettingsView: View {
                   .disableAutocorrection(true)
                   .frame(maxWidth: .infinity)
               }
+              
               HStack(alignment: .center, spacing:spacing) {
-                Label("Manifest", systemImage: "link")
+                Label("ID", systemImage: "link")
                   .labelStyle(.titleOnly)
                   .frame(maxWidth: labelWidth, alignment: .leading)
                 
@@ -342,6 +345,8 @@ struct WidgetSettingsView: View {
             } footer: {
               if let error = widget.parseError {
                 Text(error)
+              } else {
+                Text("Learn more about how to customize at https://translucent.wiki").padding(.bottom, 20)
               }
             }
           }
