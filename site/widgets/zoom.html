@@ -1,0 +1,21 @@
+
+
+<body style="width:100%; height:100%; background-color:yellow; margin:0;">
+  Pinch to zoom.
+  </body>
+  
+  <script>
+  
+  
+    function zoom(e) {
+      console.log(e.scale)
+      document.body.innerHTML = "zoom: " + e.scale
+      e.preventDefault()
+    }
+    document.addEventListener('gesturestart', zoom)
+    document.addEventListener('gesturechange', zoom)
+    document.addEventListener('gestureend', zoom)
+    
+    
+    </script>
+    
