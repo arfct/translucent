@@ -20,8 +20,7 @@ config: |
     {"label": "Culture", "image":"trophy", "url":"/category/culture"},
     {"label": "Tech", "image":"ipod", "url":"/category/tech"},
     {"label": "Nature", "image":"leaf", "url":"/category/nature"},
-    {"label": "Other", "image":"ellipsis", "url":"/category/other"}
-
+    {"label": "Other", "image":"ellipsis", "url":"/category/other"},
     {"label": "Create", "image":"wand.and.stars", "url":"https://create.beautifulthings.xyz"}
   ]}
 ---
