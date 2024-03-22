@@ -1,6 +1,6 @@
 ---
 name: Info Widget
-tags: hidden
+tags: experimental
 icon: download 
 symbol: arrow.up.and.down.and.arrow.left.and.right
 href: https://widget.vision/widgets/dims
