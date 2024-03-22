@@ -11,4 +11,4 @@ https://transparent.vision
 https://transparent.directory
 
 ### Usage: 
-https://transparent.wiki
+https://translucent.wiki
