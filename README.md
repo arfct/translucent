@@ -1,4 +1,4 @@
-<img src="https://github.com/arfct/widget.vision/assets/563095/d8e95240-ecbc-48cf-b1f4-570bf4f381f4" alt="drawing" width="200"/>
+<img src="https://github.com/arfct/translucent/assets/563095/de2bb2bd-0db2-46e8-8f01-45d145da0ed4" alt="drawing" width="200"/>
 
 # translucent.vision
 
@@ -11,5 +11,4 @@ https://transparent.vision
 https://transparent.directory
 
 ### Usage: 
-
-[Wiki - Creating and Linking](https://github.com/arfct/widget.vision/wiki/widget.vision)
+https://transparent.wiki
