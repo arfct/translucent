@@ -6,7 +6,14 @@
   <meta property="og:description" content="Web-based widgets for visionOS">
   <meta property="og:image" content="assets/img/translucent.vision.jpg">
   <link rel="icon" href="assets/img/favicon.png" type="image/png">
-  
+  <script> 
+    if (location.host == "app.translucent.vision") {
+    location.href = "https://apps.apple.com/us/app/translucent-web-and-widgets/id6477412179";
+  }
+  if (location.host == "test.translucent.vision") {
+    location.href = "https://testflight.apple.com/join/64xgwI8e";
+  }
+  </script>
   
   <style>
     
@@ -100,7 +107,7 @@
       border-radius: 30px;
       position:relative;
       overflow:hidden;
-      padding:5vmin;
+      padding:3vmin 4vmin;
       max-width:320px; margin:auto;
       margin-top:5vmin;
     }
@@ -148,16 +155,14 @@
   <div class="explainer" id="tiltableElement">
     
       <center>
-        Translucent websites and<br>widgets for visionOS.
-        <p></p>
-        From the basics...<br>
-        to everything the<br>web has to offer. 
-        <p><br>
+        Turn web pages into a clean, floating windows, with fine controls for transparent backgrounds and more.
+      
 
-          <a class="button" href="https://apps.apple.com/us/app/translucent-web-and-widgets/id6477412179">Get the App</a><p><br>
-    
+          <p><br><a class="button" href="https://apps.apple.com/us/app/translucent-web-and-widgets/id6477412179">Get Translucent</a></p>
           
-        <i>or <a href="https://testflight.apple.com/join/64xgwI8e">Join the TestFlight</a></i>
+          
+        <i>for visionOS 1.1</a></i><br>
+        <br><i>or <a href="https://testflight.apple.com/join/64xgwI8e">Join the TestFlight</a></i>
       </center>
     
   </div>
@@ -169,12 +174,7 @@
 
 
 <script>
-  if (location.host == "app.translucent.vision") {
-    location.href = "https://apps.apple.com/us/app/translucent-web-and-widgets/id6477412179";
-  }
-  if (location.host == "test.translucent.vision") {
-    location.href = "https://testflight.apple.com/join/64xgwI8e";
-  }
+
   const body = document.querySelector("body");
   const updateColor = () => {
     const currentTime = Math.floor(Date.now() / 1000); // seconds since 1970
