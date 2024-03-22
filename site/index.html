@@ -13,6 +13,9 @@
   if (location.host == "test.translucent.vision") {
     location.href = "https://testflight.apple.com/join/64xgwI8e";
   }
+  if (location.host == "translucent.wiki") {
+    location.href = "https://github.com/arfct/translucent/wiki";
+  }
   </script>
   
   <style>
@@ -239,6 +242,7 @@
     const distance = Math.max(0.9, Math.min(1.0, 1 - Math.sqrt(tiltX * tiltX + tiltY * tiltY) / 200)) ;
     tiltableElement.style.transform = `rotateX(${tiltY}deg) rotateY(${-tiltX}deg) scale(${distance})`;
   });
+  
   body.style.perspective = "1000px";
   
 </script>
