@@ -276,7 +276,7 @@ struct WidgetView: View {
             }
           } label: {
             AnimatedEllipsisView(loading: $isLoading, color: Binding<Color>(
-              get: { showPopover ? Color.black : Color.white.opacity(0.67) },
+              get: { showPopover ? Color.black : Color.white.opacity(0.5) },
               set: {val in }))
           }
           .buttonBorderShape(.capsule)
@@ -315,7 +315,7 @@ struct WidgetView: View {
                       Label("Forward",systemImage:"arrow.right")
                     }primaryAction: {
                       browserState.webView?.goForward()
-                    }.disabled(!browserState.canGoBack)
+                    }
                   }
                   Spacer()
 
