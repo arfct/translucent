@@ -362,7 +362,6 @@ struct WidgetSettingsView: View {
         // MARK: Toolbar
         .toolbar {
           
-          
           ToolbarItemGroup(placement: .topBarTrailing) {
             ShareLink(
               item: widget,

@@ -28,6 +28,8 @@ struct WidgetPickerView: View {
   @State private var searchText: String = ""
   @State var uuid: UUID
   
+  @State var endDrag: DispatchWorkItem?
+  
   var app: WidgetApp?
   
   init(app: WidgetApp? = nil) {
@@ -132,10 +134,9 @@ struct WidgetPickerView: View {
         .frame(width: 400)
         .opacity(isVisible ? 1.0 : 0.0)
         .offset(z: isVisible ? 0 : 200)
-
+      
       GeometryReader { scrollView in
         ScrollView() {
-          
           // MARK: Grid
           LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
             ForEach((0...max(8, widgets.count - 1)), id: \.self) { index in
@@ -149,6 +150,8 @@ struct WidgetPickerView: View {
                 let maxProx = proximity(of:widgetView, to:scrollView, distance:iconSize.width, at: .maxYEdge)
                 let combinedProx = minProx * maxProx
                 
+                
+                var isSelected = index < widgets.count && widgets[index] == draggedWidget
                 ZStack {
                   // MARK: Placeholders
                   
@@ -185,9 +188,11 @@ struct WidgetPickerView: View {
                       WidgetPickerItem(widget: widget)
                         .onDrag {
                           draggedWidget = widget
-                          DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
-                            draggedWidget = nil
-                          }
+                          
+                          endDrag?.cancel()
+                          endDrag = DispatchWorkItem { draggedWidget = nil }
+                          DispatchQueue.main.asyncAfter(deadline: .now() + 6, execute: endDrag!)
+                          
                           let modelID = widget.modelID
                           let userActivity = NSUserActivity(activityType: Activity.openWidget)
                           try? userActivity.setTypedPayload(["wid": widget.wid])
@@ -203,13 +208,13 @@ struct WidgetPickerView: View {
                 }
                 .scaleEffect(minProx * 0.8 + 0.2, anchor:.bottom)
                 .scaleEffect(maxProx * 0.8 + 0.2, anchor:.top)
-                .offset(z:combinedProx * 20 + abs(xoffset - 0.5) * 8)
+                .offset(z:combinedProx * 20 + abs(xoffset - 0.5) * 8 )
                 .blur(radius: (1 - combinedProx) * 10)
                 .opacity(combinedProx * (isVisible ? 1.0 : 0.0))
                 
-                .rotation3DEffect(.degrees(-30.0 * (xoffset - 0.5)), axis: (x: 0, y: 1, z: 0), anchor:anchor)
-                .rotation3DEffect(.degrees(20.0 * (1.0 - minProx)), axis: (x: 1, y: 0, z: 0), anchor:.trailing)
-                .rotation3DEffect(.degrees(-20.0 * (1.0 - maxProx)), axis: (x: 1, y: 0, z: 0), anchor:.leading)
+                .rotation3DEffect(.degrees(isSelected ? 0 : -30.0 * (xoffset - 0.5)), axis: (x: 0, y: 1, z: 0), anchor:anchor)
+                .rotation3DEffect(.degrees(isSelected ? 0 : 20.0 * (1.0 - minProx)), axis: (x: 1, y: 0, z: 0), anchor:.trailing)
+                .rotation3DEffect(.degrees(isSelected ? 0 : -20.0 * (1.0 - maxProx)), axis: (x: 1, y: 0, z: 0), anchor:.leading)
                 .transition(.move(edge: .trailing))
                 
                 .animation(.easeOut(duration: 0.2).delay(0.03 * Double(index))) { content in
@@ -243,7 +248,7 @@ struct WidgetPickerView: View {
                 getMoreWidgets()
               } label: {
                 Label("Browse for More", systemImage: "plus")
-              
+                
               }
             }
             .padding()
@@ -283,12 +288,12 @@ struct WidgetPickerView: View {
       
       .ornament(attachmentAnchor: .scene(.bottom), contentAlignment:.bottom) {
         if (!widgets.isEmpty) {
-          ZStack {
+          HStack {
             Button(role: draggedWidget == nil ? .cancel : .destructive) {
               if let draggedWidget = draggedWidget {
                 withAnimation(.spring) {
                   NotificationCenter.default.post(name: Notification.Name.widgetDeleted, object: draggedWidget)
-
+                  
                   draggedWidget.delete()
                   self.draggedWidget = nil
                 }
@@ -298,25 +303,97 @@ struct WidgetPickerView: View {
             } label: {
               Label(draggedWidget == nil ?
                     "Add More" : "Remove",
-                    systemImage: draggedWidget == nil ? "plus" : "square.and.arrow.down")
-              .padding(10)
-            }.labelStyle(.titleAndIcon)
-            
-            
-              .buttonBorderShape(.roundedRectangle(radius: 30))
+                    systemImage: draggedWidget == nil ? "plus" : "trash")
+            } .labelStyle(.iconOnly)
+//              .buttonBorderShape(.roundedRectangle(radius: 30))
+              .buttonBorderShape(.circle)
               .buttonStyle(.borderless)
             
-          }
+            
+            if (draggedWidget == nil) {
+              TextField(draggedWidget == nil ? "add a page" : "drag to remove", text: $searchText)
+                .onSubmit {
+                  print("searchText", searchText, clean(url:searchText))
+                  if let string = clean(url:searchText), let url = URL(string:string) {
+                    app?.showWindowForURL(url)
+                    searchText = ""
+                  }
+                }
+              
+                .keyboardType(.URL)
+                .autocapitalization(.none)
+                .autocorrectionDisabled()
+                .textFieldStyle(.roundedBorder)
+                .padding(.horizontal, -4)
+              //                .multilineTextAlignment(.center)
+                .overlay(alignment:.trailing) {
+                  if (UIPasteboard.general.hasURLs) {
+                    PasteButton(payloadType: URL.self) { urls in
+                      if let url = urls.first {
+                        DispatchQueue.main.async {
+                          app?.showWindowForURL(url)
+                        }
+                      }
+                    }
+                    .buttonBorderShape(.roundedRectangle(radius: 8))
+                    .buttonStyle(.borderless)
+                    .labelStyle(.titleOnly)
+                    .tint(.black)
+                    .opacity(0.667)
+                    .padding(.trailing, 2)
+                  }
+                }
+            } else {
+              Text("Drag to remove")
+                .frame(maxWidth:.infinity)
+            }
 
+ 
+            Menu {
+
+              Button {
+                UIApplication.shared.open(URL(string:"https://translucent.directory/help")!)
+              } label: {
+                Label("Help", systemImage: "questionmark.circle")
+              }
+
+//              Button {
+//                UIApplication.shared.open(URL(string:"https://translucent.directory/discord")!)
+//              } label: {
+//                Label("Discord", systemImage: "bubble")
+//              }
+              
+              Divider()
+              ShareLink(item: URL(string:"https://translucent.vision")!) {
+                  Label("Share Translucent", systemImage:  "square.and.arrow.up")
+              }
+              
+        
+
+              
+
+              
+            } label: {
+              Label("Menu", systemImage:"ellipsis")
+                .labelStyle(.iconOnly)
+
+            }                .buttonStyle(.borderless)
+              .buttonBorderShape(.circle)
+//          primaryAction: {}
+          }
+          
           .dropDestination(for: String.self) { items, location in
             draggedWidget?.delete()
             draggedWidget = nil
             return true
           }
-          .padding(10)
-          .background(draggedWidget != nil ? .black.opacity(0.5) : .black.opacity(0.0))
+          .cornerRadius(100)
+          .frame(width:300)
+          .padding(8)
+
+          .background(draggedWidget != nil ? .red.opacity(0.1) : .black.opacity(0.0))
           .glassBackgroundEffect()
-          .padding(.bottom, 8)
+          .padding(.bottom, 12)
           .animation(.spring(), value: draggedWidget)
           .animation(.spring(), value: isDragDestination)
           .animation(.spring(), value: widgets)
@@ -327,7 +404,7 @@ struct WidgetPickerView: View {
           }
         }
       }
-
+      
     } // MARK: /Main View modifiers
     .onChange(of: scenePhase) {
       if (scenePhase == .background) {
@@ -339,8 +416,8 @@ struct WidgetPickerView: View {
         }
       }
     }
-//    .windowGeometryPreferences(resizingRestrictions: .none)
-
+    //    .windowGeometryPreferences(resizingRestrictions: .none)
+    
     .onAppear() {
       widgets.forEach { widget in
         if widget.wid.count < 1 {
@@ -364,7 +441,7 @@ struct WidgetPickerView: View {
         updateHue()
       }
       
-
+      
     }
     .onDisappear() {
       isVisible = false;
@@ -376,7 +453,7 @@ struct WidgetPickerView: View {
         dismiss()
       }
       
-       
+      
     }
     
   }
