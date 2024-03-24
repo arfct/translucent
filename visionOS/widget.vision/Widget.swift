@@ -44,8 +44,8 @@ enum IconStyle:String {
   var controls: String?
   var radius: CGFloat = 30
   
-  var width: CGFloat = 600
-  var height: CGFloat = 600
+  var width: CGFloat = 640
+  var height: CGFloat = 720
   var minWidth: CGFloat = 320
   var minHeight: CGFloat = 180
   var maxWidth: CGFloat = CGFloat.infinity
