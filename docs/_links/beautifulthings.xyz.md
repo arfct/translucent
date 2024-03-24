@@ -13,6 +13,7 @@ css: |
   * {color: white !important;} 
   [data-framer-name="Active"] {background-color:black !important;}
   [data-framer-name="Logo"] { filter:invert() } 
+  #file-input-container, #text-input {background:transparent; border:1px solid white; color:white;}
 config: |
   {"tabs":[
     {"label": "All", "image":"asterisk", "url":"/"},
