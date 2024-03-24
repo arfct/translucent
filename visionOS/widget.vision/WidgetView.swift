@@ -430,7 +430,7 @@ struct WidgetView: View {
                   openWindow(id:WindowTypeID.main, value:WindowID.main)
                 } label: {
                   HStack {
-                    Text("Show Dashboard")
+                    Text("Show Favorites")
                       .frame(maxWidth: .infinity, alignment: .leading)
                     Image(systemName: "square.grid.3x3.fill")
                   }.padding(.vertical, 16)
