@@ -1,5 +1,5 @@
 ---
 ---
 <script>
-location.href = "https://github.com/arfct/translucent/wiki/Help"
+location.href = "https://github.com/arfct/translucent/wiki"
 </script>
