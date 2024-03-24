@@ -33,6 +33,7 @@
 		2C9EE6AB2B66844600D36BA6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C9EE6AA2B66844600D36BA6 /* Assets.xcassets */; };
 		2C9EE6B62B6684C100D36BA6 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9EE6B52B6684C100D36BA6 /* WebView.swift */; };
 		2CAE63102BA14EAB00F1AE30 /* WebClip.js in Resources */ = {isa = PBXBuildFile; fileRef = 2CAE630F2BA14EAB00F1AE30 /* WebClip.js */; };
+		2CBBDB3F2BB0A06F00CC9D1F /* AnimatedEllipsisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBBDB3E2BB0A06F00CC9D1F /* AnimatedEllipsisView.swift */; };
 		2CE229632B8F09510077640A /* widgets in Resources */ = {isa = PBXBuildFile; fileRef = 2CE229622B8F09510077640A /* widgets */; };
 		2CF2535A2B7847F900E57BF2 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF253592B7847F900E57BF2 /* Utils.swift */; };
 /* End PBXBuildFile section */
@@ -93,6 +94,7 @@
 		2C9EE6AF2B66844600D36BA6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2C9EE6B52B6684C100D36BA6 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		2CAE630F2BA14EAB00F1AE30 /* WebClip.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = WebClip.js; sourceTree = "<group>"; };
+		2CBBDB3E2BB0A06F00CC9D1F /* AnimatedEllipsisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedEllipsisView.swift; sourceTree = "<group>"; };
 		2CE229622B8F09510077640A /* widgets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = widgets; sourceTree = "<group>"; };
 		2CF253592B7847F900E57BF2 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -119,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				2C1B989E2B995F660003A023 /* ChromaView.swift */,
+				2CBBDB3E2BB0A06F00CC9D1F /* AnimatedEllipsisView.swift */,
 				2C34BB8F2BA64FE9006D66AD /* AV.swift */,
 				2CF253592B7847F900E57BF2 /* Utils.swift */,
 				2C42D5552B92F56A007FCA7F /* DownloadPanel.swift */,
@@ -320,6 +323,7 @@
 				2C42D5562B92F56A007FCA7F /* DownloadPanel.swift in Sources */,
 				2C42D5522B92ED72007FCA7F /* Image+Utils.swift in Sources */,
 				2C60D9A02B8FF13800494B8A /* View+WindowGeometryPreferences.swift in Sources */,
+				2CBBDB3F2BB0A06F00CC9D1F /* AnimatedEllipsisView.swift in Sources */,
 				2C42D54C2B92EC90007FCA7F /* URL+Directories.swift in Sources */,
 				2C23F8492B6D5B8C0099BA6D /* WidgetSettingsView.swift in Sources */,
 				2C1B989F2B995F660003A023 /* ChromaView.swift in Sources */,

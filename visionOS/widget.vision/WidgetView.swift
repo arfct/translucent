@@ -275,15 +275,9 @@ struct WidgetView: View {
               showPopover = true;
             }
           } label: {
-              HStack() {
-                let dotSize = 10.0
-                Group {
-                  Circle().fill(showPopover ? .black : .white.opacity(0.67))
-                  Circle().fill(showPopover ? .black : .white.opacity(0.67))
-                  Circle().fill(showPopover ? .black : .white.opacity(0.67))
-                }
-                .frame(width: dotSize, height: dotSize)
-            }
+            AnimatedEllipsisView(loading: $isLoading, color: Binding<Color>(
+              get: { showPopover ? Color.black : Color.white.opacity(0.67) },
+              set: {val in }))
           }
           .buttonBorderShape(.capsule)
           .buttonStyle(.bordered)
@@ -311,6 +305,9 @@ struct WidgetView: View {
                   }primaryAction: {
                     browserState.webView?.goBack()
                   }.disabled(!browserState.canGoBack)
+                  
+                  .keyboardShortcut(KeyEquivalent.rightArrow)
+                  
                   if browserState.canGoForward {
                     Spacer()
                     Menu {
@@ -327,6 +324,8 @@ struct WidgetView: View {
                   } label: {
                     Label("Reload",systemImage:"arrow.clockwise")
                   }
+                  .keyboardShortcut("r")
+                  
                   Spacer()
 
                   Menu {
@@ -542,7 +541,6 @@ struct WidgetView: View {
   }
 }
 
-
 #Preview(windowStyle: .plain) {
-  WidgetView(widget: Widget(name: "Test", location: "https://example.com"))
+  WidgetView(widget: Widget(name: "Test", location: "https://www.example.com"))
 }
