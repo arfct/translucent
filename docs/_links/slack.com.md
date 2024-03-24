@@ -7,6 +7,7 @@ symbol: bubble.left.and.bubble.right
 href: https://app.slack.com/
 description: Mix and match emoji
 size: 1024x768
+ua: desktop
 css: |
   * {--background-tertiary: transparent;}
 ---
