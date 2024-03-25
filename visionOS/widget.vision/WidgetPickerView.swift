@@ -311,7 +311,7 @@ struct WidgetPickerView: View {
             
             
             if (draggedWidget == nil) {
-              TextField(draggedWidget == nil ? "add a page" : "drag to remove", text: $searchText)
+              TextField(draggedWidget == nil ? "add location" : "drag to remove", text: $searchText)
                 .onSubmit {
                   print("searchText", searchText, clean(url:searchText))
                   if let string = clean(url:searchText), let url = URL(string:string) {
