@@ -120,7 +120,7 @@ struct WidgetSettingsView: View {
                 set: { self.widget.style = $0 })) {
                   Text("Transparent").tag("transparent")
                   Text("Frosted Glass").tag("glass")
-                  //                  Text("Mini Browser").tag("browser")
+                  Text("Opaque").tag("opaque")
                 }
                 .pickerStyle(.menu)
                 .buttonStyle(.borderless)

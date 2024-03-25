@@ -11,7 +11,7 @@ struct Host {
 }
 
 enum WindowStyle:String {
-  case transparent, glass
+  case transparent, glass, opaque
 }
 
 enum ControlStyle:String {
@@ -165,6 +165,10 @@ enum IconStyle:String {
       .replacingOccurrences(of: "https://widget.vision/", with: "https://")
       .replacingOccurrences(of: "https://translucent.site/", with: "https://")
     
+    if (parameters == nil) {
+      parameters = "style=opaque&size=1024x768"
+    }
+
     self.init( name: name ?? url.host() ??
                url.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "_", with: " "),
                location: location,

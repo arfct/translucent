@@ -6,7 +6,7 @@ extension Widget {
     
     var css: [String] = []
     
-    var clearSelectors = "html, body"
+    var clearSelectors = self.style == WindowStyle.opaque.rawValue ? "" : "html, body"
     if let selectors = self.clearSelectors {
       clearSelectors += ", \(selectors)"
     }
