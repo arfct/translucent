@@ -1,14 +1,11 @@
-<img src="https://github.com/arfct/translucent/assets/563095/de2bb2bd-0db2-46e8-8f01-45d145da0ed4" alt="drawing" width="200"/>
+<img src="https://github.com/arfct/translucent/assets/563095/321b1880-8ce1-4651-a779-9ee570d0ab83" alt="" width="400"/>
 
-# Translucent
+----
 
 Spatial Web Apps for visionOS
 
-### Site + TestFlight:
-https://translucent.vision
+#### Site + TestFlight: https://translucent.vision
 
-### Catalog Page
-https://translucent.directory
+#### Catalog Page: https://translucent.directory
 
-### Usage: 
-https://translucent.wiki
+#### Usage: https://translucent.wiki
