@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "B6F8A68D-87AC-4D29-9EE5-B76A4BF8AB5E"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.SymbolicBreakpoint">
+         <BreakpointContent
+            uuid = "36F1CEDD-BE75-4D73-87FA-9BCA2CB70CC3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            symbolName = "DynamicBody.updateValue"
+            moduleName = "">
+            <Locations>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.SwiftErrorBreakpoint">
+         <BreakpointContent
+            uuid = "D8C2BFC2-7C95-4506-8D23-F1615715753C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.SymbolicBreakpoint">
+         <BreakpointContent
+            uuid = "73D25B1D-1571-446B-A57F-BCB0B80FBA82"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            symbolName = "BindingOperations.ForceUnwrapping.get(base:)"
+            moduleName = "">
+            <Locations>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.SymbolicBreakpoint">
+         <BreakpointContent
+            uuid = "83BCBB90-CA83-4533-830F-10BBF927219B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            symbolName = "swift_willThrow"
+            moduleName = "">
+            <Locations>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
