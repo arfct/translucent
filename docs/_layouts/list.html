@@ -30,7 +30,7 @@ layout: default
     {%- for widget in posts -%}
     {% assign page = widget %}
 
-    {% if widget.name == "Translucent Directory" %} 
+    {% if widget.name == "Directory" %} 
     <meta name="widget" content="{% include queryparams.html content=page %}">
     {% endif %}
 
