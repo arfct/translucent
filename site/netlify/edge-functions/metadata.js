@@ -97,21 +97,26 @@ export default async (request, context) => {
       background-color:#16161d;
       display: flex; justify-content: center; align-items: center; height: 66vh;
     }
-    .widget { padding: 40px 40px 40px 40px;  border-radius: 30px;
-      border:2px solid #fff8;
+    .widget {
+      padding: 40px 40px 40px 40px;  border-radius: 30px;
+      border:2px solid #fff1;
       min-width:320px;
+      line-height: 1.5em;
+      color: #ccc;
+      text-align: center;
      }
-    a { color: #fff; }
+    a { color: #fff; text-decoration: none;}
+    a:hover { color: #fff; text-decoration: underline;}
     </style>
     
 <body>
     <div class="widget">
-    Opening <a href="${widgetURL}">${title}</a><br>in Translucent...
+    Opening <a href="${widgetURL}">${title}</a><br>in <a href="https://translucent.vision">translucent.vision</a>
     </div>
 </body>`);
 
     if (widgetURL) {
-      content.push(`<script>setTimeout(() => {location.href="${widgetURL}"; history.go(-1); }, 1)</script>`);
+      content.push(`<script>setTimeout(() => {location.href="${widgetURL}"; }, 1)</script>`);
     }
 
     return new Response(content.join("\n"), {
