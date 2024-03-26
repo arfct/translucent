@@ -2,13 +2,13 @@
 
 # translucent.vision
 
-Web based widgets for visionOS
+Spatial Web Apps for visionOS
 
 ### Site + TestFlight:
-https://transparent.vision
+https://translucent.vision
 
 ### Catalog Page
-https://transparent.directory
+https://translucent.directory
 
 ### Usage: 
 https://translucent.wiki
