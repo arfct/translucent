@@ -1,6 +1,6 @@
 ---
 name: Feedly
-tags: experimental
+tags: website
 icon: download 
 href: https://feedly.com
 ua: desktop
