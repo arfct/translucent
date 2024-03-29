@@ -4,6 +4,7 @@ tags: experimental
 icon: download 
 href: https://producthunt.com
 size: 1280x800
+bg: "#0008"
 clear: >
   body, [class*="styles_item"], div[class*="styles_header"], [data-test="vote-button"]
 css: |
