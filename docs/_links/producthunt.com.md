@@ -1,6 +1,6 @@
 ---
 name: Product Hunt
-tags: experimental
+tags: website
 icon: download 
 href: https://producthunt.com
 size: 1280x800
