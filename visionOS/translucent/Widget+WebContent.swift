@@ -69,8 +69,13 @@ extension Widget {
         viewportTag.name = "viewport"
         document.head.appendChild(viewportTag);
       }
-      viewportTag.setAttribute('content', "width=\(viewport), initial-scale=\(zoom), user-scalable=no")
+      viewportTag.setAttribute('content', "width=\(viewport)")
       """)
+  
+    
+    //    if let injectJS = widget.injectJS, injectJS.count > 0 {
+    //      source.append("\n\(injectJS)\n")
+    //    }
     
     
     if let fontName = self.fontName, fontName != "" && fontName != "-apple-system" {
@@ -91,25 +96,18 @@ extension Widget {
         """)
     }
     
-    let css = cssSrc()
+    let css = enableOverrides ? cssSrc() : ""
     
     source.append("""
-    
     var cssTag = document.getElementById('widgetVisionCSSTag')
     if (!cssTag) {
       cssTag = document.createElement('style');
       cssTag.id = "widgetVisionCSSTag"
       document.head.appendChild(cssTag);
     }
-    
     cssTag.innerHTML = `\n\(css)\n`
-    
     """)
-    
-    //    if let injectJS = widget.injectJS, injectJS.count > 0 {
-    //      source.append("\n\(injectJS)\n")
-    //    }
-    
+
     return source.joined(separator:"\n")
   }
 }

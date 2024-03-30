@@ -50,8 +50,10 @@ enum IconStyle:String {
   var minHeight: CGFloat = 180
   var maxWidth: CGFloat = CGFloat.infinity
   var maxHeight: CGFloat = CGFloat.infinity
+
   
-  var effect: String? // dark
+  var blending: String?
+  var effect: String? // dim
   var resize: String? // nil [freeform], uniform, none, (fitwidth)
   var tilt: CGFloat?
   
@@ -68,6 +70,7 @@ enum IconStyle:String {
   var userAgent: String = "mobile"
   
   // MARK: Web Overrides
+  var enableOverrides = true
   var clearSelectors: String?
   var removeSelectors: String?
   var injectCSS: String?
@@ -276,7 +279,7 @@ enum IconStyle:String {
   static var preview: Widget {
     Widget(name: "Test",
            location: "https://example.com",
-           options: "bg=0000&fg=ffff&tg=8aff&sz=360x360&zoom=1.0&icon=graduationcap")
+           options: "bg=0000&fg=ffff&tg=8aff&sz=360x360&zoom=1.0&icon=download")
   }
 }
 
@@ -508,6 +511,29 @@ extension Widget {
     }
     
     return nil;
+  }
+  
+  func incrementRadius(_ direction: CGFloat) {
+    let testRadius = radius + direction
+    let step: CGFloat =
+    testRadius > 200 ? 100 :
+    testRadius > 50 ? 10 :
+    testRadius > 10 ? 5 : 1
+    
+    let newRadius = max(0, radius + step * direction)
+    radius = newRadius
+  }
+  
+  func incrementZoom(_ direction: Int) {
+    let zooms = [0.25, 0.333, 0.5, 0.667, 0.75, 0.85, 1.0, 1.15, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 4.0, 5.0]
+    
+//    let test = zoom + CGFloat(direction) * 0.01
+    print("val \(zoom) \(zooms.firstIndex { zoom + 0.01 <= $0 })")
+    var index = zooms.firstIndex { zoom <= $0 + 0.04 } ?? zooms.count - 1;
+     
+    index = max(0, min(zooms.count - 1, index + direction))
+  
+    zoom = zooms[index]
   }
   
   func updateFromManifest() {
