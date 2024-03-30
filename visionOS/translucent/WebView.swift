@@ -58,11 +58,7 @@ struct WebView: UIViewRepresentable {
     browserState.webView = webView
     
     webView.overrideUserInterfaceStyle = .dark
-    
-    
-#if DEBUG
     webView.isInspectable = true
-#endif
     
     UIDevice.current.isBatteryMonitoringEnabled = true
     
@@ -118,7 +114,12 @@ struct WebView: UIViewRepresentable {
     if (context.coordinator.lastSetLocation != location) {
       context.coordinator.open(location: location, saveValue: true)
     }
-    
+
+    let zoom = widget.zoom
+    webView.pageZoom = zoom
+
+    //    webView.evaluateJavaScript("document.documentElement.style.zoom = \(widget.zoom)", completionHandler: nil)
+
     let size = CGSize(width:widget.width, height: widget.height)
     if (!CGSizeEqualToSize(size, context.coordinator.lastSize)) {
       context.coordinator.lastSize = size
