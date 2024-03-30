@@ -7,7 +7,7 @@ private struct DotView: View {
   
   var body: some View {
     Circle().fill(color)
-      .offset(y:scale * 10)
+      .offset(y:scale * 5)
       .frame(width: 10, height: 10, alignment: .center)
   }
 }
