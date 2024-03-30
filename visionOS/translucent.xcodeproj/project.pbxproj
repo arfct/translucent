@@ -37,6 +37,7 @@
 		2C7072442BB1DD49000DF7BA /* WidgetSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072212BB1DD49000DF7BA /* WidgetSettingsView.swift */; };
 		2C7072452BB1DD49000DF7BA /* WidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072222BB1DD49000DF7BA /* WidgetView.swift */; };
 		2C7072462BB1DD49000DF7BA /* WidgetViewBrowserBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072232BB1DD49000DF7BA /* WidgetViewBrowserBar.swift */; };
+		2C78F9302BB7394000D53DB7 /* CodeEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 2C78F92F2BB7394000D53DB7 /* CodeEditor */; };
 		2C832E0A2B7C0C800032FB06 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C832E092B7C0C800032FB06 /* ShareViewController.swift */; };
 		2C832E0E2B7C0C800032FB06 /* share.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2C832E072B7C0C800032FB06 /* share.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -117,6 +118,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C78F9302BB7394000D53DB7 /* CodeEditor in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,6 +252,7 @@
 			);
 			name = translucent;
 			packageProductDependencies = (
+				2C78F92F2BB7394000D53DB7 /* CodeEditor */,
 			);
 			productName = ittybittywidgets;
 			productReference = 2C9EE69F2B66844500D36BA6 /* translucent.app */;
@@ -282,6 +285,9 @@
 				Base,
 			);
 			mainGroup = 2C9EE6962B66844500D36BA6;
+			packageReferences = (
+				2C78F92E2BB7394000D53DB7 /* XCRemoteSwiftPackageReference "CodeEditor" */,
+			);
 			productRefGroup = 2C9EE6A02B66844500D36BA6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -636,6 +642,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2C78F92E2BB7394000D53DB7 /* XCRemoteSwiftPackageReference "CodeEditor" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ZeeZide/CodeEditor.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2C78F92F2BB7394000D53DB7 /* CodeEditor */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2C78F92E2BB7394000D53DB7 /* XCRemoteSwiftPackageReference "CodeEditor" */;
+			productName = CodeEditor;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2C9EE6972B66844500D36BA6 /* Project object */;
 }
