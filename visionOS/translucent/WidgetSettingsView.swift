@@ -117,13 +117,11 @@ struct WidgetSettingsView: View {
                 .labelsHidden()
               Spacer()
               HStack {
-                ColorPicker(selection: $backColor) {
-                  Image(systemName: "square.fill")
-                }.onChange(of: backColor) {
-                  if let hex = backColor.toHex() { widget.backHex = hex }
-                }.labelsHidden().scaleEffect(1.0)
+                CustomColorPickerView(colorValue: $backColor)
+                  .onChange(of: backColor) {
+                    if let hex = backColor.toHex() { widget.backHex = hex }
+                  }
                   .disabled(self.widget.style == "opaque")
-                //                Text("Back")
               }
             }
             
@@ -367,6 +365,23 @@ struct WidgetSettingsView: View {
                     set: { val in widget.effect = val ? "dim" : nil}), label: {
                       Text("Dim Environment")
                     })
+                  HStack(spacing:spacing - 18) {
+                    Text("Blending")
+                      .frame(maxWidth: labelWidth, alignment:.leading)
+                    
+                    Spacer()
+                    Picker("", selection: $widget.blending ?? "") {
+                      Text("Normal").tag("")
+                      Text("Plus Lighter").tag("plusLighter")
+                      Text("Plus Darker").tag("plusDarker")
+                      Text("Screen").tag("screen")
+                      Text("Multiply").tag("multiply")
+                      }
+                      .pickerStyle(.menu)
+                      .buttonStyle(.borderless)
+                      .frame(alignment: .leading)
+                      .labelsHidden()
+                  }
                   
                 }
                 .listRowBackground(Color.clear)
@@ -435,19 +450,18 @@ struct WidgetSettingsView: View {
                       .frame(maxWidth: labelWidth, alignment:.leading)
                     
                       HStack {
-                        ColorPicker(selection: $foreColor, supportsOpacity: true) {
-                          Image(systemName: "textformat.size.smaller")
-                        }.frame(maxWidth:32).onChange(of: foreColor) {
+                        CustomColorPickerView(colorValue: $foreColor)
+                          .onChange(of: foreColor) {
                           if let hex = foreColor.toHex() { widget.foreHex = hex }
-                        }.labelsHidden()
+                        }
                         Text("Text")
                       }
                       HStack {
-                        ColorPicker(selection: $tintColor, supportsOpacity: true) {
-                          Image(systemName: "a.square")
-                        }.frame(maxWidth:32).onChange(of: tintColor) {
-                          if let hex = tintColor.toHex() { widget.tintHex = hex }
-                        }.labelsHidden()
+                        
+                        CustomColorPickerView(colorValue: $tintColor)
+                          .onChange(of: tintColor) {
+                            if let hex = tintColor.toHex() { widget.tintHex = hex }
+                          }
                         Text("Tint")
                       }
                     

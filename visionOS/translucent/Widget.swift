@@ -513,6 +513,18 @@ extension Widget {
     return nil;
   }
   
+  @Transient
+  var blendMode: BlendMode {
+    return switch(blending) {
+    case "screen": .screen
+    case "multiply": .multiply
+    case "plusLighter": .plusLighter
+    case "plusDarker": .plusDarker
+    case .none: .normal
+    case .some(_): .normal
+    }
+  }
+  
   func incrementRadius(_ direction: CGFloat) {
     let testRadius = radius + direction
     let step: CGFloat =

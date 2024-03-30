@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C23F3EA2BB8B1090076C071 /* CustomColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C23F3E92BB8B1090076C071 /* CustomColorPickerView.swift */; };
 		2C7072262BB1DD49000DF7BA /* AnimatedEllipsisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072002BB1DD49000DF7BA /* AnimatedEllipsisView.swift */; };
 		2C7072272BB1DD49000DF7BA /* AV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072012BB1DD49000DF7BA /* AV.swift */; };
 		2C7072282BB1DD49000DF7BA /* Binding+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072022BB1DD49000DF7BA /* Binding+Utils.swift */; };
@@ -67,6 +68,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2C23F3E92BB8B1090076C071 /* CustomColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomColorPickerView.swift; sourceTree = "<group>"; };
 		2C7072002BB1DD49000DF7BA /* AnimatedEllipsisView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimatedEllipsisView.swift; sourceTree = "<group>"; };
 		2C7072012BB1DD49000DF7BA /* AV.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AV.swift; sourceTree = "<group>"; };
 		2C7072022BB1DD49000DF7BA /* Binding+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Binding+Utils.swift"; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 			isa = PBXGroup;
 			children = (
 				2C7072002BB1DD49000DF7BA /* AnimatedEllipsisView.swift */,
+				2C23F3E92BB8B1090076C071 /* CustomColorPickerView.swift */,
 				2C7072012BB1DD49000DF7BA /* AV.swift */,
 				2C7072022BB1DD49000DF7BA /* Binding+Utils.swift */,
 				2C7072032BB1DD49000DF7BA /* ChromaView.swift */,
@@ -341,6 +344,7 @@
 				2C70723F2BB1DD49000DF7BA /* Widget+WebContent.swift in Sources */,
 				2C7072392BB1DD49000DF7BA /* LaunchView.swift in Sources */,
 				2C7072432BB1DD49000DF7BA /* WidgetPickerView.swift in Sources */,
+				2C23F3EA2BB8B1090076C071 /* CustomColorPickerView.swift in Sources */,
 				2C70722C2BB1DD49000DF7BA /* Image+Utils.swift in Sources */,
 				2C70723D2BB1DD49000DF7BA /* WebViewCoordinator.swift in Sources */,
 				2C7072412BB1DD49000DF7BA /* WidgetApp.swift in Sources */,

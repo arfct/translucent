@@ -136,7 +136,6 @@ struct WidgetView: View {
           // MARK: Web View
           
           webView
-            
             .onLoadStatusChanged { content, loading, error in
               self.isLoading = loading
               if (!loading && !finishedFirstLoad) {
@@ -151,14 +150,17 @@ struct WidgetView: View {
               downloads.append(download)
               downloadAttachment = download;
             }
+          
+            .blendMode(widget.blendMode)
             .allowsHitTesting(showSystemOverlay || !widget.suppressFirstClick )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(widget.effect == "chroma" ? ChromaView() : nil)
+            .background(widget.backColor)
             .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
                                    displayMode: (widget.showGlassBackground ) ? .always : .never)
-            .background(widget.backColor)
+            
           
-          
+
             .cornerRadius(widget.radius)
             .opacity(!finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
             .disabled(flipped)
@@ -182,6 +184,7 @@ struct WidgetView: View {
                 
               }
             }
+          
         }
         
         //        VStack() {
