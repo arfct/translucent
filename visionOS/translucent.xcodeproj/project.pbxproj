@@ -3,11 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		2C23F3EA2BB8B1090076C071 /* CustomColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C23F3E92BB8B1090076C071 /* CustomColorPickerView.swift */; };
+		2C23F43C2BB8DD0E0076C071 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 2C23F43B2BB8DD0E0076C071 /* RealityKitContent */; };
 		2C7072262BB1DD49000DF7BA /* AnimatedEllipsisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072002BB1DD49000DF7BA /* AnimatedEllipsisView.swift */; };
 		2C7072272BB1DD49000DF7BA /* AV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072012BB1DD49000DF7BA /* AV.swift */; };
 		2C7072282BB1DD49000DF7BA /* Binding+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072022BB1DD49000DF7BA /* Binding+Utils.swift */; };
@@ -120,6 +121,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C23F43C2BB8DD0E0076C071 /* RealityKitContent in Frameworks */,
 				2C78F9302BB7394000D53DB7 /* CodeEditor in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -197,7 +199,6 @@
 			isa = PBXGroup;
 			children = (
 				2C7072242BB1DD49000DF7BA /* translucent */,
-				2C9EE6A22B66844500D36BA6 /* Packages */,
 				2C832E082B7C0C800032FB06 /* share */,
 				2C9EE6A02B66844500D36BA6 /* Products */,
 			);
@@ -210,13 +211,6 @@
 				2C832E072B7C0C800032FB06 /* share.appex */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		2C9EE6A22B66844500D36BA6 /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Packages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -256,6 +250,7 @@
 			name = translucent;
 			packageProductDependencies = (
 				2C78F92F2BB7394000D53DB7 /* CodeEditor */,
+				2C23F43B2BB8DD0E0076C071 /* RealityKitContent */,
 			);
 			productName = ittybittywidgets;
 			productReference = 2C9EE69F2B66844500D36BA6 /* translucent.app */;
@@ -290,6 +285,7 @@
 			mainGroup = 2C9EE6962B66844500D36BA6;
 			packageReferences = (
 				2C78F92E2BB7394000D53DB7 /* XCRemoteSwiftPackageReference "CodeEditor" */,
+				2C23F43A2BB8DD0E0076C071 /* XCLocalSwiftPackageReference "Packages/RealityKitContent" */,
 			);
 			productRefGroup = 2C9EE6A02B66844500D36BA6 /* Products */;
 			projectDirPath = "";
@@ -647,6 +643,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		2C23F43A2BB8DD0E0076C071 /* XCLocalSwiftPackageReference "Packages/RealityKitContent" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/RealityKitContent;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		2C78F92E2BB7394000D53DB7 /* XCRemoteSwiftPackageReference "CodeEditor" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -659,6 +662,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2C23F43B2BB8DD0E0076C071 /* RealityKitContent */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RealityKitContent;
+		};
 		2C78F92F2BB7394000D53DB7 /* CodeEditor */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2C78F92E2BB7394000D53DB7 /* XCRemoteSwiftPackageReference "CodeEditor" */;
