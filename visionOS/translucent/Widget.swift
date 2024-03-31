@@ -147,7 +147,7 @@ enum IconStyle:String {
     console.log("🌐 Creating from URL: \(url.absoluteString)")
     var location = url.absoluteString
     var parameters: String?
-    if let regex = try? Regex(#"(?:\?)v=\d(.*)"#) {
+    if let regex = try? Regex(#"(?:\?)(.*v=\d.*)"#) {
       if let match = location.firstMatch(of: regex) {
         parameters = String(match[1].substring!)
         location = location.replacing(regex, with: "")
@@ -158,16 +158,20 @@ enum IconStyle:String {
       location = decodedLocation
     }
     
-    location = location
-      .replacingOccurrences(of: "widget-http", with: "http")
-      .replacingOccurrences(of: "widget://", with: "https://")
-      .replacingOccurrences(of: "https://translucent.site/http", with: "http")
-      .replacingOccurrences(of: "https://translucent.vision/http", with: "http")
-      .replacingOccurrences(of: "https://widget.vision/http", with: "http")
-      .replacingOccurrences(of: "https://www.widget.vision/http", with: "http")
-      .replacingOccurrences(of: "https://widget.vision/", with: "https://")
-      .replacingOccurrences(of: "https://translucent.site/", with: "https://")
-    
+    if (location.hasPrefix("widget")) {
+      location = location
+        .replacingOccurrences(of: "widget-http", with: "http")
+        .replacingOccurrences(of: "widget://", with: "https://")
+    } else {
+      location = location
+        .replacingOccurrences(of: "https://widget.vision/http", with: "http")
+        .replacingOccurrences(of: "https://www.widget.vision/http", with: "http")
+        .replacingOccurrences(of: "https://widget.vision/", with: "https://")
+        .replacingOccurrences(of: "https://translucent.site/http", with: "http")
+        .replacingOccurrences(of: "https://translucent.vision/http", with: "http")
+        .replacingOccurrences(of: "https://translucent.site/", with: "https://")
+    }
+
     if (parameters == nil) {
       parameters = "style=opaque&size=1024x768"
     }
@@ -363,7 +367,7 @@ extension Widget {
   
   @Transient
   var showBrowserBar: Bool {
-    return style.caseInsensitiveCompare("browser") == .orderedSame
+    return controls == ControlStyle.toolbar.rawValue
   }
   
   // MARK: Thumbnails
