@@ -28,7 +28,7 @@
 <script>
   let url = `https://translucent.site/{{page.href | replace: "https://", "" | urlencode }}{% include queryparams.html content=page %}`;
   console.log(url)  
-  // location.href = url
+  location.href = url
 </script>
 <a href="https://translucent.site/{{page.href | replace: "https://", "" | urlencode }}{% include queryparams.html content=page %}">
 <img src="{{ page.url | replace: 'html', 'png' }}" alt="{{ page.title }}">
