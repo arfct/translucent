@@ -9,26 +9,34 @@ struct WidgetViewBrowserBar: View {
   @State private var locationTempString: String = "about:blank"
     var body: some View {
       HStack {
-        Button {
-          browserState.coordinator?.webView?.goBack()
-        } label: {
-          Label("Back", systemImage: "chevron.left").labelStyle(.iconOnly)
-        }.buttonBorderShape(.circle)
-          .buttonStyle(.borderless)
-          .disabled(!browserState.canGoBack)
-        
-        if browserState.canGoForward {
+        HStack(spacing:2) {
           Button {
-            browserState.coordinator?.webView?.goForward()
-
+            browserState.coordinator?.webView?.goBack()
           } label: {
-            Label("Forward", systemImage: "chevron.right").labelStyle(.iconOnly)
+            Label("Back", systemImage: "arrow.left").labelStyle(.iconOnly)
+          }.buttonBorderShape(.circle)
+            .buttonStyle(.borderless)
+            .disabled(!browserState.canGoBack)
+          
+          if browserState.canGoForward {
+            Button {
+              browserState.coordinator?.webView?.goForward()
+              
+            } label: {
+              Label("Forward", systemImage: "arrow.right").labelStyle(.iconOnly)
+            }.buttonBorderShape(.circle)
+              .buttonStyle(.borderless)
           }
         }
-        
         TextField("location", text:$locationTempString )
+//        SearchBar(text: $locationTempString, 
+//                  placeholder: .constant(""),
+//                  onSearchButtonClicked: {
+//          print("clicked")
+//        })
+        .padding(-24)
+        .frame(maxWidth:320)
         .textFieldStyle(.roundedBorder)
-        .cornerRadius(20)
         .autocapitalization(.none)
         .disableAutocorrection(true)
         .keyboardType(.URL)
@@ -62,7 +70,7 @@ struct WidgetViewBrowserBar: View {
         Button {
           infoCallback()
         } label: {
-          Label("info", systemImage: "gear").labelStyle(.iconOnly)
+          Label("info", systemImage: "ellipsis").labelStyle(.iconOnly)
         }
         .buttonBorderShape(.circle)
           .buttonStyle(.borderless)
@@ -74,6 +82,11 @@ struct WidgetViewBrowserBar: View {
     }
 }
 
-//#Preview {
-//    WidgetViewToolbar()
-//}
+#Preview {
+  let state = BrowserState()
+  state.canGoForward = true
+  state.canGoBack = true
+  return WidgetViewBrowserBar(widget: .constant(Widget.preview), browserState: .constant(state), infoCallback: {
+    
+  })
+}
