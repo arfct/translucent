@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2C23F3EA2BB8B1090076C071 /* CustomColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C23F3E92BB8B1090076C071 /* CustomColorPickerView.swift */; };
 		2C23F43C2BB8DD0E0076C071 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 2C23F43B2BB8DD0E0076C071 /* RealityKitContent */; };
+		2C23F43E2BB90F000076C071 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C23F43D2BB90F000076C071 /* SearchBar.swift */; };
 		2C7072262BB1DD49000DF7BA /* AnimatedEllipsisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072002BB1DD49000DF7BA /* AnimatedEllipsisView.swift */; };
 		2C7072272BB1DD49000DF7BA /* AV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072012BB1DD49000DF7BA /* AV.swift */; };
 		2C7072282BB1DD49000DF7BA /* Binding+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072022BB1DD49000DF7BA /* Binding+Utils.swift */; };
@@ -70,6 +71,7 @@
 
 /* Begin PBXFileReference section */
 		2C23F3E92BB8B1090076C071 /* CustomColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomColorPickerView.swift; sourceTree = "<group>"; };
+		2C23F43D2BB90F000076C071 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		2C7072002BB1DD49000DF7BA /* AnimatedEllipsisView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimatedEllipsisView.swift; sourceTree = "<group>"; };
 		2C7072012BB1DD49000DF7BA /* AV.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AV.swift; sourceTree = "<group>"; };
 		2C7072022BB1DD49000DF7BA /* Binding+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Binding+Utils.swift"; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 				2C7072212BB1DD49000DF7BA /* WidgetSettingsView.swift */,
 				2C7072222BB1DD49000DF7BA /* WidgetView.swift */,
 				2C7072232BB1DD49000DF7BA /* WidgetViewBrowserBar.swift */,
+				2C23F43D2BB90F000076C071 /* SearchBar.swift */,
 				2C7072172BB1DD49000DF7BA /* WebClip.js */,
 				2C70720D2BB1DD49000DF7BA /* Utils */,
 				2C70721B2BB1DD49000DF7BA /* Entitlements.entitlements */,
@@ -346,6 +349,7 @@
 				2C7072412BB1DD49000DF7BA /* WidgetApp.swift in Sources */,
 				2C7072442BB1DD49000DF7BA /* WidgetSettingsView.swift in Sources */,
 				2C7072312BB1DD49000DF7BA /* View+WindowGeometryPreferences.swift in Sources */,
+				2C23F43E2BB90F000076C071 /* SearchBar.swift in Sources */,
 				2C7072272BB1DD49000DF7BA /* AV.swift in Sources */,
 				2C7072262BB1DD49000DF7BA /* AnimatedEllipsisView.swift in Sources */,
 				2C7072422BB1DD49000DF7BA /* WidgetPickerItem.swift in Sources */,
