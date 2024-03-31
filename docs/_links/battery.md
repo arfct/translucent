@@ -1,6 +1,6 @@
 ---
 name: Battery
-tags: experimental
+tags: widget
 icon: download 
 order: 7
 href: https://widget.vision/widgets/battery
