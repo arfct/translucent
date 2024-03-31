@@ -72,6 +72,7 @@ struct WebView: UIViewRepresentable {
       // MARK: Configuration
       let config = webView.configuration
       
+      config.preferences.isElementFullscreenEnabled = true
       config.userContentController.addScriptMessageHandler(context.coordinator, contentWorld: .page, name: "widget")
       
       config.userContentController.addUserScript(WKUserScript(
@@ -90,7 +91,7 @@ struct WebView: UIViewRepresentable {
         forMainFrameOnly: false))
       
       var js =  widget.jsSrc()
-      js += "window.widget?.postMessage({'event':'loaded'})\n"
+      js += "\nwindow.widget?.postMessage({'event':'loaded'})\n"
       
       let script = WKUserScript(source:js, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
       config.userContentController.addUserScript(script)
