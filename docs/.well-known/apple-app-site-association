@@ -27,6 +27,11 @@
             "comment": "Support"
           },
           {
+            "/": "/links/*",
+            "exclude": true,
+            "comment": "Links"
+          },
+          {
             "/": "/*",
             "comment": "Matches any URL whose path starts with /"
           }
