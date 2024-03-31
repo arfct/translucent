@@ -35,9 +35,9 @@
       background-image: url(battery.png);
       background-repeat: no-repeat;
       background-position: 0 0;
-      background-size:200%;
-      width:256px;
-      height:256px;
+      
+      width:128px;
+      height:128px;
       image-rendering: pixelated;
     }
   </style>
@@ -55,8 +55,9 @@
       if (state == 0) {
         battery.style.backgroundPosition = `0 0`
       } else if (state == 1 || state == 2) {
-        let index = 1 + status.level * 8
-        battery.style.backgroundPosition = `${status?.state == 1 ? 0 : 128}px ${index * 128}px`
+        let index = Math.floor(status.level * 8)
+        console.log("index", index, status.level, `${status?.state == 1 ? 0 : 128}px ${index * 128}px`)
+        battery.style.backgroundPosition = `${status?.state == 2 ? 0 : -128}px ${index * -128}px`
       } else if (state == 3) {
         battery.style.backgroundPosition = `128px 0`
       }
