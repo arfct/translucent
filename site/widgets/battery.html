@@ -59,7 +59,7 @@
         console.log("index", index, status.level, `${status?.state == 1 ? 0 : 128}px ${index * 128}px`)
         battery.style.backgroundPosition = `${status?.state == 2 ? 0 : -128}px ${index * -128}px`
       } else if (state == 3) {
-        battery.style.backgroundPosition = `128px 0`
+        battery.style.backgroundPosition = `-128px 0`
       }
 
       // Battery level ranges from 0.0 (fully discharged) to 1.0 (100% charged). Before accessing this property, ensure that battery monitoring is enabled.

@@ -41,10 +41,78 @@ struct WidgetSettingsView: View {
   ]
   
   var body: some View {
-    GeometryReader { g in
       NavigationStack {
         Form {
           Section(){
+            
+            
+            NavigationLink {
+              Form {
+                
+                // MARK: Name
+                HStack(spacing:spacing) {
+                  Text("Title")
+                    .labelStyle(.titleOnly)
+                    .frame(maxWidth: labelWidth, alignment: .leading)
+                  
+                  TextField(widget.title ?? "", text: $widget.name)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .keyboardType(.URL)
+                }
+                
+                HStack(alignment: .center, spacing:spacing) {
+                  Text("ID")
+                    .labelStyle(.titleOnly)
+                    .frame(maxWidth: labelWidth, alignment: .leading)
+                  
+                  TextField("url or directory id", text:Binding<String>(
+                    get: { self.widget.manifest ?? "" },
+                    set: { self.widget.manifest = $0 }))
+                  .autocapitalization(.none)
+                  .disableAutocorrection(true)
+                  .keyboardType(.asciiCapable)
+                  
+                  Button {
+                    widget.updateFromManifest()
+                  } label: {
+                    Label("Reset configuration", systemImage: "arrow.triangle.2.circlepath").labelStyle(.iconOnly)
+                  }.opacity((widget.manifest?.count ?? 0) > 0 ? 1.0 : 0.0)
+                }
+                // MARK: Icon
+                HStack(spacing:spacing) {
+                  Text("Icon")
+                    .labelStyle(.titleOnly)
+                    .frame(maxWidth: labelWidth, alignment: .leading)
+                  TextField("icon name", text:$widget.icon ?? "globe")
+                  
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .frame(maxWidth: .infinity)
+                }
+                
+                
+                
+                HStack(alignment: .top, spacing:spacing) {
+                  Text("Config")
+                    .frame(maxWidth: labelWidth, alignment: .leading)
+                  TextField("json ui configuration", text:$widget.configJSON ?? "", axis: .vertical)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .keyboardType(.asciiCapable)
+                    .frame(maxWidth: .infinity)
+                }
+
+              }
+            } label: {
+              HStack {
+                HStack {
+                  Text("Info")
+                  Spacer()
+                  Text("\(widget.displayName)").foregroundColor(.secondary)
+                }
+              }
+            }
             
             // MARK: Location
             
@@ -87,21 +155,12 @@ struct WidgetSettingsView: View {
               //              }.labelStyle(.iconOnly)
               //                .buttonStyle(.borderless)
               
-            }
-            // MARK: Name
-            HStack(spacing:spacing) {
-              Text("Title")
-                .labelStyle(.titleOnly)
-                .frame(maxWidth: labelWidth, alignment: .leading)
-              
-              TextField(widget.title ?? "", text: $widget.name)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .keyboardType(.URL)
-            }
+            } // URL
+            
+
             
             HStack(spacing:spacing - 18) {
-              Text("Style")
+              Text("Window")
                 .frame(maxWidth: labelWidth, alignment:.leading)
               
               Picker("", selection: Binding<String>(
@@ -116,29 +175,28 @@ struct WidgetSettingsView: View {
                 .frame(alignment: .leading)
                 .labelsHidden()
               Spacer()
-              HStack {
-                CustomColorPickerView(colorValue: $backColor)
-                  .onChange(of: backColor) {
-                    if let hex = backColor.toHex() { widget.backHex = hex }
-                  }
-                  .disabled(self.widget.style == "opaque")
-              }
-            }
+              
+              CustomColorPickerView(colorValue: $backColor)
+                .onChange(of: backColor) {
+                  if let hex = backColor.toHex() { widget.backHex = hex }
+                }
+                .disabled(self.widget.style == "opaque")
+              
+            } // Window
             
             
-          }.listRowBackground(Color.clear)
-          
-          
-          
-          
-          // MARK: Advanced Options
-          
-          Section {
+//          }.listRowBackground(Color.clear)
+//          
+//          
+//          
+//          
+//          // MARK: Advanced Options
+//          
+//          Section {
             
             
             NavigationLink {
               Form {
-                
                 Section() {
                   HStack(spacing:spacing) {
                     Text("Controls")
@@ -365,7 +423,17 @@ struct WidgetSettingsView: View {
                     set: { val in widget.effect = val ? "dim" : nil}), label: {
                       Text("Dim Environment")
                     })
-                  HStack(spacing:spacing - 18) {
+                  
+                  HStack(spacing:spacing) {
+                    Text("Background Color")
+                    Spacer()
+                    CustomColorPickerView(colorValue: $backColor)
+                      .onChange(of: backColor) {
+                        if let hex = backColor.toHex() { widget.backHex = hex }
+                      }
+                      .disabled(self.widget.style == "opaque")
+                  }
+                  HStack(spacing:spacing) {
                     Text("Blending")
                       .frame(maxWidth: labelWidth, alignment:.leading)
                     
@@ -382,11 +450,9 @@ struct WidgetSettingsView: View {
                       .frame(alignment: .leading)
                       .labelsHidden()
                   }
-                  
                 }
                 .listRowBackground(Color.clear)
               }   .navigationTitle("View Options")
-                
             } label: {
               HStack {
                 Text("View Options")
@@ -515,74 +581,18 @@ struct WidgetSettingsView: View {
               .navigationTitle("Style Overrides")
               .navigationBarTitleDisplayMode(.inline)
               .toolbar {
-                
                 ToolbarItemGroup(placement: .topBarTrailing) {
                   Toggle(isOn: $widget.enableOverrides, label: {
                     Text("Enabled")
                   }).toggleStyle(.switch).labelsHidden()
-            
-                    
                 }
               }
-              
             } label: {
               Text("Style Overrides")
             }
             
-            
-            NavigationLink {
-              Form {
-                
-              
-                
-                HStack(alignment: .center, spacing:spacing) {
-                  Text("ID")
-                    .labelStyle(.titleOnly)
-                    .frame(maxWidth: labelWidth, alignment: .leading)
-                  
-                  TextField("url or directory id", text:Binding<String>(
-                    get: { self.widget.manifest ?? "" },
-                    set: { self.widget.manifest = $0 }))
-                  .autocapitalization(.none)
-                  .disableAutocorrection(true)
-                  .keyboardType(.asciiCapable)
-                  
-                  Button {
-                    widget.updateFromManifest()
-                  } label: {
-                    Label("Reset configuration", systemImage: "arrow.triangle.2.circlepath").labelStyle(.iconOnly)
-                  }.opacity((widget.manifest?.count ?? 0) > 0 ? 1.0 : 0.0)
-                }
-                // MARK: Icon
-                HStack(spacing:spacing) {
-                  Text("Icon")
-                    .labelStyle(.titleOnly)
-                    .frame(maxWidth: labelWidth, alignment: .leading)
-                  TextField("icon name", text:$widget.icon ?? "globe")
-                  
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .frame(maxWidth: .infinity)
-                }
-                
-                
-                
-                HStack(alignment: .top, spacing:spacing) {
-                  Text("Config")
-                    .frame(maxWidth: labelWidth, alignment: .leading)
-                  TextField("json ui configuration", text:$widget.configJSON ?? "", axis: .vertical)
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .keyboardType(.asciiCapable)
-                    .frame(maxWidth: .infinity)
-                }
 
-              }
-            } label: {
-              Text("Metadata")
-            }
-          } header: {
-            Text("Advanced")
+            
           } footer: {
             if let error = widget.parseError {
               Text(error)
@@ -592,12 +602,11 @@ struct WidgetSettingsView: View {
           }.listRowBackground(Color.clear)
           
         }
-        //        .padding(.horizontal, -24)
+        
         .frame(maxWidth: 640, maxHeight: .infinity, alignment: .center)
         
         .onReceive(NotificationCenter.default.publisher(for: Notification.Name.widgetDeleted)) { notif in
           if let anotherWidget = notif.object as? Widget, widget == anotherWidget {
-            //            callback()
             dismiss()
           }
         }
@@ -627,10 +636,15 @@ struct WidgetSettingsView: View {
             .labelStyle(.iconOnly)
           }
         }
-      }
-      .padding(min(g.size.width/32, 0)) // Collapse small size padding
+      
+     
     }
-    .frame(minWidth:400, maxHeight:600)
+//      .frame(idealWidth:400, idealHeight:600)
+      .windowGeometryPreferences(
+        size: CGSize(width: 400, height: 600),
+        minimumSize: CGSize(width: 400, height: 600),
+        maximumSize: CGSize(width:600, height:720),
+        resizingRestrictions: .freeform)
   }
 }
 
