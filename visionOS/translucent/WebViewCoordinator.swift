@@ -68,7 +68,6 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
       if let action = body.value(forKey: "action") as? String {
         let args = body.value(forKey: "args") as? NSDictionary
         
-        console.log("Action \(action) \(String(describing:args))")
         if (action == "battery") {
           console.log("battery level: \(UIDevice.current.batteryLevel)")
           return (["level": String(UIDevice.current.batteryLevel),
@@ -240,7 +239,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     container.loadStatusChanged?(container, false, nil)
     
     let fetchManifestJS = """
-      document.querySelector('meta[name="widget"]').getAttribute('content');
+      document.querySelector('meta[name="widget"]')?.getAttribute('content');
       """
     
     webView.evaluateJavaScript(fetchManifestJS, completionHandler: { value, error in
@@ -253,7 +252,8 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
   
   func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
     updateState(webView: webView, loading: false)
-    container.loadStatusChanged?(container, false, nil)
+    container.loadStatusChanged?(container, false, error)
+    print("Webkit Error: \(error)")
   }
   
 }
