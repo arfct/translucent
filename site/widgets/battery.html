@@ -6,7 +6,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,700&display=swap" rel="stylesheet">
-  <title>Digital Clock</title>
+  <title>Battery</title>
   <style>
     body {
       margin:0;
@@ -60,7 +60,7 @@
       } else if (state == 3) {
         battery.style.backgroundPosition = `128px 0`
       }
-      document.getElementById('battery').style.backgroundPosition = `${status?.state == 1 ? 0, 128} ${}`
+
       // Battery level ranges from 0.0 (fully discharged) to 1.0 (100% charged). Before accessing this property, ensure that battery monitoring is enabled.
       // case unknown = 0, case unplugged = 1, case charging = 2, case full = 3
     }
