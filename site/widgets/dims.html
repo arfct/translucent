@@ -2,36 +2,105 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
   <title>Dimensions</title>
-  <style>
-    body {
-      background-color:#88888888;
-      color:var(--fore-color, white);
-      font-family:-apple-system;
-      text-align:center;
-      font-size:15vmin;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      min-height:100vh;
-    }
-    html {
-      background: linear-gradient(45deg, #f3ec7811, #af426188);
-    }
-  </style>
+  <style type="text/css">body {
+    font-family:monospace;
+    font-size:16px;
+    display:flex;
+    min-height:100vh;
+    background-color: #283A52;
+  }
+  
+  div {
+    display:flex;
+    flex-direction:column;
+    padding:0 0;
+    float:left;
+    width:auto;
+    box-sizing:border-box;
+    margin:auto;
+    cursor:pointer;
+  }
+  
+  .screen {
+    border-radius:2em;
+    background-color:#4E5E7E;
+    color:white;
+    margin:0 1em 1em 1em;
+  }
+  
+  .screen > .header {
+    margin-left:3em;
+  }
+  
+  .window > .header {
+    margin-left:2em;
+  }
+  
+  .view > .header {
+    margin-left:1em;
+  }
+  
+  .window {
+    background-color:#7684AA;
+    border-radius:1em;
+    margin:0 1em 1em 1em;
+  }
+  
+  .view {
+    background-color:#C4CFE8;
+    width:50vw; height:50vh;;
+    margin:0 1em 1em 1em;
+    color:#283A52;
+    border-radius:0.4em;
+  }
+  
+  .header {
+    margin: 0.5em 1em;
+    text-align:left;
+    display:block;
+    width:auto;
+    transition: opacity 0.5s;
+    opacity:.8;
+  }
+  
+  .header:hover {
+    opacity:1.0;
+  }</style>
 </head>
 <body>
-  <center>
-    Hello World
-    <script>
-      let updateSize = () => {
-        let size = `${document.documentElement.clientWidth} x ${document.documentElement.clientHeight}`
-        document.body.innerHTML = size
-      }
-      window.onresize = updateSize
-      updateSize()
-    </script>
+  <div class="bezel">
+    <div class="header"></div>
+    <div class="screen">
+      <div class="header">1512 × 982 Screen @1.7x </div>
+      <div class="window">
+        <div class="header">1512 × 944 Window</div>
+        <div class="view">
+          <div class="header">&nbsp;399 × 892 View (117%) </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="text/javascript">
+  parent.postMessage({themeColor:"#283A52"}, "*");
+  window.addEventListener('load', rewrite, false);
+  window.addEventListener('resize', rewrite, false);
+  window.addEventListener('orientationchange', rewrite, false);
+  
+  let wLength = screen.width.toString().length;
+  let hLength = screen.height.toString().length;
+  let zoom = (window.outerWidth/window.innerWidth);
+  let percent = (zoom * 100).toFixed(0);
+  
+  function rewrite() {
+    document.querySelector(".screen .header").innerText = `${window.screen.width} × ${window.screen.height} Screen @${(window.devicePixelRatio/zoom).toFixed(1)}x `
+    document.querySelector(".window .header").innerText = `${window.outerWidth.toString().padStart(wLength," ")} × ${window.outerHeight.toString().padStart(hLength," ")} Window`
+    document.querySelector(".view .header").innerText = `${window.innerWidth.toString().padStart(wLength," ")} × ${window.innerHeight.toString().padStart(hLength," ")} View ${percent != 100 ? `(${percent}%)` :""} ` 
+    
+  }
+  </script>
   </center>
 </body>
 </html>
