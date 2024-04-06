@@ -203,7 +203,9 @@ struct WidgetSettingsView: View {
                       .frame(maxWidth: labelWidth, alignment:.leading)
                     Spacer()
                     Picker("", selection:$widget.controls ?? ControlStyle.show.rawValue) {
+#if DEBUG
                       Text("Browser Toolbar").tag(ControlStyle.toolbar.rawValue)
+#endif
                       Text("Show Controls").tag(ControlStyle.show.rawValue)
                       Text("Autohide Controls").tag(ControlStyle.hide.rawValue)
                       Text("Hide and Suppress Click").tag(ControlStyle.suppress.rawValue)
