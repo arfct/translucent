@@ -10,6 +10,8 @@
 		2C23F3EA2BB8B1090076C071 /* CustomColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C23F3E92BB8B1090076C071 /* CustomColorPickerView.swift */; };
 		2C23F43C2BB8DD0E0076C071 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 2C23F43B2BB8DD0E0076C071 /* RealityKitContent */; };
 		2C23F43E2BB90F000076C071 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C23F43D2BB90F000076C071 /* SearchBar.swift */; };
+		2C23F4802BBA25160076C071 /* ImmersiveWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C23F47F2BBA25160076C071 /* ImmersiveWidgetView.swift */; };
+		2C51C6562BBDA44C00A187D1 /* Widget+GroupActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C51C6552BBDA44C00A187D1 /* Widget+GroupActivity.swift */; };
 		2C7072262BB1DD49000DF7BA /* AnimatedEllipsisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072002BB1DD49000DF7BA /* AnimatedEllipsisView.swift */; };
 		2C7072272BB1DD49000DF7BA /* AV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072012BB1DD49000DF7BA /* AV.swift */; };
 		2C7072282BB1DD49000DF7BA /* Binding+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072022BB1DD49000DF7BA /* Binding+Utils.swift */; };
@@ -43,6 +45,7 @@
 		2C78F9302BB7394000D53DB7 /* CodeEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 2C78F92F2BB7394000D53DB7 /* CodeEditor */; };
 		2C832E0A2B7C0C800032FB06 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C832E092B7C0C800032FB06 /* ShareViewController.swift */; };
 		2C832E0E2B7C0C800032FB06 /* share.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2C832E072B7C0C800032FB06 /* share.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		2CA0853A2BC1B16B0099B5A9 /* WindowControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA085392BC1B16B0099B5A9 /* WindowControls.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +75,8 @@
 /* Begin PBXFileReference section */
 		2C23F3E92BB8B1090076C071 /* CustomColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomColorPickerView.swift; sourceTree = "<group>"; };
 		2C23F43D2BB90F000076C071 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		2C23F47F2BBA25160076C071 /* ImmersiveWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveWidgetView.swift; sourceTree = "<group>"; };
+		2C51C6552BBDA44C00A187D1 /* Widget+GroupActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Widget+GroupActivity.swift"; sourceTree = "<group>"; };
 		2C7072002BB1DD49000DF7BA /* AnimatedEllipsisView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimatedEllipsisView.swift; sourceTree = "<group>"; };
 		2C7072012BB1DD49000DF7BA /* AV.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AV.swift; sourceTree = "<group>"; };
 		2C7072022BB1DD49000DF7BA /* Binding+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Binding+Utils.swift"; sourceTree = "<group>"; };
@@ -109,6 +114,7 @@
 		2C832E092B7C0C800032FB06 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		2C832E0B2B7C0C800032FB06 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2C9EE69F2B66844500D36BA6 /* translucent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = translucent.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2CA085392BC1B16B0099B5A9 /* WindowControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowControls.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +140,7 @@
 		2C70720D2BB1DD49000DF7BA /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				2CA085392BC1B16B0099B5A9 /* WindowControls.swift */,
 				2C7072002BB1DD49000DF7BA /* AnimatedEllipsisView.swift */,
 				2C23F3E92BB8B1090076C071 /* CustomColorPickerView.swift */,
 				2C7072012BB1DD49000DF7BA /* AV.swift */,
@@ -170,12 +177,14 @@
 				2C7072182BB1DD49000DF7BA /* WebView.swift */,
 				2C7072192BB1DD49000DF7BA /* WebViewCoordinator.swift */,
 				2C70721A2BB1DD49000DF7BA /* Widget.swift */,
+				2C51C6552BBDA44C00A187D1 /* Widget+GroupActivity.swift */,
 				2C70721C2BB1DD49000DF7BA /* Widget+WebContent.swift */,
 				2C70721D2BB1DD49000DF7BA /* Widget+WebOrnaments.swift */,
 				2C70721F2BB1DD49000DF7BA /* WidgetPickerItem.swift */,
 				2C7072202BB1DD49000DF7BA /* WidgetPickerView.swift */,
 				2C7072212BB1DD49000DF7BA /* WidgetSettingsView.swift */,
 				2C7072222BB1DD49000DF7BA /* WidgetView.swift */,
+				2C23F47F2BBA25160076C071 /* ImmersiveWidgetView.swift */,
 				2C7072232BB1DD49000DF7BA /* WidgetViewBrowserBar.swift */,
 				2C23F43D2BB90F000076C071 /* SearchBar.swift */,
 				2C7072172BB1DD49000DF7BA /* WebClip.js */,
@@ -347,7 +356,9 @@
 				2C70722C2BB1DD49000DF7BA /* Image+Utils.swift in Sources */,
 				2C70723D2BB1DD49000DF7BA /* WebViewCoordinator.swift in Sources */,
 				2C7072412BB1DD49000DF7BA /* WidgetApp.swift in Sources */,
+				2C23F4802BBA25160076C071 /* ImmersiveWidgetView.swift in Sources */,
 				2C7072442BB1DD49000DF7BA /* WidgetSettingsView.swift in Sources */,
+				2CA0853A2BC1B16B0099B5A9 /* WindowControls.swift in Sources */,
 				2C7072312BB1DD49000DF7BA /* View+WindowGeometryPreferences.swift in Sources */,
 				2C23F43E2BB90F000076C071 /* SearchBar.swift in Sources */,
 				2C7072272BB1DD49000DF7BA /* AV.swift in Sources */,
@@ -355,6 +366,7 @@
 				2C7072422BB1DD49000DF7BA /* WidgetPickerItem.swift in Sources */,
 				2C70723E2BB1DD49000DF7BA /* Widget.swift in Sources */,
 				2C70722B2BB1DD49000DF7BA /* DownloadPanel.swift in Sources */,
+				2C51C6562BBDA44C00A187D1 /* Widget+GroupActivity.swift in Sources */,
 				2C7072282BB1DD49000DF7BA /* Binding+Utils.swift in Sources */,
 				2C7072302BB1DD49000DF7BA /* Utils.swift in Sources */,
 				2C70722F2BB1DD49000DF7BA /* URL+Directories.swift in Sources */,
