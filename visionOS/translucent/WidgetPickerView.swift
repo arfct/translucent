@@ -317,24 +317,33 @@ struct WidgetPickerView: View {
             
             //
             if (draggedWidget == nil) {
-              SearchBar( text: $searchText,
-                         placeholder:.constant(draggedWidget == nil ? "add location" : "drag to remove"),
-                         onSearchButtonClicked: {
-                print("searchText", searchText, clean(url:searchText))
-                if let string = clean(url:searchText), let url = URL(string:string) {
-                  app?.showWindowForURL(url)
-                  searchText = ""
-                }
-              })
-              .onSubmit {
-                print("searchText", searchText, clean(url:searchText))
-                if let string = clean(url:searchText), let url = URL(string:string) {
-                  app?.showWindowForURL(url)
-                  searchText = ""
-                }
-              }
               
-              .padding(-24)
+//              SearchBar( text: $searchText,
+//                         placeholder:.constant(draggedWidget == nil ? "add location" : "drag to remove"),
+//                         onSearchButtonClicked: {
+//                print("searchText", searchText, clean(url:searchText))
+//                if let string = clean(url:searchText), let url = URL(string:string) {
+//                  app?.showWindowForURL(url)
+//                  searchText = ""
+//                }
+//              })
+//              .onSubmit {
+//                print("searchText", searchText, clean(url:searchText))
+//                if let string = clean(url:searchText), let url = URL(string:string) {
+//                  app?.showWindowForURL(url)
+//                  searchText = ""
+//                }
+//              }
+//              .padding(-24)
+              
+              TextField(draggedWidget == nil ? "add location" : "drag to remove", text: $searchText)
+                .onSubmit {
+                  print("searchText", searchText, clean(url:searchText))
+                  if let string = clean(url:searchText), let url = URL(string:string) {
+                    app?.showWindowForURL(url)
+                    searchText = ""
+                  }
+                }
               .keyboardType(.URL)
               .autocapitalization(.none)
               .autocorrectionDisabled()
