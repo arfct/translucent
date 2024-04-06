@@ -1,4 +1,5 @@
 import Foundation
+import GroupActivities
 import SwiftUI
 import SwiftData
 
@@ -22,7 +23,7 @@ enum IconStyle:String {
   case fetch, download, thumbnail // , http…, [symbol]
 }
 
-@Model final class Widget: Transferable, ObservableObject {
+@Model final class Widget: Transferable, Codable, ObservableObject {
   
   static var modelContext: ModelContext?
   // MARK: Core Properties
@@ -138,11 +139,31 @@ enum IconStyle:String {
   
   static var transferRepresentation: some TransferRepresentation {
     ProxyRepresentation(exporting: \.safeShareURL)
+    GroupActivityTransferRepresentation { widget in
+        WidgetActivity(widget: widget)
+    }
   }
   
   
   
+
+  private enum CodingKeys : String, CodingKey {
+      case name
+  }
+  
+  func encode(to encoder: Encoder) throws {
+      var container = encoder.container(keyedBy: CodingKeys.self)
+      try container.encode(name, forKey: .name)
+  }
+  
   // MARK: init()
+  required init(from decoder: Decoder) throws {
+    
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.name = try container.decodeIfPresent(String.self, forKey: .name) ?? "Untitled"
+  }
+  
+  
   convenience init(url: URL, name: String? = nil, overrides: WebViewSetup? = nil) {
     console.log("🌐 Creating from URL: \(url.absoluteString)")
     var location = url.absoluteString
@@ -566,7 +587,6 @@ extension Widget {
   
   func fetchIcon() {
     if let url = iconURL {
-
       DispatchQueue.global().async {
         if let path = self.thumbnailFile, let data = try? Data(contentsOf: url) {
           DispatchQueue.main.async {
@@ -596,4 +616,5 @@ extension Widget {
       return userAgent;
     }
   }
+  
 }

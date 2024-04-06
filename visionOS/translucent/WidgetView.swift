@@ -4,7 +4,8 @@ import RealityKit
 import Combine
 import QuickLook
 import WebKit
-
+import GroupActivities
+import LinkPresentation
 
 // MARK: Coordinator
 class BrowserState  {
@@ -98,10 +99,162 @@ struct WidgetView: View {
                           attachment:$downloadAttachment,
                           browserState:$browserState)
     
+    
     let isTransient = widget.modelContext == nil;
     let tilt = showPopover ? 0 : (widget.tilt ?? 0)
     
     GeometryReader { geometry in
+      let menuView = Menu {
+          ControlGroup() {
+            Group {
+              Button  {
+                browserState.webView?.goBack()
+              } label: {
+                Label("Back",systemImage:"arrow.left")
+              }.disabled(!browserState.canGoBack)
+              
+              if browserState.canGoForward {
+                
+                Button {
+                  browserState.webView?.goForward()
+                } label: {
+                  Label("Forward",systemImage:"arrow.right")
+                }
+              }
+              
+              
+              Button {
+                browserState.webView?.reload()
+              } label: {
+                Label("Reload",systemImage:"arrow.clockwise")
+              }
+              
+              
+              Menu {
+                
+                Label("View Options",systemImage:"")
+                
+                Toggle(isOn: Binding<Bool>(
+                  get: { widget.autohideControls },
+                  set: { val in widget.controls = val ? ControlStyle.hide.rawValue : nil}))
+                {
+                  Label("Autohide Controls", systemImage:"eye.slash")
+                }
+                Toggle(isOn: Binding<Bool>(
+                  get: { widget.effect == "dim" },
+                  set: { val in widget.effect = val ? "dim" : nil})) {
+                    Label("Dim Environment", systemImage:"circle.lefthalf.filled.righthalf.striped.horizontal")
+                  }
+                
+                
+                Menu {
+                  Button { showPopover.toggle()
+                    resizeTo(CGSize(width: geometry.size.height,
+                                    height: geometry.size.width))
+                  } label: {
+                    Label("Rotate", systemImage:
+                            geometry.size.height > geometry.size.width
+                          ? "rectangle.landscape.rotate"
+                          : "rectangle.portrait.rotate")
+                  }
+                  //                    Button { showPopover.toggle()
+                  //                      resizeTo(CGSize(width: geometry.size.width,
+                  //                                      height: geometry.size.width))
+                  //                    } label: {
+                  //                      Label("Square",systemImage:"square")
+                  //                    }
+                  Button { showPopover.toggle()
+                    resizeTo(CGSize(width: geometry.size.width,
+                                    height: geometry.size.width / 4 * 3))
+                  } label: {
+                    Label("Standard (4:3)",systemImage:"rectangle.ratio.4.to.3")
+                  }
+                  Button { showPopover.toggle()
+                    resizeTo(CGSize(width: geometry.size.width,
+                                    height: geometry.size.width / 16 * 9))
+                  } label: {
+                    Label("Widescreen (16:9)",systemImage:"rectangle.ratio.16.to.9")
+                  }
+                  Button { showPopover.toggle()
+                    resizeTo(CGSize(width: geometry.size.width,
+                                    height: geometry.size.width / 64 * 27))
+                  } label: {
+                    Label("Cinematic (21:9)",systemImage:"pano")
+                  }
+                } label: {
+                  
+                  Label("Resize Window",systemImage:"aspectratio")
+                }
+#if DEBUG
+                Divider()
+                Menu {
+                  
+                  Label("Experimental Options",systemImage:"")
+                  Button { showPopover.toggle()
+                    showTilt.toggle()
+                    if showTilt { widget.tilt = nil }
+                  } label: {
+                    Label("Adjust Tilt",systemImage:"rotate.3d")
+                  }
+                } label: {
+                  
+                  Label("Experimental",systemImage:"testtube.2")
+                }
+#endif
+                
+              } label: {
+                Label("Settings",systemImage:"slider.horizontal.3")
+              }
+              //              .buttonStyle(.accessoryBar)
+              
+              
+            }
+            .labelStyle(.iconOnly)
+            .buttonStyle(.borderless)
+            .buttonBorderShape(.circle)
+            
+            
+            
+          }.padding(.horizontal, 10)
+            .padding(.bottom, 4)
+          Divider()
+          Group {
+            
+            Button { showPopover.toggle()
+              openWindow(id: WindowTypeID.main, value: "settings:\(widget.wid)")
+            } label: {
+              HStack {
+                Text("Customize site…")
+                  .frame(maxWidth: .infinity, alignment: .leading)
+                Image(systemName: "square.and.pencil")
+              }.padding(.vertical, 16)
+            }
+            Button {showPopover.toggle()
+              openWindow(id:WindowTypeID.main, value:WindowID.main)
+            } label: {
+              HStack {
+                Text("Show Favorites")
+                  .frame(maxWidth: .infinity, alignment: .leading)
+                Image(systemName: "square.grid.3x3.fill")
+              }.padding(.vertical, 16)
+            }
+          }
+          .frame(maxWidth:.infinity)
+          .buttonStyle(.borderless)
+          .buttonBorderShape(.roundedRectangle)
+        
+      } label: {
+        AnimatedEllipsisView(loading: $isLoading)
+      }
+      .buttonBorderShape(.capsule)
+      .buttonStyle(.bordered)
+      .tint(showPopover ? .white : .clear)
+      .labelStyle(.iconOnly)
+      .transition(.move(edge: .top))
+      .padding(.bottom, 4)
+      .onTapGesture {
+        cancelHide()
+      }
       
       // MARK: Tab View
       ZStack(alignment: .center) {
@@ -147,7 +300,7 @@ struct WidgetView: View {
               downloads.append(download)
               downloadAttachment = download;
             }
-
+          
             .blendMode(widget.blendMode)
             .allowsHitTesting(showSystemOverlay || !widget.suppressFirstClick )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -155,9 +308,9 @@ struct WidgetView: View {
             .background(widget.backColor)
             .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: widget.radius),
                                    displayMode: (widget.showGlassBackground ) ? .always : .never)
-            
           
-
+          
+          
             .cornerRadius(widget.radius)
             .opacity(!finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
             .disabled(flipped)
@@ -262,157 +415,13 @@ struct WidgetView: View {
         }
         
       })
- 
+      
       .popover(isPresented: $showPopover,
                attachmentAnchor:.point(.top),
                arrowEdge:.top,
                content: {
-        
-        VStack() {
-          HStack() {
-            Group {
-              Menu {
-              } label: {
-                Label("Back",systemImage:"arrow.left")
-              }primaryAction: {
-                browserState.webView?.goBack()
-              }.disabled(!browserState.canGoBack)
-              
-              .keyboardShortcut(KeyEquivalent.rightArrow)
-              
-              if browserState.canGoForward {
-                Spacer()
-                Menu {
-                } label: {
-                  Label("Forward",systemImage:"arrow.right")
-                }primaryAction: {
-                  browserState.webView?.goForward()
-                }
-              }
-              Spacer()
-
-              Button {
-                browserState.webView?.reload()
-              } label: {
-                Label("Reload",systemImage:"arrow.clockwise")
-              }
-              .keyboardShortcut("r")
-              
-              Spacer()
-
-              Menu {
-                Label("View Options",systemImage:"")
-
-                Toggle(isOn: Binding<Bool>(
-                  get: { widget.autohideControls },
-                  set: { val in widget.controls = val ? ControlStyle.hide.rawValue : nil}))
-                 {
-                  Label("Autohide Controls", systemImage:"eye.slash")
-                }
-                Toggle(isOn: Binding<Bool>(
-                  get: { widget.effect == "dim" },
-                  set: { val in widget.effect = val ? "dim" : nil})) {
-                    Label("Dim Environment", systemImage:"circle.lefthalf.filled.righthalf.striped.horizontal")
-                  }
-                
-                
-                Menu {
-                  Button { showPopover.toggle()
-                    resizeTo(CGSize(width: geometry.size.height,
-                                    height: geometry.size.width))
-                  } label: {
-                    Label("Rotate", systemImage:
-                            geometry.size.height > geometry.size.width
-                          ? "rectangle.landscape.rotate"
-                          : "rectangle.portrait.rotate")
-                  }
-                  //                    Button { showPopover.toggle()
-                  //                      resizeTo(CGSize(width: geometry.size.width,
-                  //                                      height: geometry.size.width))
-                  //                    } label: {
-                  //                      Label("Square",systemImage:"square")
-                  //                    }
-                  Button { showPopover.toggle()
-                    resizeTo(CGSize(width: geometry.size.width,
-                                    height: geometry.size.width / 4 * 3))
-                  } label: {
-                    Label("Standard (4:3)",systemImage:"rectangle.ratio.4.to.3")
-                  }
-                  Button { showPopover.toggle()
-                    resizeTo(CGSize(width: geometry.size.width,
-                                    height: geometry.size.width / 16 * 9))
-                  } label: {
-                    Label("Widescreen (16:9)",systemImage:"rectangle.ratio.16.to.9")
-                  }
-                  Button { showPopover.toggle()
-                    resizeTo(CGSize(width: geometry.size.width,
-                                    height: geometry.size.width / 64 * 27))
-                  } label: {
-                    Label("Cinematic (21:9)",systemImage:"pano")
-                  }
-                } label: {
-                  
-                    Label("Resize Window",systemImage:"aspectratio")
-                }
-#if DEBUG
-                Divider()
-                Menu {
-                  
-                  Label("Experimental Options",systemImage:"")
-                  Button { showPopover.toggle()
-                    showTilt.toggle()
-                    if showTilt { widget.tilt = nil }
-                  } label: {
-                    Label("Adjust Tilt",systemImage:"rotate.3d")
-                  }
-                } label: {
-                  
-                  Label("Experimental",systemImage:"testtube.2")
-                }
-#endif
-
-              } label: {
-                Label("Settings",systemImage:"slider.horizontal.3")
-              }
-              
-  
-            }
-            .labelStyle(.iconOnly)
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.circle)
-            
-            
-            
-          }.padding(.horizontal, 10)
-            .padding(.bottom, 4)
-          Divider()
-          Group {
-            
-            Button { showPopover.toggle()
-              openWindow(id: WindowTypeID.main, value: "settings:\(widget.wid)")
-            } label: {
-              HStack {
-                Text("Customize site…")
-                  .frame(maxWidth: .infinity, alignment: .leading)
-                Image(systemName: "square.and.pencil")
-              }.padding(.vertical, 16)
-            }
-            Button {showPopover.toggle()
-              openWindow(id:WindowTypeID.main, value:WindowID.main)
-            } label: {
-              HStack {
-                Text("Show Favorites")
-                  .frame(maxWidth: .infinity, alignment: .leading)
-                Image(systemName: "square.grid.3x3.fill")
-              }.padding(.vertical, 16)
-            }
-          }
-          .frame(maxWidth:.infinity)
-          .buttonStyle(.borderless)
-          .buttonBorderShape(.roundedRectangle)
-        }.frame(minWidth:260).padding()
       })
-
+      
       // MARK: Window Menu
       .ornament(attachmentAnchor: .scene(.top), contentAlignment:.bottom) {
         if (widget.showBrowserBar) {
@@ -420,38 +429,12 @@ struct WidgetView: View {
             .frame(maxWidth:geometry.size.width - 10)
           
         } else {
-          Button {
-            withAnimation {
-              showPopover = true;
-            }
-          } label: {
-            AnimatedEllipsisView(loading: $isLoading, color: Binding<Color>(
-              get: { showPopover ? Color.black : Color.white.opacity(0.5) },
-              set: {val in }))
-          }
-          .buttonBorderShape(.capsule)
-          .buttonStyle(.bordered)
-          .tint(showPopover ? .white : .clear)
-          .labelStyle(.iconOnly)
-          .transition(.move(edge: .top))
-          .hoverEffect()
-          .offset(y: showInfo || isLoading || showPopover ? 0 : 40)
-          .padding(.bottom, 4)
-          .opacity((isLoading || showInfo || showPopover) && !flipped && !wasBackgrounded ? 1.0 : 0.0)
-          .rotation3DEffect(.degrees(showInfo || isLoading || showPopover ? 0.0 : 45), axis: (1, 0, 0),
-                            anchor: UnitPoint3D(x: 0.5, y: 1.0, z: 0))
-          .animation(.spring(), value: flipped)
-          .animation(.spring(), value: showInfo)
-          .animation(.spring(), value: isLoading)
-          .animation(.spring(), value: showPopover)
-          .simultaneousGesture(LongPressGesture().onEnded { _ in
-        
-          })
+          menuView
         }
       }
       // MARK: Content view modifiers
       .preferredSurroundingsEffect(widget.effect == "dim" ? .systemDark : nil)
-
+      
       .rotation3DEffect(.degrees(flipped ? -180.0 : 0.0), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
       .onChange(of: geometry.size) {
         widget.width = geometry.size.width
@@ -495,7 +478,7 @@ struct WidgetView: View {
     .onAppear(){
       let windowScenes = UIApplication.shared.connectedScenes
       resizeTo(CGSizeMake(widget.width, widget.height))
-
+      
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
         loadedWindow = true;
       }
@@ -503,7 +486,7 @@ struct WidgetView: View {
       widget.lastOpened = .now
       if (widget.shouldCacheIcon) { widget.fetchIcon() }
     }
-
+    
     .onChange(of: scenePhase) {
       if (scenePhase == .active) {
         if (wasBackgrounded) {
@@ -543,6 +526,60 @@ struct WidgetView: View {
       })
     }
   }
+  
+  //
+  //  // SHAREPLAY CODE
+  //  private func startSharePlaySession() async {
+  //
+  //
+  //    for await session in WidgetView.sessions() {
+  //      guard let systemCoordinator = await session.systemCoordinator else { continue }
+  //
+  //      let isLocalParticipantSpatial = systemCoordinator.localParticipantState.isSpatial
+  //
+  //      Task.detached {
+  //        for await localParticipantState in systemCoordinator.localParticipantStates {
+  //          if localParticipantState.isSpatial {
+  //            // Start syncing scroll position
+  //          } else {
+  //            // Stop syncing scroll position
+  //          }
+  //        }
+  //      }
+  //
+  //      var configuration = SystemCoordinator.Configuration()
+  //      configuration.spatialTemplatePreference = .sideBySide
+  //      systemCoordinator.configuration = configuration
+  //
+  //      session.join()
+  //    }
+  //
+  //    let location = "https://example.com"
+  //
+  //    if let widget = Widget.findOrCreate(location: location) {
+  //      // Create the activity
+  //      let activity = WidgetView(widget: widget)
+  //
+  //      // Register the activity on the item provider
+  //      let itemProvider = NSItemProvider()
+  //      itemProvider.registerGroupActivity(activity)
+  //
+  //      // Create the activity items configuration
+  //      let configuration = await UIActivityItemsConfiguration(itemProviders: [itemProvider])
+  //
+  //      // Provide the metadata for the group activity
+  //      configuration.metadataProvider = { key in
+  //        guard key == .linkPresentationMetadata else { return nil }
+  //        let metadata = LPLinkMetadata()
+  //        metadata.title = "Explore Together"
+  //        metadata.imageProvider = NSItemProvider(object: UIImage(named: "explore-activity")!)
+  //        return metadata
+  //      }
+  //      self.activityItemsConfiguration = configuration
+  //    }
+  //  }
+  
+  
 }
 
 #Preview(windowStyle: .plain) {
