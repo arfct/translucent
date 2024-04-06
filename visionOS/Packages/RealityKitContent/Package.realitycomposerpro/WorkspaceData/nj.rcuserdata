@@ -1,5 +1,5 @@
 {
-  "advancedEditorSelectedIdentifier" : "ShaderGraphEditorPluginID",
+  "advancedEditorSelectedIdentifier" : "ProjectBrowser",
   "openSceneRelativePaths" : [
     "Materials\/Stereo.usda"
   ],
@@ -30,6 +30,31 @@
           1
         ]
       }
+    ],
+    "C6FC9011-917C-484D-84FB-47EFC17377EE" : [
+      {
+        "date" : 734119135.510651,
+        "title" : "Untitled",
+        "transform" : [
+          1,
+          0,
+          -0,
+          0,
+          -0,
+          0.8660249,
+          -0.5000008,
+          0,
+          0,
+          0.5000008,
+          0.8660249,
+          0,
+          0,
+          3.2412539,
+          3.4966779,
+          1
+        ]
+      }
     ]
-  }
+  },
+  "selectedSceneRelativePath" : "Materials\/Stereo.usda"
 }
