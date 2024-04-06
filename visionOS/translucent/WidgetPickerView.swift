@@ -318,23 +318,23 @@ struct WidgetPickerView: View {
             //
             if (draggedWidget == nil) {
               
-//              SearchBar( text: $searchText,
-//                         placeholder:.constant(draggedWidget == nil ? "add location" : "drag to remove"),
-//                         onSearchButtonClicked: {
-//                print("searchText", searchText, clean(url:searchText))
-//                if let string = clean(url:searchText), let url = URL(string:string) {
-//                  app?.showWindowForURL(url)
-//                  searchText = ""
-//                }
-//              })
-//              .onSubmit {
-//                print("searchText", searchText, clean(url:searchText))
-//                if let string = clean(url:searchText), let url = URL(string:string) {
-//                  app?.showWindowForURL(url)
-//                  searchText = ""
-//                }
-//              }
-//              .padding(-24)
+              //              SearchBar( text: $searchText,
+              //                         placeholder:.constant(draggedWidget == nil ? "add location" : "drag to remove"),
+              //                         onSearchButtonClicked: {
+              //                print("searchText", searchText, clean(url:searchText))
+              //                if let string = clean(url:searchText), let url = URL(string:string) {
+              //                  app?.showWindowForURL(url)
+              //                  searchText = ""
+              //                }
+              //              })
+              //              .onSubmit {
+              //                print("searchText", searchText, clean(url:searchText))
+              //                if let string = clean(url:searchText), let url = URL(string:string) {
+              //                  app?.showWindowForURL(url)
+              //                  searchText = ""
+              //                }
+              //              }
+              //              .padding(-24)
               
               TextField(draggedWidget == nil ? "add location" : "drag to remove", text: $searchText)
                 .onSubmit {
@@ -344,29 +344,29 @@ struct WidgetPickerView: View {
                     searchText = ""
                   }
                 }
-              .keyboardType(.URL)
-              .autocapitalization(.none)
-              .autocorrectionDisabled()
-              .textFieldStyle(.roundedBorder)
-              .padding(.horizontal, -4)
+                .keyboardType(.URL)
+                .autocapitalization(.none)
+                .autocorrectionDisabled()
+                .textFieldStyle(.roundedBorder)
+                .padding(.horizontal, -4)
               //                .multilineTextAlignment(.center)
-              .overlay(alignment:.trailing) {
-                if (UIPasteboard.general.hasURLs) {
-                  PasteButton(payloadType: URL.self) { urls in
-                    if let url = urls.first {
-                      DispatchQueue.main.async {
-                        app?.showWindowForURL(url)
+                .overlay(alignment:.trailing) {
+                  if (UIPasteboard.general.hasURLs) {
+                    PasteButton(payloadType: URL.self) { urls in
+                      if let url = urls.first {
+                        DispatchQueue.main.async {
+                          app?.showWindowForURL(url)
+                        }
                       }
                     }
+                    .buttonBorderShape(.roundedRectangle(radius: 8))
+                    .buttonStyle(.borderless)
+                    .labelStyle(.titleOnly)
+                    .tint(.black)
+                    .opacity(0.667)
+                    .padding(.trailing, 2)
                   }
-                  .buttonBorderShape(.roundedRectangle(radius: 8))
-                  .buttonStyle(.borderless)
-                  .labelStyle(.titleOnly)
-                  .tint(.black)
-                  .opacity(0.667)
-                  .padding(.trailing, 2)
                 }
-              }
             } else {
               Text("Drag to remove")
                 .frame(maxWidth:.infinity)
