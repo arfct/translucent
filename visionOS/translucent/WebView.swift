@@ -73,6 +73,7 @@ struct WebView: UIViewRepresentable {
       let config = webView.configuration
       
       config.preferences.isElementFullscreenEnabled = true
+      config.preferences.javaScriptCanOpenWindowsAutomatically = true
       config.userContentController.addScriptMessageHandler(context.coordinator, contentWorld: .page, name: "widget")
       
       config.userContentController.addUserScript(WKUserScript(
