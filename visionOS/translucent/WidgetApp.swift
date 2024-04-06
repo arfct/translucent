@@ -144,8 +144,13 @@ struct WidgetApp: App {
       .handlesExternalEvents(matching: [Activity.openWidget])
       .modelContainer(container)
       .windowStyle(.plain)
-      
       .defaultSize(width: 600, height: 800)
+
+    ImmersiveSpace(id: "ImmersiveSpace") {
+      ImmersiveWidgetView()
+    }
     
   }
+  
+
 }

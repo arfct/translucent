@@ -13,6 +13,9 @@ struct WidgetPickerView: View {
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.dismiss) private var dismiss
   
+  @Environment(\.openImmersiveSpace) var openImmersiveSpace
+  @Environment(\.dismissImmersiveSpace) var dismissImmersiveSpace
+  
   @Query(sort: [SortDescriptor(\Widget.lastOpened, order: .reverse)], animation: .default)
   var widgets: [Widget]
   
@@ -30,6 +33,9 @@ struct WidgetPickerView: View {
   
   @State var endDrag: DispatchWorkItem?
   
+  @State private var showImmersiveSpace = false
+  @State private var immersiveSpaceIsShown = false
+  
   var app: WidgetApp?
   
   init(app: WidgetApp? = nil) {
@@ -38,7 +44,7 @@ struct WidgetPickerView: View {
   }
   
   let columns = [GridItem(.adaptive(minimum: 160, maximum: 160),
-                          spacing:40,
+                          spacing: 40,
                           alignment: .center)]
   
   let colors = [
@@ -305,81 +311,92 @@ struct WidgetPickerView: View {
                     "Add More" : "Remove",
                     systemImage: draggedWidget == nil ? "plus" : "trash")
             } .labelStyle(.iconOnly)
-//              .buttonBorderShape(.roundedRectangle(radius: 30))
+            //              .buttonBorderShape(.roundedRectangle(radius: 30))
               .buttonBorderShape(.circle)
               .buttonStyle(.borderless)
             
-            
+            //
             if (draggedWidget == nil) {
-              TextField(draggedWidget == nil ? "add location" : "drag to remove", text: $searchText)
-                .onSubmit {
-                  print("searchText", searchText, clean(url:searchText))
-                  if let string = clean(url:searchText), let url = URL(string:string) {
-                    app?.showWindowForURL(url)
-                    searchText = ""
-                  }
+              SearchBar( text: $searchText,
+                         placeholder:.constant(draggedWidget == nil ? "add location" : "drag to remove"),
+                         onSearchButtonClicked: {
+                print("searchText", searchText, clean(url:searchText))
+                if let string = clean(url:searchText), let url = URL(string:string) {
+                  app?.showWindowForURL(url)
+                  searchText = ""
                 }
+              })
+              .onSubmit {
+                print("searchText", searchText, clean(url:searchText))
+                if let string = clean(url:searchText), let url = URL(string:string) {
+                  app?.showWindowForURL(url)
+                  searchText = ""
+                }
+              }
               
-                .keyboardType(.URL)
-                .autocapitalization(.none)
-                .autocorrectionDisabled()
-                .textFieldStyle(.roundedBorder)
-                .padding(.horizontal, -4)
+              .padding(-24)
+              .keyboardType(.URL)
+              .autocapitalization(.none)
+              .autocorrectionDisabled()
+              .textFieldStyle(.roundedBorder)
+              .padding(.horizontal, -4)
               //                .multilineTextAlignment(.center)
-                .overlay(alignment:.trailing) {
-                  if (UIPasteboard.general.hasURLs) {
-                    PasteButton(payloadType: URL.self) { urls in
-                      if let url = urls.first {
-                        DispatchQueue.main.async {
-                          app?.showWindowForURL(url)
-                        }
+              .overlay(alignment:.trailing) {
+                if (UIPasteboard.general.hasURLs) {
+                  PasteButton(payloadType: URL.self) { urls in
+                    if let url = urls.first {
+                      DispatchQueue.main.async {
+                        app?.showWindowForURL(url)
                       }
                     }
-                    .buttonBorderShape(.roundedRectangle(radius: 8))
-                    .buttonStyle(.borderless)
-                    .labelStyle(.titleOnly)
-                    .tint(.black)
-                    .opacity(0.667)
-                    .padding(.trailing, 2)
                   }
+                  .buttonBorderShape(.roundedRectangle(radius: 8))
+                  .buttonStyle(.borderless)
+                  .labelStyle(.titleOnly)
+                  .tint(.black)
+                  .opacity(0.667)
+                  .padding(.trailing, 2)
                 }
+              }
             } else {
               Text("Drag to remove")
                 .frame(maxWidth:.infinity)
             }
-
- 
+            
+            
             Menu {
-
+              
               Button {
                 UIApplication.shared.open(URL(string:"https://translucent.directory/help")!)
               } label: {
                 Label("Help", systemImage: "questionmark.circle")
               }
-
-//              Button {
-//                UIApplication.shared.open(URL(string:"https://translucent.directory/discord")!)
-//              } label: {
-//                Label("Discord", systemImage: "bubble")
-//              }
+              
+              //              Button {
+              //                UIApplication.shared.open(URL(string:"https://translucent.directory/discord")!)
+              //              } label: {
+              //                Label("Discord", systemImage: "bubble")
+              //              }
+              
               
               Divider()
               ShareLink(item: URL(string:"https://translucent.vision")!) {
-                  Label("Share Translucent", systemImage:  "square.and.arrow.up")
+                Label("Share Translucent", systemImage:  "square.and.arrow.up")
               }
               
-        
-
               
-
+              
+#if DEBUG
+              
+              Toggle("Show Immersive Space", isOn: $showImmersiveSpace).labelsHidden()
+#endif
               
             } label: {
               Label("Menu", systemImage:"ellipsis")
                 .labelStyle(.iconOnly)
-
+              
             }                .buttonStyle(.borderless)
               .buttonBorderShape(.circle)
-//          primaryAction: {}
           }
           
           .dropDestination(for: String.self) { items, location in
@@ -390,7 +407,7 @@ struct WidgetPickerView: View {
           .cornerRadius(100)
           .frame(width:300)
           .padding(8)
-
+          
           .background(draggedWidget != nil ? .red.opacity(0.1) : .black.opacity(0.0))
           .glassBackgroundEffect()
           .padding(.bottom, 12)
@@ -454,6 +471,24 @@ struct WidgetPickerView: View {
       }
       
       
+    }
+    .onChange(of: showImmersiveSpace) { _, newValue in
+      Task {
+        if newValue {
+          switch await openImmersiveSpace(id: "ImmersiveSpace") {
+          case .opened:
+            immersiveSpaceIsShown = true
+          case .error, .userCancelled:
+            fallthrough
+          @unknown default:
+            immersiveSpaceIsShown = false
+            showImmersiveSpace = false
+          }
+        } else if immersiveSpaceIsShown {
+          await dismissImmersiveSpace()
+          immersiveSpaceIsShown = false
+        }
+      }
     }
     
   }
