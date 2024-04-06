@@ -37,10 +37,14 @@
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSHandsTrackingUsageDescription</key>
+	<string>Allows anchoring widgets to your hands</string>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>vision.widget.open</string>
 	</array>
+	<key>NSWorldSensingUsageDescription</key>
+	<string>Allows anchoring widgets to the world</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationPreferredDefaultSceneSessionRole</key>
