@@ -2,11 +2,10 @@ import SwiftUI
 
 
 private struct DotView: View {
-  @Binding var color: Color
   @Binding var scale: CGFloat
   
   var body: some View {
-    Circle().fill(color)
+    Circle()
       .offset(y:scale * 5)
       .frame(width: 10, height: 10, alignment: .center)
   }
@@ -14,7 +13,6 @@ private struct DotView: View {
 
 struct AnimatedEllipsisView: View {
   @Binding var loading: Bool
-  @Binding var color: Color
   
   @State var animate = false
   
@@ -30,9 +28,9 @@ struct AnimatedEllipsisView: View {
   
   var body: some View {
     HStack {
-      DotView(color: .constant(color), scale: .constant(scales[0]))
-      DotView(color: .constant(color), scale: .constant(scales[1]))
-      DotView(color: .constant(color), scale: .constant(scales[2]))
+      DotView(scale: .constant(scales[0]))
+      DotView(scale: .constant(scales[1]))
+      DotView(scale: .constant(scales[2]))
     }
     .onAppear {
       animateDots(true)
@@ -75,5 +73,5 @@ struct AnimatedEllipsisView: View {
 }
 
 #Preview(windowStyle: .plain) {
-  AnimatedEllipsisView(loading: .constant(true), color: .constant(.white))
+  AnimatedEllipsisView(loading: .constant(true))
 }
