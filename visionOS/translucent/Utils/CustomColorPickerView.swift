@@ -24,6 +24,7 @@ struct CustomColorPickerView: View {
             }
       
             .overlay(ColorPicker("", selection:  $colorValue).labelsHidden().opacity(0.015))
+            .padding(.leading, -6)
       
     }
 }

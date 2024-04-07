@@ -28,8 +28,6 @@ struct WidgetApp: App {
   @Environment(\.openWindow) var openWindow
   @Environment(\.dismissWindow) var dismissWindow
   
-  // MARK: - ModelContainer
-  //  private var container: ModelContainer
   static var modelContext: ModelContext?
   
   var container: ModelContainer = {
@@ -50,6 +48,7 @@ struct WidgetApp: App {
     }
   }()
   
+  // MARK: init()
   init() {
     do {
       let fm = FileManager.default
@@ -107,17 +106,17 @@ struct WidgetApp: App {
           }
         }
         
-        // Settings window
+        // MARK: Settings window
         else if windowID.starts(with:"settings:"), let widget = Widget.find(id:windowID.replacingOccurrences(of: "settings:", with: ""))  {
           WidgetSettingsView(widget:widget)
         }
         
-        // Widget window
+        // MARK: Widget window
         else if let widget = Widget.find(id:windowID) {
           WidgetView(widget:widget, app:self)
         }
         
-        // WebView window
+        // MARK: WebView window
         else if let url = URL(string:windowID) {
           let widget = Widget(url:url, overrides: WebView.newWebViewOverride)
           WidgetView(widget:widget, app:self)
@@ -137,7 +136,6 @@ struct WidgetApp: App {
         return true
       }
       
-      
     } defaultValue: {  WindowID.main }
       .windowStyle(.plain)
       .windowResizability(.contentSize)
@@ -146,11 +144,9 @@ struct WidgetApp: App {
       .windowStyle(.plain)
       .defaultSize(width: 600, height: 800)
 
+    // MARK: Immersive space
     ImmersiveSpace(id: "ImmersiveSpace") {
       ImmersiveWidgetView()
     }
-    
   }
-  
-
 }

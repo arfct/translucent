@@ -48,61 +48,63 @@ struct WidgetSettingsView: View {
             
             NavigationLink {
               Form {
-                
-                // MARK: Name
-                HStack(spacing:spacing) {
-                  Text("Title")
-                    .labelStyle(.titleOnly)
-                    .frame(maxWidth: labelWidth, alignment: .leading)
+                Section {
+                  // MARK: Name
+                  HStack(spacing:spacing) {
+                    Text("Title")
+                      .labelStyle(.titleOnly)
+                      .frame(maxWidth: labelWidth, alignment: .leading)
+                    
+                    TextField(widget.title ?? "", text: $widget.name)
+                      .autocapitalization(.none)
+                      .disableAutocorrection(true)
+                      .keyboardType(.URL)
+                  }
                   
-                  TextField(widget.title ?? "", text: $widget.name)
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .keyboardType(.URL)
-                }
-                
-                HStack(alignment: .center, spacing:spacing) {
-                  Text("ID")
-                    .labelStyle(.titleOnly)
-                    .frame(maxWidth: labelWidth, alignment: .leading)
-                  
-                  TextField("url or directory id", text:Binding<String>(
-                    get: { self.widget.manifest ?? "" },
-                    set: { self.widget.manifest = $0 }))
-                  .autocapitalization(.none)
-                  .disableAutocorrection(true)
-                  .keyboardType(.asciiCapable)
-                  
-                  Button {
-                    widget.updateFromManifest()
-                  } label: {
-                    Label("Reset configuration", systemImage: "arrow.triangle.2.circlepath").labelStyle(.iconOnly)
-                  }.opacity((widget.manifest?.count ?? 0) > 0 ? 1.0 : 0.0)
-                }
-                // MARK: Icon
-                HStack(spacing:spacing) {
-                  Text("Icon")
-                    .labelStyle(.titleOnly)
-                    .frame(maxWidth: labelWidth, alignment: .leading)
-                  TextField("icon name", text:$widget.icon ?? "globe")
-                  
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .frame(maxWidth: .infinity)
-                }
-                
-                
-                
-                HStack(alignment: .top, spacing:spacing) {
-                  Text("Config")
-                    .frame(maxWidth: labelWidth, alignment: .leading)
-                  TextField("json ui configuration", text:$widget.configJSON ?? "", axis: .vertical)
+                  HStack(alignment: .center, spacing:spacing) {
+                    Text("ID")
+                      .labelStyle(.titleOnly)
+                      .frame(maxWidth: labelWidth, alignment: .leading)
+                    
+                    TextField("url or directory id", text:Binding<String>(
+                      get: { self.widget.manifest ?? "" },
+                      set: { self.widget.manifest = $0 }))
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
                     .keyboardType(.asciiCapable)
-                    .frame(maxWidth: .infinity)
-                }
-
+                    
+                    Button {
+                      widget.updateFromManifest()
+                    } label: {
+                      Label("Reset configuration", systemImage: "arrow.triangle.2.circlepath").labelStyle(.iconOnly)
+                    }.opacity((widget.manifest?.count ?? 0) > 0 ? 1.0 : 0.0)
+                  }
+                  .navigationTitle("Info")
+                  
+                  // MARK: Icon
+                  HStack(spacing:spacing) {
+                    Text("Icon")
+                      .labelStyle(.titleOnly)
+                      .frame(maxWidth: labelWidth, alignment: .leading)
+                    TextField("icon name", text:$widget.icon ?? "globe")
+                    
+                      .autocapitalization(.none)
+                      .disableAutocorrection(true)
+                      .frame(maxWidth: .infinity)
+                  }
+                  
+                  
+                  
+                  HStack(alignment: .top, spacing:spacing) {
+                    Text("Config")
+                      .frame(maxWidth: labelWidth, alignment: .leading)
+                    TextField("json ui configuration", text:$widget.configJSON ?? "", axis: .vertical)
+                      .autocapitalization(.none)
+                      .disableAutocorrection(true)
+                      .keyboardType(.asciiCapable)
+                      .frame(maxWidth: .infinity)
+                  }
+                }.listRowBackground(Color.clear)
               }
             } label: {
               HStack {

@@ -29,7 +29,6 @@
 		2C7072342BB1DD49000DF7BA /* mirror.png in Resources */ = {isa = PBXBuildFile; fileRef = 2C70720F2BB1DD49000DF7BA /* mirror.png */; };
 		2C7072352BB1DD49000DF7BA /* mirror@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2C7072102BB1DD49000DF7BA /* mirror@2x.png */; };
 		2C7072362BB1DD49000DF7BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C7072122BB1DD49000DF7BA /* Assets.xcassets */; };
-		2C7072392BB1DD49000DF7BA /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072152BB1DD49000DF7BA /* LaunchView.swift */; };
 		2C70723B2BB1DD49000DF7BA /* WebClip.js in Resources */ = {isa = PBXBuildFile; fileRef = 2C7072172BB1DD49000DF7BA /* WebClip.js */; };
 		2C70723C2BB1DD49000DF7BA /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072182BB1DD49000DF7BA /* WebView.swift */; };
 		2C70723D2BB1DD49000DF7BA /* WebViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072192BB1DD49000DF7BA /* WebViewCoordinator.swift */; };
@@ -96,7 +95,6 @@
 		2C7072122BB1DD49000DF7BA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2C7072132BB1DD49000DF7BA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2C7072142BB1DD49000DF7BA /* InfoPlist.xcstrings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
-		2C7072152BB1DD49000DF7BA /* LaunchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		2C7072172BB1DD49000DF7BA /* WebClip.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = WebClip.js; sourceTree = "<group>"; };
 		2C7072182BB1DD49000DF7BA /* WebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		2C7072192BB1DD49000DF7BA /* WebViewCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewCoordinator.swift; sourceTree = "<group>"; };
@@ -173,7 +171,6 @@
 			isa = PBXGroup;
 			children = (
 				2C70721E2BB1DD49000DF7BA /* WidgetApp.swift */,
-				2C7072152BB1DD49000DF7BA /* LaunchView.swift */,
 				2C7072182BB1DD49000DF7BA /* WebView.swift */,
 				2C7072192BB1DD49000DF7BA /* WebViewCoordinator.swift */,
 				2C70721A2BB1DD49000DF7BA /* Widget.swift */,
@@ -350,7 +347,6 @@
 				2C70722A2BB1DD49000DF7BA /* Color+Utils.swift in Sources */,
 				2C7072402BB1DD49000DF7BA /* Widget+WebOrnaments.swift in Sources */,
 				2C70723F2BB1DD49000DF7BA /* Widget+WebContent.swift in Sources */,
-				2C7072392BB1DD49000DF7BA /* LaunchView.swift in Sources */,
 				2C7072432BB1DD49000DF7BA /* WidgetPickerView.swift in Sources */,
 				2C23F3EA2BB8B1090076C071 /* CustomColorPickerView.swift in Sources */,
 				2C70722C2BB1DD49000DF7BA /* Image+Utils.swift in Sources */,
