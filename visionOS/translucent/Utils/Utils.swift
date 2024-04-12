@@ -47,6 +47,17 @@ func sizeFor(dimensions: String) -> CGSize {
   return size;
 }
 
+func url(from location: String) -> URL? {
+  if let urlString = clean(url: location),
+     let url = URL(string: urlString) {
+    return url
+  }
+  let searchEngine = "https://www.google.com/search?q="
+  if let query = location.addingPercentEncoding(withAllowedCharacters:.alphanumerics) {
+    return URL(string:"\(searchEngine)\(query)")
+  }
+  return nil
+}
 func clean(url: String) -> String? {
   if (url.hasPrefix("http") || url.hasPrefix("file://")) {
     return url
@@ -58,6 +69,12 @@ func clean(url: String) -> String? {
   return nil
 }
 
-extension URL {
-  
+extension UIView {
+    func findViews<T: UIView>(subclassOf: T.Type) -> [T] {
+        return recursiveSubviews.compactMap { $0 as? T }
+    }
+
+    var recursiveSubviews: [UIView] {
+        return subviews + subviews.flatMap { $0.recursiveSubviews }
+    }
 }

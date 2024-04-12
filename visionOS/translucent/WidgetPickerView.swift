@@ -293,63 +293,67 @@ struct WidgetPickerView: View {
       // MARK: Bottom Button
       
       .ornament(attachmentAnchor: .scene(.bottom), contentAlignment:.bottom) {
-        if (!widgets.isEmpty) {
+        if (true) { //}!widgets.isEmpty) {
           HStack {
-            Button(role: draggedWidget == nil ? .cancel : .destructive) {
-              if let draggedWidget = draggedWidget {
-                withAnimation(.spring) {
-                  NotificationCenter.default.post(name: Notification.Name.widgetDeleted, object: draggedWidget)
-                  
-                  draggedWidget.delete()
-                  self.draggedWidget = nil
-                }
-              } else {
+            if (draggedWidget == nil) {
+              Button {
                 getMoreWidgets()
-              }
-            } label: {
-              Label(draggedWidget == nil ?
-                    "Add More" : "Remove",
-                    systemImage: draggedWidget == nil ? "plus" : "trash")
-            } .labelStyle(.iconOnly)
-            //              .buttonBorderShape(.roundedRectangle(radius: 30))
-              .buttonBorderShape(.circle)
-              .buttonStyle(.borderless)
+              } label: {
+                Label("", systemImage:  "plus" )
+              } .labelStyle(.iconOnly)
+                .buttonBorderShape(.circle)
+                .buttonStyle(.borderless)
+            } else {
+              Button(role: .destructive) {
+                if let draggedWidget = draggedWidget {
+                  withAnimation(.spring) {
+                    NotificationCenter.default.post(name: Notification.Name.widgetDeleted, object: draggedWidget)
+                    
+                    draggedWidget.delete()
+                    self.draggedWidget = nil
+                  }
+                }
+              } label: {
+                Label("Remove Site", systemImage: "trash")
+                
+         
+                  .frame(maxWidth: .infinity, alignment:.leading)
+              } .labelStyle(.titleAndIcon)
+              //              .buttonBorderShape(.roundedRectangle(radius: 30))
+                .buttonBorderShape(.capsule)
+                .buttonStyle(.borderless)
+                .frame(alignment:.leading)
+            }
+
             
             //
             if (draggedWidget == nil) {
               
-              //              SearchBar( text: $searchText,
-              //                         placeholder:.constant(draggedWidget == nil ? "add location" : "drag to remove"),
-              //                         onSearchButtonClicked: {
-              //                print("searchText", searchText, clean(url:searchText))
-              //                if let string = clean(url:searchText), let url = URL(string:string) {
-              //                  app?.showWindowForURL(url)
-              //                  searchText = ""
-              //                }
-              //              })
-              //              .onSubmit {
-              //                print("searchText", searchText, clean(url:searchText))
-              //                if let string = clean(url:searchText), let url = URL(string:string) {
-              //                  app?.showWindowForURL(url)
-              //                  searchText = ""
-              //                }
-              //              }
-              //              .padding(-24)
-              
-              TextField(draggedWidget == nil ? "add location" : "drag to remove", text: $searchText)
-                .onSubmit {
-                  print("searchText", searchText, clean(url:searchText))
-                  if let string = clean(url:searchText), let url = URL(string:string) {
-                    app?.showWindowForURL(url)
-                    searchText = ""
-                  }
+              SearchBar( text: $searchText,
+                         placeholder:.constant("open location"),
+                         onSubmit: { bool in
+                print("searchText", searchText, clean(url:searchText))
+                if let url = url(from: searchText) {
+                  app?.showWindowForURL(url)
+                  searchText = ""
                 }
-                .keyboardType(.URL)
-                .autocapitalization(.none)
-                .autocorrectionDisabled()
-                .textFieldStyle(.roundedBorder)
-                .padding(.horizontal, -4)
-              //                .multilineTextAlignment(.center)
+              })
+              
+              
+//              TextField(draggedWidget == nil ? "add location" : "drag to remove", text: $searchText)
+//                .onSubmit {
+//                  print("searchText", searchText, clean(url:searchText))
+//                  if let string = clean(url:searchText), let url = URL(string:string) {
+//                    app?.showWindowForURL(url)
+//                    searchText = ""
+//                  }
+//                }
+//                .keyboardType(.URL)
+//                .autocapitalization(.none)
+//                .autocorrectionDisabled()
+//                .textFieldStyle(.roundedBorder)
+//                .padding(.horizontal, -4)
+//              //                .multilineTextAlignment(.center)
                 .overlay(alignment:.trailing) {
                   if (UIPasteboard.general.hasURLs) {
                     PasteButton(payloadType: URL.self) { urls in
@@ -368,8 +372,8 @@ struct WidgetPickerView: View {
                   }
                 }
             } else {
-              Text("Drag to remove")
-                .frame(maxWidth:.infinity)
+//              Text("Drag to remove")
+//                .frame(maxWidth:.infinity)
             }
             
             
@@ -504,6 +508,14 @@ struct WidgetPickerView: View {
   
 }
 
-#Preview(traits: .sizeThatFitsLayout) {
+#Preview(traits: .fixedLayout(width: 600, height: 800)) {
+//  let config = ModelConfiguration(isStoredInMemoryOnly: true)
+//  let container = try! ModelContainer(for: Widget.self, configurations: config)
+
+//  Widget.modelContext = container.mainContext
+  
   WidgetPickerView(app:nil)
+//    .modelContainer(container)
+} cameras: {
+  PreviewCamera(from: .front, zoom:1.5, name: "Front")
 }

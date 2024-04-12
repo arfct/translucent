@@ -147,7 +147,6 @@ struct WebView: UIViewRepresentable {
   // MARK: dismantleUIView
   
   static func dismantleUIView(_ webView: WKWebView, coordinator: WebViewCoordinator) {
-    print("Dismantling \(webView) \(coordinator)")
     webView.stopLoading()
     webView.navigationDelegate = nil
     webView.uiDelegate = nil

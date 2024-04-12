@@ -78,7 +78,6 @@ struct WidgetViewBrowserBar: View {
       .padding(8)
       .frame(minWidth:310, maxWidth:isTextFieldFocused ? .infinity :  400)
       .glassBackgroundEffect()
-      .padding(.bottom, 8)
     }
 }
 

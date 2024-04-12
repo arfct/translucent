@@ -55,11 +55,15 @@ struct WidgetView: View {
   @State var downloads: [URL] = []
   @State var activeTab: Int = 0
   @State var browserState = BrowserState();
-  @State var showPopover = false
+  @State var menuVisible = false
   @State var showTilt = false
   @State var clampedSize: CGSize?
   @State var constrainRatio = false
+  @State var locationTempString = ""
   
+  @FocusState private var isTextFieldFocused: Bool
+  
+  let toolbarHeight = 68.0;
   
   init(widget: Widget, app: WidgetApp? = nil) {
     self.widget = widget
@@ -68,7 +72,7 @@ struct WidgetView: View {
   }
   
   func toggleSettings() {
-    showPopover.toggle()
+    menuVisible.toggle()
   }
   
   func resizeTo(_ size: CGSize) {
@@ -99,162 +103,269 @@ struct WidgetView: View {
                           attachment:$downloadAttachment,
                           browserState:$browserState)
     
-    
-    let isTransient = widget.modelContext == nil;
-    let tilt = showPopover ? 0 : (widget.tilt ?? 0)
+    //    let isTransient = widget.modelContext == nil;
+    let tilt = menuVisible ? 0 : (widget.tilt ?? 0)
     
     GeometryReader { geometry in
-      let menuView = Menu {
-          ControlGroup() {
-            Group {
-              Button  {
-                browserState.webView?.goBack()
-              } label: {
-                Label("Back",systemImage:"arrow.left")
-              }.disabled(!browserState.canGoBack)
-              
-              if browserState.canGoForward {
-                
-                Button {
-                  browserState.webView?.goForward()
-                } label: {
-                  Label("Forward",systemImage:"arrow.right")
-                }
-              }
-              
+      let menuContents = Group {
+        ControlGroup() {
+          Group {
+            Button  {
+              browserState.webView?.goBack()
+            } label: {
+              Label("Back",systemImage:"arrow.left")
+            }.disabled(!browserState.canGoBack)
+            
+              .menuActionDismissBehavior(.disabled)
+            if browserState.canGoForward {
               
               Button {
-                browserState.webView?.reload()
+                browserState.webView?.goForward()
               } label: {
-                Label("Reload",systemImage:"arrow.clockwise")
-              }
+                Label("Forward",systemImage:"arrow.right")
+              }.disabled(!browserState.canGoForward)
               
-              
-              Menu {
-                
-                Label("View Options",systemImage:"")
-                
-                Toggle(isOn: Binding<Bool>(
-                  get: { widget.autohideControls },
-                  set: { val in widget.controls = val ? ControlStyle.hide.rawValue : nil}))
-                {
-                  Label("Autohide Controls", systemImage:"eye.slash")
-                }
-                Toggle(isOn: Binding<Bool>(
-                  get: { widget.effect == "dim" },
-                  set: { val in widget.effect = val ? "dim" : nil})) {
-                    Label("Dim Environment", systemImage:"circle.lefthalf.filled.righthalf.striped.horizontal")
-                  }
-                
-                
-                Menu {
-                  Button { showPopover.toggle()
-                    resizeTo(CGSize(width: geometry.size.height,
-                                    height: geometry.size.width))
-                  } label: {
-                    Label("Rotate", systemImage:
-                            geometry.size.height > geometry.size.width
-                          ? "rectangle.landscape.rotate"
-                          : "rectangle.portrait.rotate")
-                  }
-                  //                    Button { showPopover.toggle()
-                  //                      resizeTo(CGSize(width: geometry.size.width,
-                  //                                      height: geometry.size.width))
-                  //                    } label: {
-                  //                      Label("Square",systemImage:"square")
-                  //                    }
-                  Button { showPopover.toggle()
-                    resizeTo(CGSize(width: geometry.size.width,
-                                    height: geometry.size.width / 4 * 3))
-                  } label: {
-                    Label("Standard (4:3)",systemImage:"rectangle.ratio.4.to.3")
-                  }
-                  Button { showPopover.toggle()
-                    resizeTo(CGSize(width: geometry.size.width,
-                                    height: geometry.size.width / 16 * 9))
-                  } label: {
-                    Label("Widescreen (16:9)",systemImage:"rectangle.ratio.16.to.9")
-                  }
-                  Button { showPopover.toggle()
-                    resizeTo(CGSize(width: geometry.size.width,
-                                    height: geometry.size.width / 64 * 27))
-                  } label: {
-                    Label("Cinematic (21:9)",systemImage:"pano")
-                  }
-                } label: {
-                  
-                  Label("Resize Window",systemImage:"aspectratio")
-                }
-#if DEBUG
-                Divider()
-                Menu {
-                  
-                  Label("Experimental Options",systemImage:"")
-                  Button { showPopover.toggle()
-                    showTilt.toggle()
-                    if showTilt { widget.tilt = nil }
-                  } label: {
-                    Label("Adjust Tilt",systemImage:"rotate.3d")
-                  }
-                } label: {
-                  
-                  Label("Experimental",systemImage:"testtube.2")
-                }
-#endif
-                
-              } label: {
-                Label("Settings",systemImage:"slider.horizontal.3")
-              }
-              //              .buttonStyle(.accessoryBar)
-              
-              
+                .menuActionDismissBehavior(.disabled)
             }
-            .labelStyle(.iconOnly)
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.circle)
             
             
-            
-          }.padding(.horizontal, 10)
-            .padding(.bottom, 4)
-          Divider()
-          Group {
-            
-            Button { showPopover.toggle()
-              openWindow(id: WindowTypeID.main, value: "settings:\(widget.wid)")
+            Button {
+              browserState.webView?.reload()
             } label: {
-              HStack {
-                Text("Customize site…")
-                  .frame(maxWidth: .infinity, alignment: .leading)
-                Image(systemName: "square.and.pencil")
-              }.padding(.vertical, 16)
+              Label("Reload",systemImage:"arrow.clockwise")
             }
-            Button {showPopover.toggle()
-              openWindow(id:WindowTypeID.main, value:WindowID.main)
-            } label: {
-              HStack {
-                Text("Show Favorites")
-                  .frame(maxWidth: .infinity, alignment: .leading)
-                Image(systemName: "square.grid.3x3.fill")
-              }.padding(.vertical, 16)
+            .menuActionDismissBehavior(.disabled)
+            
+            ShareLink(
+              item: widget,
+              preview: SharePreview(
+                "Widget \(widget.name)",
+                image: Image(systemName: "plus"))
+            ) {
+              Image(systemName: "square.and.arrow.up")
             }
+            
+            
+            
           }
-          .frame(maxWidth:.infinity)
+          .labelStyle(.iconOnly)
           .buttonStyle(.borderless)
-          .buttonBorderShape(.roundedRectangle)
+          .buttonBorderShape(.circle)
+          
+          
+          
+        }.padding(.horizontal, 10)
+        Divider()
+        Group {
+          Menu {
+#if DEBUG
+            Toggle(isOn: Binding<Bool>(
+              get: { widget.showBrowserBar },
+              set: { val in widget.controls = (val ? ControlStyle.toolbar.rawValue : nil)}))
+            {
+              Label("Show Toolbar", systemImage:"ellipsis.rectangle")
+            }
+#endif
+            
+            Toggle(isOn: Binding<Bool>(
+              get: { widget.autohideControls },
+              set: { val in widget.controls = val ? ControlStyle.hide.rawValue : nil}))
+            {
+              Label("Autohide Controls", systemImage:"eye.slash")
+            }
+            Divider()
+            Toggle(isOn: Binding<Bool>(
+              get: { widget.effect == "dim" },
+              set: { val in widget.effect = val ? "dim" : nil})) {
+                Label("Dim Environment", systemImage:"circle.lefthalf.filled.righthalf.striped.horizontal")
+              }
+            
+            
+            Menu {
+              Button { menuVisible.toggle()
+                resizeTo(CGSize(width: geometry.size.height,
+                                height: geometry.size.width))
+              } label: {
+                Label("Rotate", systemImage:
+                        geometry.size.height > geometry.size.width
+                      ? "rectangle.landscape.rotate"
+                      : "rectangle.portrait.rotate")
+              }
+              //                    Button { menuVisible.toggle()
+              //                      resizeTo(CGSize(width: geometry.size.width,
+              //                                      height: geometry.size.width))
+              //                    } label: {
+              //                      Label("Square",systemImage:"square")
+              //                    }
+              Button { menuVisible.toggle()
+                resizeTo(CGSize(width: geometry.size.width,
+                                height: geometry.size.width / 4 * 3))
+              } label: {
+                Label("Standard (4:3)",systemImage:"rectangle.ratio.4.to.3")
+              }
+              Button { menuVisible.toggle()
+                resizeTo(CGSize(width: geometry.size.width,
+                                height: geometry.size.width / 16 * 9))
+              } label: {
+                Label("Widescreen (16:9)",systemImage:"rectangle.ratio.16.to.9")
+              }
+              Button { menuVisible.toggle()
+                resizeTo(CGSize(width: geometry.size.width,
+                                height: geometry.size.width / 64 * 27))
+              } label: {
+                Label("Cinematic (21:9)",systemImage:"pano")
+              }
+            } label: {
+              Label("Resize Window",systemImage:"aspectratio")
+            }
+#if DEBUG
+            Divider()
+            Menu {
+              
+              Label("Experimental Options",systemImage:"")
+              Button { menuVisible.toggle()
+                showTilt.toggle()
+                if showTilt { widget.tilt = nil }
+              } label: {
+                Label("Adjust Tilt",systemImage:"rotate.3d")
+              }
+            } label: {
+              
+              Label("Experimental",systemImage:"testtube.2")
+            }
+#endif
+            
+          } label: {
+            Label("Window Options",systemImage:"slider.horizontal.below.rectangle")
+          }
+          
+          Button { menuVisible.toggle()
+            openWindow(id: WindowTypeID.main, value: "settings:\(widget.wid)")
+          } label: {
+            HStack {
+              Text("Tweak Website…")
+                .frame(maxWidth: .infinity, alignment: .leading)
+              Image(systemName: "gear")
+            }.padding(.vertical, 16)
+          }
+          
+          Divider()
+          
+          Button {menuVisible.toggle()
+            openWindow(id:WindowTypeID.main, value:WindowID.main)
+          } label: {
+            HStack {
+              Text("Show Favorites")
+                .frame(maxWidth: .infinity, alignment: .leading)
+              Image(systemName: "square.grid.3x3.fill")
+            }.padding(.vertical, 16)
+          }
+        }
+        .frame(maxWidth:.infinity)
+        .buttonStyle(.borderless)
+        .buttonBorderShape(.roundedRectangle)
         
+      }
+      let menuView = Menu {
+        menuContents
       } label: {
         AnimatedEllipsisView(loading: $isLoading)
       }
-      .buttonBorderShape(.capsule)
-      .buttonStyle(.bordered)
-      .tint(showPopover ? .white : .clear)
-      .labelStyle(.iconOnly)
-      .transition(.move(edge: .top))
-      .padding(.bottom, 4)
-      .onTapGesture {
-        cancelHide()
+      
+        .buttonBorderShape(.capsule)
+        .buttonStyle(.bordered)
+        .tint(menuVisible ? .white : .clear)
+        .labelStyle(.iconOnly)
+        .transition(.move(edge: .top))
+        .onTapGesture {
+          cancelHide()
+        }
+      
+      
+      let browserBar = HStack {
+        HStack(spacing:0) {
+          Button {
+            browserState.coordinator?.webView?.goBack()
+          } label: {
+            Label("Back", systemImage: "arrow.left").labelStyle(.iconOnly)
+          }.buttonBorderShape(.circle)
+            .buttonStyle(.borderless)
+            .disabled(!browserState.canGoBack)
+          
+          if browserState.canGoForward {
+            Button {
+              browserState.coordinator?.webView?.goForward()
+              
+            } label: {
+              Label("Forward", systemImage: "arrow.right").labelStyle(.iconOnly)
+            }.buttonBorderShape(.circle)
+              .buttonStyle(.borderless)
+          }
+        }
+        SearchBar(text: $locationTempString,
+                  placeholder: .constant(""),
+                  onSubmit: { ended in
+          print("changed \(ended)")
+          if let url = url(from:locationTempString) {
+            widget.location = url.absoluteString
+          }
+        })
+        .overlay(alignment:.trailing) {
+          Button {
+            browserState.webView?.reload()
+          } label: {
+            Image(systemName: "arrow.clockwise")
+              .foregroundColor(.secondary)
+          }
+          .buttonStyle(.borderless)
+          .buttonBorderShape(.circle)
+          .scaleEffect(0.8)
+        }
+        //        TextField("location", text:$locationTempString )
+        .padding(.horizontal, -4)
+        .frame(maxWidth:320)
+        .textFieldStyle(.roundedBorder)
+        .autocapitalization(.none)
+        .disableAutocorrection(true)
+        .keyboardType(.URL)
+        .onAppear {
+          //          isTextFieldFocused ? browserState.url.absoluteString : browserState.url.host()?.replacingOccurrences(of: "www.", with: "") ?? ""
+          if let location = widget.location {
+            locationTempString = location.replacingOccurrences(of: "https://", with: "")
+          }
+        }
+        
+        .onSubmit {
+          if let location = clean(url:locationTempString){
+            browserState.coordinator?.open(location: location)
+          }
+        }
+        
+        .focused($isTextFieldFocused)
+        .onChange(of: isTextFieldFocused) {
+          if isTextFieldFocused {
+            DispatchQueue.main.async {
+              UIApplication.shared.sendAction(#selector(UIResponder.selectAll(_:)), to: nil, from: nil, for: nil)
+            }
+          } else {
+            //              commitLocation()
+          }
+        }
+        
+        Menu {
+          //        infoCallback()
+          menuContents
+        } label: {
+          Label("info", systemImage: "ellipsis").labelStyle(.iconOnly)
+        }
+        .buttonBorderShape(.circle)
+        .buttonStyle(.borderless)
+        
       }
+        .padding(8)
+        .frame(minWidth:310, maxWidth:isTextFieldFocused ? .infinity :  400)
+        .glassBackgroundEffect()
+      
       
       // MARK: Tab View
       ZStack(alignment: .center) {
@@ -272,16 +383,18 @@ struct WidgetView: View {
         }
         
         
-        if (flipped) {
-          WidgetSettingsView(widget:widget)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(widget.backColor.opacity(0.2))
-            .glassBackgroundEffect(in:RoundedRectangle(cornerRadius: 30))
-            .offset(z: flipped ? 1 : 0)
-            .opacity(flipped ? 1.0 : 0.0)
-            .rotation3DEffect(.degrees(180), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
-            .disabled(!flipped)
-        } else {
+        VStack(spacing:0) {
+          VStack {
+            if (widget.showBrowserBar) {
+              browserBar
+                .padding(.bottom, 8)
+                .padding(.horizontal, 12)
+            } else {
+              menuView
+                .padding(.top, 5)
+            }
+          }.frame(height:toolbarHeight)
+          
           
           // MARK: Web View
           
@@ -314,7 +427,7 @@ struct WidgetView: View {
             .cornerRadius(widget.radius)
             .opacity(!finishedFirstLoad || !loadedWindow ? 0.8 : 1.0)
             .disabled(flipped)
-            .rotation3DEffect(.degrees(90.0 * (tilt ?? 0)),
+            .rotation3DEffect(.degrees(90.0 * (tilt)),
                               axis: (x: 1, y: 0, z: 0),
                               anchor: .center)
             .offset(z: tilt > 0
@@ -337,9 +450,9 @@ struct WidgetView: View {
           
         }
         
-        //        VStack() {
-        //          Text("HELLO").padding().gesture(drag)
-        //        }
+        
+        
+        
         
       }
       
@@ -416,33 +529,17 @@ struct WidgetView: View {
         
       })
       
-      .popover(isPresented: $showPopover,
-               attachmentAnchor:.point(.top),
-               arrowEdge:.top,
-               content: {
-      })
-      
-      // MARK: Window Menu
-      .ornament(attachmentAnchor: .scene(.top), contentAlignment:.bottom) {
-        if (widget.showBrowserBar) {
-          WidgetViewBrowserBar(widget: $widget, browserState: $browserState, infoCallback: toggleSettings)
-            .frame(maxWidth:geometry.size.width - 10)
-          
-        } else {
-          menuView
-        }
-      }
       // MARK: Content view modifiers
       .preferredSurroundingsEffect(widget.effect == "dim" ? .systemDark : nil)
       
       .rotation3DEffect(.degrees(flipped ? -180.0 : 0.0), axis: (0, 1, 0), anchor: UnitPoint3D(x: 0.5, y: 0, z: 0))
       .onChange(of: geometry.size) {
-        widget.width = geometry.size.width
-        widget.height = geometry.size.height
+        widget.width = geometry.size.width - toolbarHeight
+        widget.height = geometry.size.height - toolbarHeight
         console.log("↔️ Widget size changed to \(Int(widget.width))×\(Int(widget.height))")
         widget.save()
       }
-      .animation(.spring(), value: showPopover)
+      .animation(.spring(), value: menuVisible)
       .opacity(wasBackgrounded ? 0.0 : 1.0)
       .onDisappear {
         console.log("❌ Closing Widget \(widget.name)")
@@ -455,9 +552,9 @@ struct WidgetView: View {
     .frame(minWidth: clampedSize?.width ?? widget.minWidth,
            idealWidth: clampedSize?.width ?? widget.width,
            maxWidth: clampedSize?.width ??  widget.maxWidth,
-           minHeight: clampedSize?.height ??  widget.minHeight,
-           idealHeight: clampedSize?.height ?? widget.height,
-           maxHeight: clampedSize?.height ??  widget.maxHeight)
+           minHeight: toolbarHeight + (clampedSize?.height ??  widget.minHeight),
+           idealHeight: toolbarHeight + (clampedSize?.height ?? widget.height),
+           maxHeight: toolbarHeight + (clampedSize?.height ??  widget.maxHeight))
     //    .fixedSize(horizontal:clampInitialSize, vertical:clampInitialSize)
     //    .windowGeometryPreferences(
     //      size: CGSize(width: clampedSize?.width ?? widget.width,
@@ -476,7 +573,6 @@ struct WidgetView: View {
     .onWindowChange { window in
     }
     .onAppear(){
-      let windowScenes = UIApplication.shared.connectedScenes
       resizeTo(CGSizeMake(widget.width, widget.height))
       
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
@@ -503,8 +599,8 @@ struct WidgetView: View {
       currentPhase = scenePhase
     }
     
-    .onChange(of: showPopover) {
-      if (showPopover) {
+    .onChange(of: menuVisible) {
+      if (menuVisible) {
         cancelHide()
       } else {
         scheduleHide()
@@ -582,7 +678,19 @@ struct WidgetView: View {
   
 }
 
-#Preview(windowStyle: .plain) {
-  let widget = Widget(name: "Test", location: "https://www.example.com?v=1&controls=toolbar")
+#Preview("Bar", windowStyle: .plain, traits: .fixedLayout(width: 400, height: 480)) {
+  let widget = Widget(name: "Test", location: "https://www.example.com", options:"?v=1&controls=toolbar")
   WidgetView(widget: widget)
+} cameras: {
+  PreviewCamera(from: .front, zoom:1.5, name: "Front")
 }
+
+
+
+#Preview("Standard", windowStyle: .plain, traits: .fixedLayout(width: 400, height: 400)) {
+  let widget = Widget(name: "Test", location: "https://www.example.com")
+  WidgetView(widget: widget)
+} cameras: {
+  PreviewCamera(from: .front, zoom:2, name: "Front")
+}
+

@@ -45,7 +45,7 @@ enum IconStyle:String {
   var controls: String?
   var radius: CGFloat = 30
   
-  var width: CGFloat = 640
+  var width: CGFloat = 720
   var height: CGFloat = 720
   var minWidth: CGFloat = 320
   var minHeight: CGFloat = 180
@@ -105,7 +105,7 @@ enum IconStyle:String {
     return nil
   }
   
-  static func findOrCreate(location: String?) -> Widget? {
+  static func findOrCreate(location: String?, addToFavorites: Bool = false) -> Widget? {
     guard let location = location,
           let url = URL(string:location)
           else {return nil}
@@ -116,8 +116,10 @@ enum IconStyle:String {
       return match
     }
     
-    self.modelContext?.insert(widget)
-    try? self.modelContext?.save()
+    if (addToFavorites) {
+      self.modelContext?.insert(widget)
+      try? self.modelContext?.save()
+    }
     return widget
   }
   
@@ -194,7 +196,7 @@ enum IconStyle:String {
     }
 
     if (parameters == nil) {
-      parameters = "style=opaque&size=1024x768"
+      parameters = "style=opaque&size=720x720"
     }
 
     self.init( name: name ?? url.host() ??
@@ -223,7 +225,7 @@ enum IconStyle:String {
   }
   
   func apply(options: String?, fromSite: Bool? = false, origin: String? = nil) {
-    
+
     let isTrusted = fromSite == true || origin == nil || origin == Host.wwwidget || origin == Host.site
     if let options = options {
       console.log("Applying options: \(options)")
@@ -562,7 +564,7 @@ extension Widget {
   }
   
   func incrementZoom(_ direction: Int) {
-    let zooms = [0.25, 0.333, 0.5, 0.667, 0.75, 0.85, 1.0, 1.15, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 4.0, 5.0]
+    let zooms = [0.25, 0.333, 0.5, 0.667, 0.75, 0.875, 1.0, 1.125, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 4.0, 5.0]
     
 //    let test = zoom + CGFloat(direction) * 0.01
     print("val \(zoom) \(zooms.firstIndex { zoom + 0.01 <= $0 })")

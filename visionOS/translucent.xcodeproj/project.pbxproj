@@ -40,7 +40,6 @@
 		2C7072432BB1DD49000DF7BA /* WidgetPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072202BB1DD49000DF7BA /* WidgetPickerView.swift */; };
 		2C7072442BB1DD49000DF7BA /* WidgetSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072212BB1DD49000DF7BA /* WidgetSettingsView.swift */; };
 		2C7072452BB1DD49000DF7BA /* WidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072222BB1DD49000DF7BA /* WidgetView.swift */; };
-		2C7072462BB1DD49000DF7BA /* WidgetViewBrowserBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7072232BB1DD49000DF7BA /* WidgetViewBrowserBar.swift */; };
 		2C78F9302BB7394000D53DB7 /* CodeEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 2C78F92F2BB7394000D53DB7 /* CodeEditor */; };
 		2C832E0A2B7C0C800032FB06 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C832E092B7C0C800032FB06 /* ShareViewController.swift */; };
 		2C832E0E2B7C0C800032FB06 /* share.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2C832E072B7C0C800032FB06 /* share.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -107,7 +106,6 @@
 		2C7072202BB1DD49000DF7BA /* WidgetPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WidgetPickerView.swift; sourceTree = "<group>"; };
 		2C7072212BB1DD49000DF7BA /* WidgetSettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WidgetSettingsView.swift; sourceTree = "<group>"; };
 		2C7072222BB1DD49000DF7BA /* WidgetView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WidgetView.swift; sourceTree = "<group>"; };
-		2C7072232BB1DD49000DF7BA /* WidgetViewBrowserBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WidgetViewBrowserBar.swift; sourceTree = "<group>"; };
 		2C832E072B7C0C800032FB06 /* share.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = share.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C832E092B7C0C800032FB06 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		2C832E0B2B7C0C800032FB06 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -138,6 +136,7 @@
 		2C70720D2BB1DD49000DF7BA /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				2C23F43D2BB90F000076C071 /* SearchBar.swift */,
 				2CA085392BC1B16B0099B5A9 /* WindowControls.swift */,
 				2C7072002BB1DD49000DF7BA /* AnimatedEllipsisView.swift */,
 				2C23F3E92BB8B1090076C071 /* CustomColorPickerView.swift */,
@@ -171,8 +170,6 @@
 			isa = PBXGroup;
 			children = (
 				2C70721E2BB1DD49000DF7BA /* WidgetApp.swift */,
-				2C7072182BB1DD49000DF7BA /* WebView.swift */,
-				2C7072192BB1DD49000DF7BA /* WebViewCoordinator.swift */,
 				2C70721A2BB1DD49000DF7BA /* Widget.swift */,
 				2C51C6552BBDA44C00A187D1 /* Widget+GroupActivity.swift */,
 				2C70721C2BB1DD49000DF7BA /* Widget+WebContent.swift */,
@@ -181,9 +178,9 @@
 				2C7072202BB1DD49000DF7BA /* WidgetPickerView.swift */,
 				2C7072212BB1DD49000DF7BA /* WidgetSettingsView.swift */,
 				2C7072222BB1DD49000DF7BA /* WidgetView.swift */,
+				2C7072182BB1DD49000DF7BA /* WebView.swift */,
+				2C7072192BB1DD49000DF7BA /* WebViewCoordinator.swift */,
 				2C23F47F2BBA25160076C071 /* ImmersiveWidgetView.swift */,
-				2C7072232BB1DD49000DF7BA /* WidgetViewBrowserBar.swift */,
-				2C23F43D2BB90F000076C071 /* SearchBar.swift */,
 				2C7072172BB1DD49000DF7BA /* WebClip.js */,
 				2C70720D2BB1DD49000DF7BA /* Utils */,
 				2C70721B2BB1DD49000DF7BA /* Entitlements.entitlements */,
@@ -369,7 +366,6 @@
 				2C70722E2BB1DD49000DF7BA /* RealityKitEntity+Enumerate.swift in Sources */,
 				2C70722D2BB1DD49000DF7BA /* ModelContext+SQLite.swift in Sources */,
 				2C7072452BB1DD49000DF7BA /* WidgetView.swift in Sources */,
-				2C7072462BB1DD49000DF7BA /* WidgetViewBrowserBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
