@@ -135,15 +135,7 @@ struct WidgetView: View {
               Label("Reload",systemImage:"arrow.clockwise")
             }
             .menuActionDismissBehavior(.disabled)
-            
-            ShareLink(
-              item: widget,
-              preview: SharePreview(
-                "Widget \(widget.name)",
-                image: Image(systemName: "plus"))
-            ) {
-              Image(systemName: "square.and.arrow.up")
-            }
+
             
             
             
@@ -152,12 +144,61 @@ struct WidgetView: View {
           .buttonStyle(.borderless)
           .buttonBorderShape(.circle)
           
-          
-          
-        }.padding(.horizontal, 10)
-        Divider()
-        Group {
           Menu {
+            
+
+            Menu {
+              Button { menuVisible.toggle()
+                resizeTo(CGSize(width: geometry.size.height,
+                                height: geometry.size.width))
+              } label: {
+                Label("Rotate", systemImage:
+                        geometry.size.height > geometry.size.width
+                      ? "rectangle.landscape.rotate"
+                      : "rectangle.portrait.rotate")
+              }
+              
+              Divider()
+            
+              //                    Button { menuVisible.toggle()
+              //                      resizeTo(CGSize(width: geometry.size.width,
+              //                                      height: geometry.size.width))
+              //                    } label: {
+              //                      Label("Square",systemImage:"square")
+              //                    }
+              
+
+              Button { menuVisible.toggle()
+                resizeTo(dimensionsWith(area: geometry.size.width * geometry.size.height,
+                                        ratio: 1.0))
+              } label: {
+                Label("Square (1:1)",systemImage:"square")
+              }
+              
+              Button { menuVisible.toggle()
+                resizeTo(dimensionsWith(area: geometry.size.width * geometry.size.height, 
+                                        ratio: 4.0 / 3.0))
+              } label: {
+                Label("Standard (4:3)",systemImage:"rectangle.ratio.4.to.3")
+              }
+              Button { menuVisible.toggle()
+                resizeTo(dimensionsWith(area: geometry.size.width * geometry.size.height,
+                                        ratio: 16.0 / 9.0))
+              } label: {
+                Label("Widescreen (16:9)",systemImage:"rectangle.ratio.16.to.9")
+              }
+              Button { menuVisible.toggle()
+                resizeTo(dimensionsWith(area: geometry.size.width * geometry.size.height,
+                                        ratio: 64.0 / 27.0))
+              } label: {
+                Label("Cinematic (21:9)",systemImage:"pano")
+              }
+              
+              
+              } label: {
+                Label("Resize",systemImage:"aspectratio")
+              }
+            Divider()
 #if DEBUG
             Toggle(isOn: Binding<Bool>(
               get: { widget.showBrowserBar },
@@ -176,84 +217,89 @@ struct WidgetView: View {
             {
               Label("Autohide Controls", systemImage:"eye.slash")
             }
-            Divider()
+            
             Toggle(isOn: Binding<Bool>(
               get: { widget.effect == "dim" },
               set: { val in widget.effect = val ? "dim" : nil})) {
                 Label("Dim Environment", systemImage:"circle.lefthalf.filled.righthalf.striped.horizontal")
               }
             
-            
-            Menu {
-              Button { menuVisible.toggle()
-                resizeTo(CGSize(width: geometry.size.height,
-                                height: geometry.size.width))
-              } label: {
-                Label("Rotate", systemImage:
-                        geometry.size.height > geometry.size.width
-                      ? "rectangle.landscape.rotate"
-                      : "rectangle.portrait.rotate")
-              }
-              //                    Button { menuVisible.toggle()
-              //                      resizeTo(CGSize(width: geometry.size.width,
-              //                                      height: geometry.size.width))
-              //                    } label: {
-              //                      Label("Square",systemImage:"square")
-              //                    }
-              Button { menuVisible.toggle()
-                resizeTo(CGSize(width: geometry.size.width,
-                                height: geometry.size.width / 4 * 3))
-              } label: {
-                Label("Standard (4:3)",systemImage:"rectangle.ratio.4.to.3")
-              }
-              Button { menuVisible.toggle()
-                resizeTo(CGSize(width: geometry.size.width,
-                                height: geometry.size.width / 16 * 9))
-              } label: {
-                Label("Widescreen (16:9)",systemImage:"rectangle.ratio.16.to.9")
-              }
-              Button { menuVisible.toggle()
-                resizeTo(CGSize(width: geometry.size.width,
-                                height: geometry.size.width / 64 * 27))
-              } label: {
-                Label("Cinematic (21:9)",systemImage:"pano")
-              }
-            } label: {
-              Label("Resize Window",systemImage:"aspectratio")
-            }
 #if DEBUG
-            Divider()
-            Menu {
-              
-              Label("Experimental Options",systemImage:"")
-              Button { menuVisible.toggle()
-                showTilt.toggle()
-                if showTilt { widget.tilt = nil }
-              } label: {
-                Label("Adjust Tilt",systemImage:"rotate.3d")
-              }
+          Menu {
+            
+            Label("Experimental Options",systemImage:"")
+            Button { menuVisible.toggle()
+              showTilt.toggle()
+              if showTilt { widget.tilt = nil }
             } label: {
-              
-              Label("Experimental",systemImage:"testtube.2")
+              Label("Adjust Tilt",systemImage:"rotate.3d")
             }
+          } label: {
+            
+            Label("Experimental",systemImage:"testtube.2")
+          }
 #endif
+           
+
+            
+            Divider()
+            Button {
+              print("key window", UIApplication.shared.keyWindow)
+              dismissWindow()
+            } label: {
+              HStack {
+                Text("Close Window")
+                  .frame(maxWidth: .infinity, alignment: .leading)
+                Image(systemName: "xmark")
+              }.padding(.vertical, 16)
+            }
+          
             
           } label: {
-            Label("Window Options",systemImage:"slider.horizontal.below.rectangle")
+            
+              Label("Window",systemImage:"rectangle.on.rectangle")
           }
+          
+        }.padding(.horizontal, 10)
+        Divider()
+        Group {
+         
           
           Button { menuVisible.toggle()
             openWindow(id: WindowTypeID.main, value: "settings:\(widget.wid)")
           } label: {
             HStack {
-              Text("Customize Website…")
+              Text("Site Settings…")
                 .frame(maxWidth: .infinity, alignment: .leading)
               Image(systemName: "gear")
             }.padding(.vertical, 16)
           }
           
-          Divider()
           
+          
+       
+          
+          Divider()
+          if (widget.isTemporaryWidget) {
+            Button {
+              Widget.persist(widget: widget)
+            } label: {
+              HStack {
+                Text("Add to Favorites")
+                  .frame(maxWidth: .infinity, alignment: .leading)
+                Image(systemName: "plus")
+              }.padding(.vertical, 16)
+            }
+          }
+          
+          ShareLink(
+            item: widget,
+            preview: SharePreview(
+              "Widget \(widget.name)",
+              image: Image(systemName: "plus"))
+          ) {
+            Label("Share", systemImage: "square.and.arrow.up")
+          }
           Button {menuVisible.toggle()
             openWindow(id:WindowTypeID.main, value:WindowID.main)
           } label: {
@@ -543,6 +589,7 @@ struct WidgetView: View {
       
       .opacity(wasBackgrounded ? 0.0 : 1.0)
       .onDisappear {
+        NotificationCenter.default.post(name: Notification.Name.widgetClosed, object: widget)
         console.log("❌ Closing Widget \(widget.name)")
       }
     }
@@ -608,7 +655,7 @@ struct WidgetView: View {
       }
     }
   }
-  
+
   func cancelHide() {
     ornamentTimer?.invalidate()
     showSystemOverlay = true

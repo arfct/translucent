@@ -6,6 +6,7 @@ import OSLog
 extension Notification.Name {
   static let mainWindowOpened = Notification.Name("mainWindowOpened")
   static let widgetDeleted = Notification.Name("widgetDeleted")
+  static let widgetClosed = Notification.Name("widgetClosed")
 }
 
 struct WidgetPickerView: View {
@@ -253,7 +254,7 @@ struct WidgetPickerView: View {
               Button {
                 getMoreWidgets()
               } label: {
-                Label("Browse for More", systemImage: "plus")
+                Label("Browse for More", systemImage: "book")
                 
               }
             }
@@ -299,7 +300,7 @@ struct WidgetPickerView: View {
               Button {
                 getMoreWidgets()
               } label: {
-                Label("", systemImage:  "plus" )
+                Label("Directory", systemImage:  "book" )
               } .labelStyle(.iconOnly)
                 .buttonBorderShape(.circle)
                 .buttonStyle(.borderless)
@@ -316,7 +317,7 @@ struct WidgetPickerView: View {
               } label: {
                 Label("Remove Site", systemImage: "trash")
                 
-         
+                
                   .frame(maxWidth: .infinity, alignment:.leading)
               } .labelStyle(.titleAndIcon)
               //              .buttonBorderShape(.roundedRectangle(radius: 30))
@@ -324,13 +325,13 @@ struct WidgetPickerView: View {
                 .buttonStyle(.borderless)
                 .frame(alignment:.leading)
             }
-
+            
             
             //
             if (draggedWidget == nil) {
               
               SearchBar( text: $searchText,
-                         placeholder:.constant("open location"),
+                         placeholder:.constant(UIPasteboard.general.hasURLs ? "Search" : "Search or enter url"),
                          onSubmit: { bool in
                 print("searchText", searchText, clean(url:searchText))
                 if let url = url(from: searchText) {
@@ -338,42 +339,27 @@ struct WidgetPickerView: View {
                   searchText = ""
                 }
               })
-              
-              
-//              TextField(draggedWidget == nil ? "add location" : "drag to remove", text: $searchText)
-//                .onSubmit {
-//                  print("searchText", searchText, clean(url:searchText))
-//                  if let string = clean(url:searchText), let url = URL(string:string) {
-//                    app?.showWindowForURL(url)
-//                    searchText = ""
-//                  }
-//                }
-//                .keyboardType(.URL)
-//                .autocapitalization(.none)
-//                .autocorrectionDisabled()
-//                .textFieldStyle(.roundedBorder)
-//                .padding(.horizontal, -4)
-//              //                .multilineTextAlignment(.center)
-                .overlay(alignment:.trailing) {
-                  if (UIPasteboard.general.hasURLs) {
-                    PasteButton(payloadType: URL.self) { urls in
-                      if let url = urls.first {
-                        DispatchQueue.main.async {
-                          app?.showWindowForURL(url)
-                        }
+              .overlay(alignment:.trailing) {
+                if (UIPasteboard.general.hasURLs) {
+                  PasteButton(payloadType: URL.self) { urls in
+                    if let url = urls.first {
+                      DispatchQueue.main.async {
+                        app?.showWindowForURL(url)
                       }
                     }
-                    .buttonBorderShape(.roundedRectangle(radius: 8))
-                    .buttonStyle(.borderless)
-                    .labelStyle(.titleOnly)
-                    .tint(.black)
-                    .opacity(0.667)
-                    .padding(.trailing, 2)
                   }
+                  .buttonBorderShape(.roundedRectangle(radius: 40))
+                  .buttonStyle(.borderless)
+                  .labelStyle(.titleOnly)
+                  .tint(.black)
+                  .opacity(0.667)
+                  .padding(.trailing, 6)
                 }
+              }
+              .padding(.horizontal, -4)
             } else {
-//              Text("Drag to remove")
-//                .frame(maxWidth:.infinity)
+              //              Text("Drag to remove")
+              //                .frame(maxWidth:.infinity)
             }
             
             
@@ -402,6 +388,7 @@ struct WidgetPickerView: View {
 #if DEBUG
               
               Toggle("Show Immersive Space", isOn: $showImmersiveSpace).labelsHidden()
+              Divider()
 #endif
               
             } label: {
@@ -509,13 +496,13 @@ struct WidgetPickerView: View {
 }
 
 #Preview(traits: .fixedLayout(width: 600, height: 800)) {
-//  let config = ModelConfiguration(isStoredInMemoryOnly: true)
-//  let container = try! ModelContainer(for: Widget.self, configurations: config)
-
-//  Widget.modelContext = container.mainContext
+  //  let config = ModelConfiguration(isStoredInMemoryOnly: true)
+  //  let container = try! ModelContainer(for: Widget.self, configurations: config)
+  
+  //  Widget.modelContext = container.mainContext
   
   WidgetPickerView(app:nil)
-//    .modelContainer(container)
+  //    .modelContainer(container)
 } cameras: {
   PreviewCamera(from: .front, zoom:1.5, name: "Front")
 }

@@ -115,14 +115,23 @@ enum IconStyle:String {
     if let match =  Widget.find(location: widget.location) {
       return match
     }
-    
-    self.modelContext?.insert(widget)
-    try? self.modelContext?.save()
+        
+    persist(widget: widget)
     
     return widget
   }
   
+
+  
   // MARK: Model Functions
+
+  static func persist(widget: Widget) {
+    widget.isTemporaryWidget = false
+    modelContext?.insert(widget)
+    try? modelContext?.save()
+  }
+  
+  
   @MainActor
   func save() {
     do {

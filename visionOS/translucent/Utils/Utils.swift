@@ -20,19 +20,26 @@ extension Bool: Comparable {
 
 
 extension UIApplication {
-    var keyWindow: UIWindow? {
-        // Get connected scenes
-        return self.connectedScenes
-            // Keep only active scenes, onscreen and visible to the user
-            .filter { $0.activationState == .foregroundActive }
-            // Keep only the first `UIWindowScene`
-            .first(where: { $0 is UIWindowScene })
-            // Get its associated windows
-            .flatMap({ $0 as? UIWindowScene })?.windows
-            // Finally, keep only the key window
-            .first(where: \.isKeyWindow)
-    }
-    
+  var keyWindow: UIWindow? {
+      // Get connected scenes
+      return self.connectedScenes
+          // Keep only active scenes, onscreen and visible to the user
+          .filter { $0.activationState == .foregroundActive }
+          // Keep only the first `UIWindowScene`
+          .first(where: { $0 is UIWindowScene })
+          // Get its associated windows
+          .flatMap({ $0 as? UIWindowScene })?.windows
+          // Finally, keep only the key window
+          .first(where: \.isKeyWindow)
+  }
+  var windows: [UIWindow]? {
+    return self.connectedScenes
+      .filter { $0.activationState == .foregroundActive }
+      .first(where: { $0 is UIWindowScene })
+      .flatMap({ $0 as? UIWindowScene })?.windows
+  }
+  
+  
 }
 
 func sizeFor(dimensions: String) -> CGSize {
@@ -45,6 +52,12 @@ func sizeFor(dimensions: String) -> CGSize {
     size.height = CGFloat(heightDouble)
   }
   return size;
+}
+
+func dimensionsWith(area: CGFloat, ratio:CGFloat) -> CGSize {
+  let width = sqrt(area * ratio);
+  let height = area / width
+  return CGSizeMake(width, height);
 }
 
 func url(from location: String) -> URL? {

@@ -614,6 +614,12 @@ struct WidgetSettingsView: View {
             dismiss()
           }
         }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name.widgetClosed)) { notif in
+          if let anotherWidget = notif.object as? Widget, widget == anotherWidget {
+            dismiss()
+          }
+        }
+
         // MARK: Toolbar
         .toolbar {
           
@@ -632,8 +638,9 @@ struct WidgetSettingsView: View {
           }
           ToolbarItemGroup(placement: .navigation) {
             Button {
-              DispatchQueue.main.async { widget.save() }
               dismiss()
+              print("Windows", UIApplication.shared.windows)
+              DispatchQueue.main.async { widget.save() }
             } label: {
               Label("Done", systemImage: "xmark")
             }
