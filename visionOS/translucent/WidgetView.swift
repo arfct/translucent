@@ -265,23 +265,10 @@ struct WidgetView: View {
         Group {
          
           
-          Button { menuVisible.toggle()
-            openWindow(id: WindowTypeID.main, value: "settings:\(widget.wid)")
-          } label: {
-            HStack {
-              Text("Site Settings…")
-                .frame(maxWidth: .infinity, alignment: .leading)
-              Image(systemName: "gear")
-            }.padding(.vertical, 16)
-          }
-          
-          
-          
-       
-          
-          Divider()
           if (widget.isTemporaryWidget) {
             Button {
+              widget.location = browserState.location
+              widget.name = browserState.webView?.title ?? ""
               Widget.persist(widget: widget)
             } label: {
               HStack {
@@ -290,7 +277,22 @@ struct WidgetView: View {
                 Image(systemName: "plus")
               }.padding(.vertical, 16)
             }
+          } else {
+            Button { menuVisible.toggle()
+              openWindow(id: WindowTypeID.main, value: "settings:\(widget.wid)")
+            } label: {
+              HStack {
+                Text("Site Settings…")
+                  .frame(maxWidth: .infinity, alignment: .leading)
+                Image(systemName: "gear")
+              }.padding(.vertical, 16)
+            }
           }
+          
+       
+          
+          Divider()
+
           
           ShareLink(
             item: widget,
@@ -400,7 +402,6 @@ struct WidgetView: View {
         }
         
         Menu {
-          //        infoCallback()
           menuContents
         } label: {
           Label("info", systemImage: "ellipsis").labelStyle(.iconOnly)
@@ -441,6 +442,12 @@ struct WidgetView: View {
                 .padding(.top, 5)
             }
           }.frame(height:toolbarHeight)
+            .opacity((isLoading || showInfo) && !flipped && !wasBackgrounded ? 1.0 : 0.0)
+            .rotation3DEffect(.degrees(showInfo || isLoading ? 0.0 : 45), axis: (1, 0, 0),
+                              anchor: UnitPoint3D(x: 0.5, y: 1.0, z: 0))
+            .animation(.spring(), value: flipped)
+            .animation(.spring(), value: showInfo)
+            .animation(.spring(), value: isLoading)
           
           
           // MARK: Web View

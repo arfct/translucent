@@ -76,7 +76,7 @@ enum IconStyle:String {
   var removeSelectors: String?
   var injectCSS: String?
   var injectJS: String?
-  
+
   var configJSON: String?
   
   @Transient
@@ -174,7 +174,7 @@ enum IconStyle:String {
   }
   
   
-  convenience init(url: URL, name: String? = nil, overrides: WebViewSetup? = nil) {
+  convenience init(url: URL, name: String? = nil, overrides: WebViewSetup? = nil, isTemporary: Bool = false) {
     console.log("🌐 Creating from URL: \(url.absoluteString)")
     var location = url.absoluteString
     var parameters: String?
@@ -212,6 +212,7 @@ enum IconStyle:String {
                location: location,
                options:parameters)
     
+    isTemporaryWidget = isTemporary
     if let overrides = overrides {
       if let w = overrides.windowFeatures.width?.floatValue {  width = CGFloat(w) }
       if let h = overrides.windowFeatures.height?.floatValue {  height = CGFloat(h) }

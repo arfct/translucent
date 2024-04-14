@@ -62,9 +62,13 @@ func dimensionsWith(area: CGFloat, ratio:CGFloat) -> CGSize {
 
 func url(from location: String) -> URL? {
   if let urlString = clean(url: location),
-     let url = URL(string: urlString) {
+  let url = URL(string: urlString) {
     return url
   }
+  return nil
+}
+
+func searchUrl(from location: String) -> URL? {
   let searchEngine = "https://www.google.com/search?q="
   if let query = location.addingPercentEncoding(withAllowedCharacters:.alphanumerics) {
     return URL(string:"\(searchEngine)\(query)")

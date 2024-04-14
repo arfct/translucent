@@ -331,11 +331,15 @@ struct WidgetPickerView: View {
             if (draggedWidget == nil) {
               
               SearchBar( text: $searchText,
-                         placeholder:.constant(UIPasteboard.general.hasURLs ? "Search" : "Search or enter url"),
+                         placeholder:.constant(UIPasteboard.general.hasURLs ?
+                                               "Search" : "Search or enter url"),
                          onSubmit: { bool in
-                print("searchText", searchText, clean(url:searchText))
+                
                 if let url = url(from: searchText) {
                   app?.showWindowForURL(url)
+                  searchText = ""
+                } else if let url = searchUrl(from: searchText) {
+                  app?.showWindowForURL(url, temporary: true)
                   searchText = ""
                 }
               })
@@ -382,13 +386,11 @@ struct WidgetPickerView: View {
               ShareLink(item: URL(string:"https://translucent.vision")!) {
                 Label("Share Translucent", systemImage:  "square.and.arrow.up")
               }
-              
-              
-              
+
 #if DEBUG
               
-              Toggle("Show Immersive Space", isOn: $showImmersiveSpace).labelsHidden()
               Divider()
+              Toggle("Show Immersive Space", isOn: $showImmersiveSpace).labelsHidden()
 #endif
               
             } label: {

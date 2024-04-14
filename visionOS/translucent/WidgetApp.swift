@@ -71,14 +71,18 @@ struct WidgetApp: App {
     
   }
   
-  @MainActor func showWindowForURL(_ url: URL?) {
+  @MainActor func showWindowForURL(_ url: URL?, temporary: Bool = false) {
     guard let url = url else { return }
-    do {
-      if let widget = Widget.findOrCreate(location:url.absoluteString) {
-        openWindow(id: WindowTypeID.widget, value: widget.wid)
+    if (temporary) {
+      openWindow(id: WindowTypeID.webview, value:url.absoluteString)
+    } else {
+      do {
+        if let widget = Widget.findOrCreate(location:url.absoluteString) {
+          openWindow(id: WindowTypeID.widget, value: widget.wid)
+        }
+      } catch {
+        console.log("Error opening url \(error)")
       }
-    } catch {
-      console.log("Error opening url \(error)")
     }
   }
 
@@ -118,7 +122,8 @@ struct WidgetApp: App {
         
         // MARK: WebView window
         else if let url = URL(string:windowID) {
-          let widget = Widget(url:url, overrides: WebView.newWebViewOverride)
+          let widget = Widget(url:url, overrides: WebView.newWebViewOverride, isTemporary: true)
+         
           WidgetView(widget:widget, app:self)
             .onOpenURL { showWindowForURL($0) }
             .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { showWindowForURL($0.webpageURL) }
