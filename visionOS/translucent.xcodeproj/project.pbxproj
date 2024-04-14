@@ -136,20 +136,14 @@
 		2C70720D2BB1DD49000DF7BA /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				2C23F43D2BB90F000076C071 /* SearchBar.swift */,
-				2CA085392BC1B16B0099B5A9 /* WindowControls.swift */,
-				2C7072002BB1DD49000DF7BA /* AnimatedEllipsisView.swift */,
-				2C23F3E92BB8B1090076C071 /* CustomColorPickerView.swift */,
+				2C70720A2BB1DD49000DF7BA /* Utils.swift */,
 				2C7072012BB1DD49000DF7BA /* AV.swift */,
 				2C7072022BB1DD49000DF7BA /* Binding+Utils.swift */,
-				2C7072032BB1DD49000DF7BA /* ChromaView.swift */,
 				2C7072042BB1DD49000DF7BA /* Color+Utils.swift */,
-				2C7072052BB1DD49000DF7BA /* DownloadPanel.swift */,
 				2C7072062BB1DD49000DF7BA /* Image+Utils.swift */,
 				2C7072072BB1DD49000DF7BA /* ModelContext+SQLite.swift */,
 				2C7072082BB1DD49000DF7BA /* RealityKitEntity+Enumerate.swift */,
 				2C7072092BB1DD49000DF7BA /* URL+Directories.swift */,
-				2C70720A2BB1DD49000DF7BA /* Utils.swift */,
 				2C70720B2BB1DD49000DF7BA /* View+WindowGeometryPreferences.swift */,
 				2C70720C2BB1DD49000DF7BA /* View+WindowReader.swift */,
 			);
@@ -182,6 +176,7 @@
 				2C7072192BB1DD49000DF7BA /* WebViewCoordinator.swift */,
 				2C23F47F2BBA25160076C071 /* ImmersiveWidgetView.swift */,
 				2C7072172BB1DD49000DF7BA /* WebClip.js */,
+				2CDE54D62BCC30CB00DF4181 /* Views */,
 				2C70720D2BB1DD49000DF7BA /* Utils */,
 				2C70721B2BB1DD49000DF7BA /* Entitlements.entitlements */,
 				2C7072132BB1DD49000DF7BA /* Info.plist */,
@@ -217,6 +212,19 @@
 				2C832E072B7C0C800032FB06 /* share.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		2CDE54D62BCC30CB00DF4181 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2C7072002BB1DD49000DF7BA /* AnimatedEllipsisView.swift */,
+				2C23F43D2BB90F000076C071 /* SearchBar.swift */,
+				2C7072052BB1DD49000DF7BA /* DownloadPanel.swift */,
+				2CA085392BC1B16B0099B5A9 /* WindowControls.swift */,
+				2C7072032BB1DD49000DF7BA /* ChromaView.swift */,
+				2C23F3E92BB8B1090076C071 /* CustomColorPickerView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
