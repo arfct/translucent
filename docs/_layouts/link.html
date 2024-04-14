@@ -3,9 +3,9 @@
 ---
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{page.title}}</title>
-  <meta property="widget" content="{{page.href | urlencode}}{% include queryparams.html content=page %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="widget" content="{{page.href | urlencode}}{% include queryparams.html content=page %}">
   <meta property="og:title" content="{{ page.title }}">
   <meta property="og:author" content="{{ page.author }}">
   <meta property="og:image" content="{{ page.url | replace: 'html', 'png' }}">
