@@ -24,6 +24,7 @@ struct _SearchBar: UIViewRepresentable {
     searchBar.keyboardType = .webSearch
     searchBar.autocorrectionType = .no
     searchBar.autocapitalizationType = .none
+    // These calls do not work, but should...
     // searchBar.setShowsCancelButton(false, animated: false)
     // searchBar.showsCancelButton = false
     return searchBar
@@ -36,8 +37,7 @@ struct _SearchBar: UIViewRepresentable {
   static func dismantleUIView(_ searchBar: UISearchBar, coordinator: SearchBarCoordinator) {
     searchBar.delegate = nil
   }
-  
-  
+
   func makeCoordinator() -> SearchBarCoordinator { SearchBarCoordinator(self) }
 }
 
@@ -59,7 +59,6 @@ class SearchBarCoordinator: NSObject, UISearchBarDelegate {
 
 }
 
-
 class CircularSearchBar: UISearchBar {
   private var didObserveSubviews = false
   private let desiredCornerRadius = 22.0
@@ -67,8 +66,6 @@ class CircularSearchBar: UISearchBar {
   
   override func willMove(toWindow newWindow: UIWindow?) {
     super.willMove(toWindow: newWindow)
-    
-    
     
     guard !didObserveSubviews else { return }
     observeSubviews(self)
@@ -82,7 +79,7 @@ class CircularSearchBar: UISearchBar {
   
   override func layoutSubviews() {
     
-    // Manually remove clear button since .setShowsCancelButton does not work
+    // Manually manage clear button since .setShowsCancelButton does not work
     for textField in findViews(subclassOf: UITextField.self) {
       textField.clearButtonMode = .never
     }
@@ -120,7 +117,7 @@ class CircularSearchBar: UISearchBar {
 #Preview(windowStyle: .automatic,traits:.fixedLayout(width: 320, height: 320)) {
   VStack {
     
-    SearchBar(text:.constant("TEXt"), placeholder:.constant("Search")) { ended in
+    SearchBar(text:.constant("Text"), placeholder:.constant("Search")) { ended in
       print("Change \(ended)")
     }
   }
