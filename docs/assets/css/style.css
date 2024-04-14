@@ -123,7 +123,9 @@ body:not(.widgets):not(.websites):not(.experimental) a.tile.all {
   display:block !important;
 }
 
-html:not(.experiment) a#experimental-link {
+html:not(.experiment) a#experimental-link,
+html.asWidget a#experimental-link
+{
   display:none;
 }
 html.experiment .experiment {
