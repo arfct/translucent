@@ -169,7 +169,10 @@ struct WidgetView: View {
             
             Toggle(isOn: Binding<Bool>(
               get: { widget.autohideControls },
-              set: { val in widget.controls = val ? ControlStyle.hide.rawValue : nil}))
+              set: { val in
+                widget.controls = val ? ControlStyle.hide.rawValue : nil
+                scheduleHide()
+              }))
             {
               Label("Autohide Controls", systemImage:"eye.slash")
             }
@@ -243,7 +246,7 @@ struct WidgetView: View {
             openWindow(id: WindowTypeID.main, value: "settings:\(widget.wid)")
           } label: {
             HStack {
-              Text("Tweak Website…")
+              Text("Customize Website…")
                 .frame(maxWidth: .infinity, alignment: .leading)
               Image(systemName: "gear")
             }.padding(.vertical, 16)
@@ -271,10 +274,8 @@ struct WidgetView: View {
       } label: {
         AnimatedEllipsisView(loading: $isLoading)
       }
-      
         .buttonBorderShape(.capsule)
-        .buttonStyle(.bordered)
-        .tint(menuVisible ? .white : .clear)
+        .buttonStyle(.borderless)
         .labelStyle(.iconOnly)
         .transition(.move(edge: .top))
         .onTapGesture {
@@ -539,7 +540,7 @@ struct WidgetView: View {
         console.log("↔️ Widget size changed to \(Int(widget.width))×\(Int(widget.height))")
         widget.save()
       }
-      .animation(.spring(), value: menuVisible)
+      
       .opacity(wasBackgrounded ? 0.0 : 1.0)
       .onDisappear {
         console.log("❌ Closing Widget \(widget.name)")

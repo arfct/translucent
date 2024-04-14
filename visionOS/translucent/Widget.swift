@@ -105,7 +105,7 @@ enum IconStyle:String {
     return nil
   }
   
-  static func findOrCreate(location: String?, addToFavorites: Bool = false) -> Widget? {
+  static func findOrCreate(location: String?) -> Widget? {
     guard let location = location,
           let url = URL(string:location)
           else {return nil}
@@ -116,10 +116,9 @@ enum IconStyle:String {
       return match
     }
     
-    if (addToFavorites) {
-      self.modelContext?.insert(widget)
-      try? self.modelContext?.save()
-    }
+    self.modelContext?.insert(widget)
+    try? self.modelContext?.save()
+    
     return widget
   }
   
@@ -579,8 +578,17 @@ extension Widget {
     if let url = manifestURL {
       do {
         let contents = try String(contentsOf: url)
-        console.log("Applying updated config: \(contents)")
-        apply(options: contents, fromSite: false, origin: url.host)
+      
+        if let regex = try? Regex(#"<meta name="widget" content="([^"]+)">"#) {
+          if let match = contents.firstMatch(of: regex) {
+            print("match", match)
+            let parameters = String(match[1].substring!)
+            console.log("Applying updated config: \(parameters)")
+            apply(options: parameters, fromSite: false, origin: url.host)
+
+            
+          }
+        }
       } catch {
         console.log("Failed to fetch config \(error)")
       }

@@ -418,7 +418,7 @@ struct WidgetPickerView: View {
             return true
           }
           .cornerRadius(100)
-          .frame(width:300)
+          .frame(width:360)
           .padding(8)
           
           .background(draggedWidget != nil ? .red.opacity(0.1) : .black.opacity(0.0))
