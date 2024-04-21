@@ -13,7 +13,7 @@ struct WindowControls: View {
         Circle()
           .frame(width:14, height:14)
           .opacity(0)
-      }.padding(.top, 22).border(.red)
+      }.padding(.top, 22)
     }
 }
 

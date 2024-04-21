@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 import RealityKit
 import RealityKitContent
 
@@ -10,21 +11,27 @@ struct AnchoredWidget: Identifiable {
 }
 
 struct ImmersiveWidgetView: View {
-  @State var anchoredWidgets = [AnchoredWidget]()
-  
+  @Query(
+    sort: \Widget.title
+//    filter: #Predicate<Widget> { true }
+  )
+  var anchoredWidgets: [Widget]
+
   var body: some View {
     RealityView { content, attachments in
+  let _ = print("render", anchoredWidgets)
       
       for anchoredWidget in anchoredWidgets {
+        if (!anchoredWidget.isSpatial) {  continue }
         let anchor = AnchorEntity(anchoredWidget.anchor)
         anchor.anchoring.trackingMode = .continuous
         
-        if let attachment = attachments.entity(for: anchoredWidget.id) {
+        if let attachment = attachments.entity(for: anchoredWidget.wid) {
           attachment.transform = anchoredWidget.transform
           
           attachment.setParent(anchor)
         }
-        let entity = ModelEntity(mesh: MeshResource.generatePlane(width: 0.1, height:0.1))
+        let entity = ModelEntity(mesh: MeshResource.generatePlane(width: 0.02, height:0.02))
         entity.setParent(anchor)
         content.add(anchor)
       }
@@ -33,11 +40,10 @@ struct ImmersiveWidgetView: View {
       
     } attachments: {
       ForEach(anchoredWidgets) { anchoredWidget in
-        Attachment(id: "id") {
+        let _ = print(anchoredWidget.displayName)
+        Attachment(id: anchoredWidget.wid) {
           VStack {
-            WidgetView(widget: anchoredWidget.widget)
-              .cornerRadius(180)
-              .frame(maxWidth:360, maxHeight:360)
+            WidgetView(widget: anchoredWidget)
             WindowControls()
           }
         }
@@ -46,15 +52,14 @@ struct ImmersiveWidgetView: View {
   }
 }
 
-#Preview(immersionStyle: .mixed) {
-  let widget = Widget(name: "Test",
-         location: "https://widget.vision/widgets/orrery.html",
-         options: "size=360x360")
-  WidgetView(widget: .preview)
-    .cornerRadius(180)
-    .frame(maxWidth:360, maxHeight:360)
-  let transform = Transform.init(translation:.init(x: 0, y: 1, z: -3.3))
-  ImmersiveWidgetView(anchoredWidgets: [
-    AnchoredWidget(widget: widget, anchor: .head, transform: transform, id: "test")
-  ])
-}
+//#Preview(immersionStyle: .mixed) {
+//  let widget = Widget(name: "Test",
+//                      location: "https://widget.vision/widgets/orrery.html",
+//                      options: "size=360x360")
+//  WidgetView(widget: .preview)
+//    .frame(maxWidth:360, maxHeight:360)
+//  let transform = Transform.init(translation:.init(x: 0, y: 1, z: -3.3))
+//  ImmersiveWidgetView(anchoredWidgets: [
+//    AnchoredWidget(widget: widget, anchor: .head, transform: transform, id: "test")
+//  ])
+//}

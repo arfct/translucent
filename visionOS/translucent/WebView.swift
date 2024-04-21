@@ -29,6 +29,13 @@ struct WebView: UIViewRepresentable {
     return copy
   }
   
+  var scrollChanged: ((WebView, UnitPoint3D, Error?) -> Void)? = nil
+  func onScrollChanged(perform: ((WebView, UnitPoint3D, Error?) -> Void)?) -> WebView {
+    var copy = self
+    copy.scrollChanged = perform
+    return copy
+  }
+  
   var downloadCompleted: ((WebView, URL, Error?) -> Void)? = nil
   func onDownloadCompleted(perform: ((WebView, URL, Error?) -> Void)?) -> some View {
     var copy = self
@@ -53,6 +60,8 @@ struct WebView: UIViewRepresentable {
     context.coordinator.webView = webView
     webView.navigationDelegate = context.coordinator
     webView.uiDelegate = context.coordinator
+    webView.scrollView.delegate = context.coordinator
+
     
     browserState.coordinator = context.coordinator
     browserState.webView = webView
@@ -153,6 +162,7 @@ struct WebView: UIViewRepresentable {
     webView.stopLoading()
     webView.navigationDelegate = nil
     webView.uiDelegate = nil
+    webView.scrollView.delegate = nil
     webView.configuration.userContentController.removeScriptMessageHandler(forName: "widget")
     webView.removeFromSuperview()
   }

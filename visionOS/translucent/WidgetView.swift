@@ -63,6 +63,11 @@ struct WidgetView: View {
   
   @FocusState private var isTextFieldFocused: Bool
   
+  
+  @StateObject private var groupStateObserver = GroupStateObserver()
+  @State private var session: GroupSession<WidgetActivity>? = nil
+  @State private var subscriptions = Set<AnyCancellable>()
+  
   let toolbarHeight = 68.0;
   
   init(widget: Widget, app: WidgetApp? = nil) {
@@ -111,7 +116,7 @@ struct WidgetView: View {
         
         let windowMenu = Menu {
           
-
+          
           Menu {
             Button { menuVisible.toggle()
               resizeTo(CGSize(width: geometry.size.height,
@@ -124,7 +129,7 @@ struct WidgetView: View {
             }
             
             Divider()
-          
+            
             //                    Button { menuVisible.toggle()
             //                      resizeTo(CGSize(width: geometry.size.width,
             //                                      height: geometry.size.width))
@@ -132,7 +137,7 @@ struct WidgetView: View {
             //                      Label("Square",systemImage:"square")
             //                    }
             
-
+            
             Button { menuVisible.toggle()
               resizeTo(dimensionsWith(area: geometry.size.width * geometry.size.height,
                                       ratio: 1.0))
@@ -160,11 +165,11 @@ struct WidgetView: View {
             }
             
             
-            } label: {
-              Label("Resize",systemImage:"aspectratio")
-            }
+          } label: {
+            Label("Resize",systemImage:"aspectratio")
+          }
           Divider()
-
+          
           Toggle(isOn: Binding<Bool>(
             get: { widget.showBrowserBar },
             set: { val in widget.controls = (val ? ControlStyle.toolbar.rawValue : nil)}))
@@ -189,22 +194,22 @@ struct WidgetView: View {
             }
           
 #if DEBUG
-        Menu {
-          
-          Label("Experimental Options",systemImage:"")
-          Button { menuVisible.toggle()
-            showTilt.toggle()
-            if showTilt { widget.tilt = nil }
+          Menu {
+            
+            Label("Experimental Options",systemImage:"")
+            Button { menuVisible.toggle()
+              showTilt.toggle()
+              if showTilt { widget.tilt = nil }
+            } label: {
+              Label("Adjust Tilt",systemImage:"rotate.3d")
+            }
           } label: {
-            Label("Adjust Tilt",systemImage:"rotate.3d")
+            
+            Label("Experimental",systemImage:"testtube.2")
           }
-        } label: {
-          
-          Label("Experimental",systemImage:"testtube.2")
-        }
 #endif
-         
-
+          
+          
           
           Divider()
           Button {
@@ -265,11 +270,11 @@ struct WidgetView: View {
             
             windowMenu
             Divider()
-
+            
           }
         }
         Group {
-         
+          
           
           if (widget.isTemporaryWidget) {
             Button {
@@ -295,10 +300,9 @@ struct WidgetView: View {
             }
           }
           
-       
+          
           
           Divider()
-
           
           ShareLink(
             item: widget,
@@ -308,15 +312,39 @@ struct WidgetView: View {
           ) {
             Label("Share", systemImage: "square.and.arrow.up")
           }
+          
+          if (groupStateObserver.isEligibleForGroupSession) {
+            Button {
+              print("Starting as SharePlay", groupStateObserver.isEligibleForGroupSession)
+              
+              Task {
+                do {
+                  try await startSession(widget:widget)
+                } catch {
+                  print("SharePlay session failure", error)
+                }
+              }
+            } label: {
+              Text("Play with Friends")
+                .frame(maxWidth: .infinity)
+              Label("SharePlay", systemImage: "shareplay")  
+            }
+          }
+          
+          
           Button {menuVisible.toggle()
             openWindow(id:WindowTypeID.main, value:WindowID.main)
           } label: {
             HStack {
-              Text("Show Favorites")
+              Text("Show Bookmarks")
                 .frame(maxWidth: .infinity, alignment: .leading)
               Image(systemName: "square.grid.3x3.fill")
             }.padding(.vertical, 16)
           }
+          
+          
+          
+          
         }
         .frame(maxWidth:.infinity)
         .buttonStyle(.borderless)
@@ -469,6 +497,13 @@ struct WidgetView: View {
               }
               if let error = error { console.log("Loading error: \(error)") }
             }
+            .onScrollChanged(perform: { content, scrollPoint, error in
+              sessionInfo?.reliableMessenger?.send(ScrollMessage(position:scrollPoint)) { error in
+                if error != nil {
+                  print("Send scroll error:", error!)
+                }
+              }
+            })
             .onDownloadCompleted { content, download, error in
               downloads.append(download)
               downloadAttachment = download;
@@ -667,8 +702,74 @@ struct WidgetView: View {
         scheduleHide()
       }
     }
+    
+    // MARK: SharePlay
+    .task {
+      sessionInfo = .init()
+      for await newSession in WidgetActivity.sessions() {
+        print("New GroupActivities session", newSession)
+        
+        newSession.join()
+        
+        session = newSession
+        sessionInfo?.session = newSession
+        
+        // Spatial coordination.
+        if let coordinator = await newSession.systemCoordinator {
+          var config = SystemCoordinator.Configuration()
+          config.spatialTemplatePreference = .sideBySide
+          config.supportsGroupImmersiveSpace = true
+          coordinator.configuration = config
+          
+          Task.detached { @MainActor in
+            for await state in coordinator.localParticipantStates {
+              print("Is Spatial", state.isSpatial)
+            }
+          }
+        }
+        
+        sessionInfo?.reliableMessenger = GroupSessionMessenger(session: newSession, deliveryMode: .reliable)
+        
+        newSession.$state.sink { state in
+          if case .invalidated = state {
+            //                    gameModel.reset()
+            sessionInfo = nil
+          }
+        }
+        .store(in: &subscriptions)
+        
+        // Handle url changes.
+        Task {
+          for await (message, sender) in sessionInfo!.reliableMessenger!.messages(of: LocationMessage.self) {
+            print("New Location", message)
+            if let url = URL(string:message.location) {
+              browserState.coordinator?.loadURL(url)
+            }
+          }
+        }
+        Task {
+          for await (message, _) in sessionInfo!.messenger!.messages(of: ScrollMessage.self) {
+            if let point = message.position {
+              browserState.coordinator?.scrollTo(message.position)
+            }
+          }
+        }
+      }
+    }
+    .onChange(of: browserState.location) { oldLocation, location in
+      print("Sending Location", location)
+      sessionInfo?.reliableMessenger?.send(LocationMessage(location: location)) { error in
+        if error != nil {
+          print("Send score error:", error!)
+        }
+      }
+    }
+    .handlesExternalEvents(preferring: [WidgetActivity.activityIdentifier],
+                           allowing: [WidgetActivity.activityIdentifier])
   }
-
+  
+  //MARK: Timers
+  
   func cancelHide() {
     ornamentTimer?.invalidate()
     showSystemOverlay = true
@@ -684,58 +785,58 @@ struct WidgetView: View {
     }
   }
   
+  
+  // SHAREPLAY CODE
+  //    private func startSharePlaySession() async {
   //
-  //  // SHAREPLAY CODE
-  //  private func startSharePlaySession() async {
   //
+  //      for await session in WidgetActivity.sessions() {
+  //        guard let systemCoordinator = await session.systemCoordinator else { continue }
   //
-  //    for await session in WidgetView.sessions() {
-  //      guard let systemCoordinator = await session.systemCoordinator else { continue }
+  //        let isLocalParticipantSpatial = systemCoordinator.localParticipantState.isSpatial
   //
-  //      let isLocalParticipantSpatial = systemCoordinator.localParticipantState.isSpatial
-  //
-  //      Task.detached {
-  //        for await localParticipantState in systemCoordinator.localParticipantStates {
-  //          if localParticipantState.isSpatial {
-  //            // Start syncing scroll position
-  //          } else {
-  //            // Stop syncing scroll position
+  //        Task.detached {
+  //          for await localParticipantState in systemCoordinator.localParticipantStates {
+  //            if localParticipantState.isSpatial {
+  //              // Start syncing scroll position
+  //            } else {
+  //              // Stop syncing scroll position
+  //            }
   //          }
   //        }
+  //
+  //        var configuration = SystemCoordinator.Configuration()
+  //        configuration.spatialTemplatePreference = .sideBySide
+  //        systemCoordinator.configuration = configuration
+  //
+  //        session.join()
   //      }
   //
-  //      var configuration = SystemCoordinator.Configuration()
-  //      configuration.spatialTemplatePreference = .sideBySide
-  //      systemCoordinator.configuration = configuration
+  //      let location = "https://example.com"
   //
-  //      session.join()
-  //    }
+  //      if let widget = Widget.findOrCreate(location: location) {
+  //        // Create the activity
+  //        let activity = WidgetActivity(widget: widget)
   //
-  //    let location = "https://example.com"
+  //        // Register the activity on the item provider
+  //        let itemProvider = NSItemProvider()
+  //        itemProvider.registerGroupActivity(activity)
   //
-  //    if let widget = Widget.findOrCreate(location: location) {
-  //      // Create the activity
-  //      let activity = WidgetView(widget: widget)
+  //        // Create the activity items configuration
+  //        let configuration = await UIActivityItemsConfiguration(itemProviders: [itemProvider])
   //
-  //      // Register the activity on the item provider
-  //      let itemProvider = NSItemProvider()
-  //      itemProvider.registerGroupActivity(activity)
-  //
-  //      // Create the activity items configuration
-  //      let configuration = await UIActivityItemsConfiguration(itemProviders: [itemProvider])
-  //
-  //      // Provide the metadata for the group activity
-  //      configuration.metadataProvider = { key in
-  //        guard key == .linkPresentationMetadata else { return nil }
-  //        let metadata = LPLinkMetadata()
-  //        metadata.title = "Explore Together"
-  //        metadata.imageProvider = NSItemProvider(object: UIImage(named: "explore-activity")!)
-  //        return metadata
+  //        // Provide the metadata for the group activity
+  //        configuration.metadataProvider = { key in
+  //          guard key == .linkPresentationMetadata else { return nil }
+  //          let metadata = LPLinkMetadata()
+  //          metadata.title = "Explore Together"
+  //          metadata.imageProvider = NSItemProvider(object: UIImage(named: "explore-activity")!)
+  //          return metadata
+  //        }
+  //        self.activityItemsConfiguration = configuration
   //      }
-  //      self.activityItemsConfiguration = configuration
   //    }
-  //  }
-  
+  //
   
 }
 

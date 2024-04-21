@@ -10,6 +10,7 @@ struct Activity {
   static let openSettings = "vision.widget.settings"
   static let openPreview = "vision.widget.preview"
   static let openWebView = "vision.widget.webview"
+  static let groupActivity = "vision.widget.activity"
 }
 
 struct WindowID {
@@ -68,12 +69,12 @@ struct WidgetApp: App {
     }
     
     Widget.modelContext = container.mainContext
-    
   }
   
   @MainActor func showWindowForURL(_ url: URL?, temporary: Bool = false) {
     guard let url = url else { return }
     if (temporary) {
+
       openWindow(id: WindowTypeID.webview, value:url.absoluteString)
     } else {
       do {
@@ -101,6 +102,14 @@ struct WidgetApp: App {
             WidgetPickerView(app: self)
               .frame(idealWidth: 600, idealHeight: 800, alignment: .center)
               .fixedSize(horizontal: true, vertical:true)
+              .task {
+                for await newSession in WidgetActivity.sessions() {
+                  print("New GroupActivities session:", newSession.activity.widget.location)
+                  if let location = newSession.activity.widget.location {
+                    windowID = location
+                  }
+                }
+              }
           } else {
             ZStack() {
               
@@ -140,11 +149,12 @@ struct WidgetApp: App {
         }}
         return true
       }
+
       
     } defaultValue: {  WindowID.main }
       .windowStyle(.plain)
       .windowResizability(.contentSize)
-      .handlesExternalEvents(matching: [Activity.openWidget])
+      .handlesExternalEvents(matching: [Activity.openWidget, WidgetActivity.activityIdentifier])
       .modelContainer(container)
       .windowStyle(.plain)
       .defaultSize(width: 600, height: 800)
@@ -152,6 +162,6 @@ struct WidgetApp: App {
     // MARK: Immersive space
     ImmersiveSpace(id: "ImmersiveSpace") {
       ImmersiveWidgetView()
-    }
+    }.modelContainer(container)
   }
 }

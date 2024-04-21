@@ -10,8 +10,13 @@ struct WebViewSetup {
   var webView: WKWebView
 }
 
+struct ScrollPosition {
+  let point: CGPoint
+  let zoom: CGFloat
+}
+
 // MARK: Coordinator
-class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler, WKScriptMessageHandlerWithReply, WKDownloadDelegate, QLPreviewControllerDataSource {
+class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler, WKScriptMessageHandlerWithReply, WKDownloadDelegate, UIScrollViewDelegate, QLPreviewControllerDataSource {
   @Environment(\.openWindow) var openWindow
   
   let container: WebView
@@ -50,10 +55,18 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     webView?.load(URLRequest(url: url))
   }
   
+  func scrollTo(position: UnitPoint3D) {
+    if let scrollView = webView?.scrollView {
+      let x = position.x * scrollView.contentSize.width - scrollView.frame.size.width
+      let y = position.y * scrollView.contentSize.height - scrollView.frame.size.height
+      scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
+      scrollView.setZoomScale(position.z, animated: false)
+    }
+  }
   
   func webClipJS() -> String?{
     guard let path = Bundle.main.path(forResource: "WebClip", ofType: "js") else { return nil }
-            return try? String(contentsOfFile: path, encoding: .utf8)
+    return try? String(contentsOfFile: path, encoding: .utf8)
   }
   // MARK: WKUserContentController
   
@@ -91,16 +104,16 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     guard let url = navigationAction.request.url else { return nil}
     
     
-    let frame = CGRectMake(0, 0, 
+    let frame = CGRectMake(0, 0,
                            CGFloat(windowFeatures.width?.floatValue ?? 0),
                            CGFloat(windowFeatures.height?.floatValue ?? 0))
     let newWebView = WKWebView(frame:frame,
                                configuration: configuration)
     
     WebView.newWebViewOverride = WebViewSetup(configuration: configuration,
-                                               navigationAction: navigationAction,
-                                               windowFeatures: windowFeatures,
-                                               webView: newWebView)
+                                              navigationAction: navigationAction,
+                                              windowFeatures: windowFeatures,
+                                              webView: newWebView)
     
     let openInBrowser = false
     if (openInBrowser) {
@@ -127,18 +140,18 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     initiatedByFrame frame: WKFrameInfo,
     type: WKMediaCaptureType,
     decisionHandler: @escaping (WKPermissionDecision) -> Void) {
-    decisionHandler(.grant)
-  }
+      decisionHandler(.grant)
+    }
   
-
+  
   // MARK: WKNavigationDelegate
   
   func webView(_ webView: WKWebView,
-               decidePolicyFor navigationAction: WKNavigationAction, 
+               decidePolicyFor navigationAction: WKNavigationAction,
                preferences: WKWebpagePreferences,
                decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
     
-//    console.log("Navigating to \(String(describing:navigationAction.request.url))")
+    //    console.log("Navigating to \(String(describing:navigationAction.request.url))")
     
     let url = navigationAction.request.url
     if url?.host() == Host.site && navigationAction.navigationType == .linkActivated {
@@ -158,7 +171,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     }
   }
   
-  func webView(_ webView: WKWebView, 
+  func webView(_ webView: WKWebView,
                decidePolicyFor navigationResponse: WKNavigationResponse,
                decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
     if navigationResponse.canShowMIMEType {
@@ -192,7 +205,7 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
       completionHandler(currentDownload)
     }
   }
-
+  
   func downloadDidFinish(_ download: WKDownload) {
     container.downloadCompleted?(container, currentDownload!, nil)
     // openWindow(id: "preview", value: currentDownload!);
@@ -204,7 +217,20 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     console.log("Download error: \(error)")
   }
   
-
+  //MARK: ScrollView Delegate
+  
+  func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    let contentLoaded = scrollView.contentSize.height > 1000
+    let endOfContentReached = scrollView.contentSize.height - scrollView.contentOffset.y - scrollView.frame.size.height < 100
+    
+    let x = scrollView.contentOffset.x / (scrollView.contentSize.width - scrollView.frame.size.width)
+    let y = scrollView.contentOffset.y / (scrollView.contentSize.height - scrollView.frame.size.height)
+    let z = scrollView.zoomScale
+    
+    let point = UnitPoint3D(x: x, y: y, z: z)
+    container.scrollChanged?(container, point, nil)
+  }
+  
   
   // MARK: QuickLook preview
   func numberOfPreviewItems(in controller: QLPreviewController) -> Int { return 1 }

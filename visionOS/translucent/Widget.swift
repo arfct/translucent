@@ -3,6 +3,8 @@ import GroupActivities
 import SwiftUI
 import SwiftData
 
+import RealityKit
+import RealityKitContent
 
 struct Host {
   static let site = "translucent.site"
@@ -78,6 +80,26 @@ enum IconStyle:String {
   var injectJS: String?
 
   var configJSON: String?
+  
+  // MARK: Spatial Anchoring
+  var anchorPoint: String?
+  var anchorTransform: String?
+  
+  @Transient
+  var isSpatial: Bool {
+    return true
+  }
+  
+  @Transient
+  var anchor: AnchoringComponent.Target {
+    return .head
+//    return .hand(.left, location: .indexFingerTip)
+  }
+  
+  @Transient
+  var transform: Transform {
+    return Transform.init(translation:.init(x: 0, y: 1, z: -3.3))
+  }
   
   @Transient
   var parseError: String?
@@ -158,55 +180,34 @@ enum IconStyle:String {
   
 
   private enum CodingKeys : String, CodingKey {
-      case name
+      case location
   }
   
   func encode(to encoder: Encoder) throws {
+    
+      print("encoding from", encoder)
       var container = encoder.container(keyedBy: CodingKeys.self)
-      try container.encode(name, forKey: .name)
+    try container.encode(shareURL?.absoluteString, forKey: .location)
   }
   
   // MARK: init()
   required init(from decoder: Decoder) throws {
-    
+    print("decoding from", decoder)
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.name = try container.decodeIfPresent(String.self, forKey: .name) ?? "Untitled"
+    if let location = try container.decodeIfPresent(String.self, forKey: .location),
+       let url = URL(string:location) {
+      
+      let (location, parameters) = locationAndParams(url: url)
+      self.location = location
+      self.originalLocation = location
+      apply(options: parameters)
+    }
   }
   
   
   convenience init(url: URL, name: String? = nil, overrides: WebViewSetup? = nil, isTemporary: Bool = false) {
-    console.log("🌐 Creating from URL: \(url.absoluteString)")
-    var location = url.absoluteString
-    var parameters: String?
-    if let regex = try? Regex(#"(?:\?)(.*v=\d.*)"#) {
-      if let match = location.firstMatch(of: regex) {
-        parameters = String(match[1].substring!)
-        location = location.replacing(regex, with: "")
-      }
-    }
     
-    if let decodedLocation = location.removingPercentEncoding {
-      location = decodedLocation
-    }
-    
-    if (location.hasPrefix("widget")) {
-      location = location
-        .replacingOccurrences(of: "widget-http", with: "http")
-        .replacingOccurrences(of: "widget://", with: "https://")
-    } else {
-      location = location
-        .replacingOccurrences(of: "https://widget.vision/http", with: "http")
-        .replacingOccurrences(of: "https://www.widget.vision/http", with: "http")
-        .replacingOccurrences(of: "https://widget.vision/", with: "https://")
-        .replacingOccurrences(of: "https://translucent.site/http", with: "http")
-        .replacingOccurrences(of: "https://translucent.vision/http", with: "http")
-        .replacingOccurrences(of: "https://translucent.site/", with: "https://")
-    }
-
-    if (parameters == nil) {
-      parameters = "style=opaque&size=720x720"
-    }
-
+    let (location, parameters) = locationAndParams(url: url)
     self.init( name: name ?? url.host() ??
                url.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "_", with: " "),
                location: location,
@@ -230,7 +231,6 @@ enum IconStyle:String {
     self.location = location
     self.originalLocation = location
     apply(options: options)
-    
   }
   
   func apply(options: String?, fromSite: Bool? = false, origin: String? = nil) {
@@ -637,4 +637,43 @@ extension Widget {
     }
   }
   
+}
+
+
+
+func locationAndParams(url: URL) -> (String, String?){
+  
+  console.log("🌐 Creating from URL: \(url.absoluteString)")
+  var location = url.absoluteString
+  var parameters: String?
+  if let regex = try? Regex(#"(?:\?)(.*v=\d.*)"#) {
+    if let match = location.firstMatch(of: regex) {
+      parameters = String(match[1].substring!)
+      location = location.replacing(regex, with: "")
+    }
+  }
+  
+  if let decodedLocation = location.removingPercentEncoding {
+    location = decodedLocation
+  }
+  
+  if (location.hasPrefix("widget")) {
+    location = location
+      .replacingOccurrences(of: "widget-http", with: "http")
+      .replacingOccurrences(of: "widget://", with: "https://")
+  } else {
+    location = location
+      .replacingOccurrences(of: "https://widget.vision/http", with: "http")
+      .replacingOccurrences(of: "https://www.widget.vision/http", with: "http")
+      .replacingOccurrences(of: "https://widget.vision/", with: "https://")
+      .replacingOccurrences(of: "https://translucent.site/http", with: "http")
+      .replacingOccurrences(of: "https://translucent.vision/http", with: "http")
+      .replacingOccurrences(of: "https://translucent.site/", with: "https://")
+  }
+
+  if (parameters == nil) {
+    parameters = "style=opaque&size=720x720"
+  }
+  
+  return (location, parameters)
 }
