@@ -746,12 +746,11 @@ struct WidgetView: View {
               browserState.coordinator?.loadURL(url)
             }
           }
-        }
-        Task {
+
           for await (message, _) in sessionInfo!.messenger!.messages(of: ScrollMessage.self) {
-            if let point = message.position {
-              browserState.coordinator?.scrollTo(message.position)
-            }
+             let point = message.position
+            print("point \(point)")
+//              browserState.coordinator?.scrollTo(point)
           }
         }
       }

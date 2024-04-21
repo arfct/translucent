@@ -59,8 +59,9 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate, WKScript
     if let scrollView = webView?.scrollView {
       let x = position.x * scrollView.contentSize.width - scrollView.frame.size.width
       let y = position.y * scrollView.contentSize.height - scrollView.frame.size.height
-      scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
-      scrollView.setZoomScale(position.z, animated: false)
+      //scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
+      //scrollView.setZoomScale(position.z, animated: false)
+      print("Scroll to \(x), \(y)")
     }
   }
   
