@@ -9,3 +9,7 @@ Spatial Web Apps for visionOS
 #### Catalog Page: https://translucent.directory
 
 #### Usage: https://translucent.wiki
+
+#### Catalogue
+
+The Artifact catalogue entry for this product is [`.artifact/translucent.md`](.artifact/translucent.md).
