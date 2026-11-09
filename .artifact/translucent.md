@@ -5,7 +5,6 @@ category: product
 tags:
   - visionos
   - widget
-  - open-source
 url: https://translucent.directory
 links:
   app_store: https://apps.apple.com/app/id6477412179
