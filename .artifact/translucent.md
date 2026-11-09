@@ -20,8 +20,8 @@ unconfirmed:
   - date
 ---
 
-Windows that know when to disappear. Translucent puts web-based widgets into the visionOS spatial environment—small information panels, weather and clocks among them, rendered as translucent surfaces that sit in the room and recede into the background rather than demanding it. The web supplies the content; the platform supplies depth and place.
+Translucent places web-based widgets in a visionOS room. Each widget is a small information panel (weather and clocks among them) rendered as a translucent surface at a chosen position in the room. The web supplies the content; visionOS supplies the depth and placement.
 
-Built in early 2024, in the Vision Pro's first weeks. Released on the App Store in March 2024.
+It was built in early 2024, in the Vision Pro's first weeks, and released on the App Store in March 2024.
 
 Swift, WebKit, visionOS. 2024.
