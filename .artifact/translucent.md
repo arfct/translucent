@@ -20,7 +20,7 @@ unconfirmed:
   - date
 ---
 
-In Translucent, a visionOS app, a website is a window in a room. The first image has a New York Times front page open as one, its window menu showing, beside a launcher with nine favorites. A window can hold a whole site, such as Reddit or Discord, or a page with a single purpose, such as a clock, a timer or an orrery. In the second image, taken from further back in the same room, the orrery is on the wall to the left.
+Websites open as windows in a room in Translucent, an app for visionOS. The first image has a New York Times front page open as one, its window menu showing, beside a launcher with nine favorites. A window can hold a whole site, such as Reddit or Discord, or a page with a single purpose, such as a clock, a timer or an orrery. In the second image, taken from further back in the same room, the orrery is on the wall to the left.
 
 Each window has its own size, a background of glass, transparent or opaque, and optionally its own fonts and CSS. Favorites appear in the launcher grid. The directory at translucent.directory lists example windows under four headings: Examples, Widgets, Websites and Experimental.
 
