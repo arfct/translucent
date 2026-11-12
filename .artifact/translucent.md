@@ -1,6 +1,7 @@
 ---
 title: Translucent
 date: 2024-03
+status: released
 category: product
 tags:
   - visionos
@@ -16,6 +17,7 @@ media:
   - src: room.jpg
     caption: The same room from further back, where the orrery is on the wall to the left
     alt: A wide visionOS view of a corner with a dark orrery panel, the widget grid and a newspaper page
+unconfirmed: [status]
 ---
 
 Websites open as windows in a room in Translucent, an app for visionOS. The first image has a New York Times front page open as one, its window menu showing, beside a launcher with nine favorites. A window can hold a whole site, such as Reddit or Discord, or a page with a single purpose, such as a clock, a timer or an orrery. In the second image, taken from further back in the same room, the orrery is on the wall to the left.
